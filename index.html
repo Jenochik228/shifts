@@ -33,20 +33,21 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-html{background:var(--bg)}
-body{margin:0;min-height:100vh;color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:radial-gradient(1200px 500px at 80% -10%,var(--accent-soft),transparent 60%),var(--bg);
-  padding-bottom:env(safe-area-inset-bottom)}
+html{background:var(--bg);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;min-height:100vh;min-height:100dvh;color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:radial-gradient(1200px 500px at 80% -10%,var(--accent-soft),transparent 60%),var(--bg)}
 body:has(dialog[open]){overflow:hidden}
-.wrap{max-width:920px;margin:0 auto;padding:16px;padding-top:max(16px,env(safe-area-inset-top))}
+.wrap{max-width:920px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+  padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 
 /* анимация смены темы */
 ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
 ::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}
 .theming,.theming *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease!important}
 
-header{display:flex;align-items:center;gap:8px;margin:4px 0 14px}
-h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 auto 0 0;text-transform:capitalize}
+header{display:flex;align-items:center;gap:8px;margin:4px 0 14px;flex:none}
+header .nav{display:flex;gap:8px;align-items:center}
+h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 auto 0 0;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer;
   transition:transform .12s,border-color .2s,background .2s,box-shadow .2s,opacity .2s}
 button:hover{border-color:var(--accent)}
@@ -60,11 +61,11 @@ button.ghost{background:transparent}
 
 /* календарь */
 .calwrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow);touch-action:pan-y}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
 .dow{text-align:center;color:var(--muted);font-size:12px;font-weight:600;padding:6px 0;text-transform:uppercase;letter-spacing:.04em}
 .slide{animation:slide .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes slide{from{opacity:0;transform:translateX(var(--dx,14px))}to{opacity:1;transform:none}}
-.day{background:var(--bg2);border:1px solid transparent;border-radius:12px;min-height:80px;padding:6px;cursor:pointer;position:relative;
+.day{background:var(--bg2);border:1px solid transparent;border-radius:12px;min-height:80px;min-width:0;padding:6px;cursor:pointer;position:relative;
   display:flex;flex-direction:column;user-select:none;transition:transform .12s,background .3s,border-color .2s}
 .day:hover{border-color:var(--accent)}
 .day:active{transform:scale(.95)}
@@ -72,7 +73,7 @@ button.ghost{background:transparent}
 .day .n{font-size:12px;font-weight:600;color:var(--muted);width:22px;height:22px;display:grid;place-items:center;border-radius:50%}
 .day.today .n{background:var(--accent);color:#fff}
 .day .nd{position:absolute;top:10px;left:32px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.day .chip{margin-top:auto;font-weight:700;font-size:14px;border-radius:8px;padding:3px 0;text-align:center;color:#fff;
+.day .chip{margin-top:auto;font-weight:700;font-size:14px;border-radius:8px;padding:3px 0;text-align:center;color:#fff;overflow:hidden;
   animation:pop .25s cubic-bezier(.3,1.5,.5,1)}
 .chip em{display:block;font-style:normal;font-size:10px;font-weight:500;opacity:.9;line-height:1.15}
 @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
@@ -83,7 +84,7 @@ button.ghost{background:transparent}
 
 /* всплывающие окна */
 dialog{border:0;padding:0;border-radius:22px;background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(0,0,0,.35);
-  width:calc(100% - 24px);max-width:520px;max-height:calc(100vh - 32px);overflow:hidden}
+  width:calc(100% - 24px);max-width:520px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:hidden}
 dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.9,.3,1.1)}
 dialog.closing{animation:dlgOut .18s ease forwards}
 dialog::backdrop{background:rgba(10,14,25,.5);backdrop-filter:blur(5px);animation:fade .25s}
@@ -91,7 +92,7 @@ dialog.closing::backdrop{animation:fade .18s reverse forwards}
 @keyframes dlgIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes dlgOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
 @keyframes fade{from{opacity:0}}
-.dlg{padding:18px;overflow:auto;max-height:calc(100vh - 32px)}
+.dlg{padding:18px;overflow:auto;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overscroll-behavior:contain}
 .dhead{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .dhead h2{margin:0 auto 0 0;font-size:18px;letter-spacing:-.01em;text-transform:capitalize}
 .sec{margin-top:18px}
@@ -113,21 +114,21 @@ dialog.closing::backdrop{animation:fade .18s reverse forwards}
 .stat b{font-size:22px;letter-spacing:-.02em;display:block}
 .stat.big{background:var(--accent-soft)}
 
-.seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:3px}
 .seg button{border:0;background:transparent;padding:6px 12px;border-radius:9px;font-size:13px;color:var(--muted)}
 .seg button.on{color:var(--text);background:var(--card);box-shadow:var(--shadow)}
 
 .catlist{display:flex;flex-direction:column;gap:6px}
 .catlist button{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:8px 12px}
 .catlist .dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:9px;color:#fff;font-weight:700;font-size:13px;padding:0 4px}
-.catlist .nm{flex:1}
+.catlist .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 
 input,select,textarea{font:inherit;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;transition:border-color .2s,background .3s}
 input:focus,textarea:focus{outline:none;border-color:var(--accent)}
 input:disabled{opacity:.6}
 textarea{width:100%;resize:vertical;min-height:70px}
 input[type=color]{padding:2px;width:44px;height:36px;cursor:pointer}
-input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px;flex:none}
 label.f{display:block;margin-top:12px}
 label.f>span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
 label.f input[type=text],label.f input[type=number]{width:100%}
@@ -136,7 +137,7 @@ label.chk small{display:block;color:var(--muted)}
 .swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .swatches button{width:28px;height:28px;border-radius:50%;padding:0;border:2px solid transparent}
 .swatches button.on{border-color:var(--text)}
-.foot{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.foot{display:flex;gap:8px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap}
 .foot .danger{margin-right:auto}
 
 /* уведомление с отменой */
@@ -148,17 +149,63 @@ label.chk small{display:block;color:var(--muted)}
 :root[data-theme=dark] #toast button{color:#3b54e0}
 @keyframes tin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
 
+/* ---------- адаптация под телефон ---------- */
+@media(max-width:700px){
+  /* календарь занимает всю высоту экрана, строки растягиваются */
+  .calwrap{flex:1;display:flex;flex-direction:column;min-height:0}
+  #grid{flex:1;grid-auto-rows:minmax(54px,1fr)}
+  .day{min-height:54px}
+  input,select,textarea{font-size:16px}          /* iOS не приближает страницу при фокусе */
+}
 @media(max-width:560px){
-  .wrap{padding:12px;padding-top:max(12px,env(safe-area-inset-top))}
+  .wrap{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
   h1{font-size:22px}
   .grid{gap:3px}.calwrap{padding:6px}
-  .day{min-height:62px;padding:4px;border-radius:9px}
+  .day{padding:4px;border-radius:9px}
   .day .nd{top:7px;left:28px}
+  .day .chip{font-size:clamp(12px,3.6vw,15px)}
   .chip em{display:none}
   .badges{top:3px;right:3px}.badges span{font-size:10px;padding:0 4px}
   dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:22px 22px 0 0}
+  .dlg{padding-bottom:calc(18px + env(safe-area-inset-bottom));max-height:92vh;max-height:92dvh}
+  dialog{max-height:92vh;max-height:92dvh}
   @keyframes dlgIn{from{opacity:.6;transform:translateY(60px)}to{opacity:1;transform:none}}
   @keyframes dlgOut{to{opacity:0;transform:translateY(60px)}}
+}
+@media(max-width:420px){
+  /* заголовок в первой строке, навигация — на всю ширину во второй */
+  header{flex-wrap:wrap}
+  header .nav{order:3;width:100%}
+  header .nav #todayBtn{flex:1}
+  .dow{font-size:11px;letter-spacing:0}
+  .cats{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:340px){
+  .day .n{width:18px;height:18px;font-size:11px}
+  .day .nd{display:none}
+  .cats{grid-template-columns:1fr}
+}
+@media(pointer:coarse){
+  button{min-height:44px}
+  button.icon{width:44px;height:44px}
+  .seg button{min-height:38px}
+  .swatches button{width:34px;height:34px;min-height:0}
+}
+/* телефон в горизонтальном положении */
+@media(max-height:520px) and (orientation:landscape){
+  .wrap{padding-top:max(8px,env(safe-area-inset-top))}
+  header{margin-bottom:8px}
+  h1{font-size:20px}
+  button.icon{width:36px;height:36px}
+  button{min-height:0}
+  .dow{padding:2px 0}
+  .day{min-height:36px;padding:2px 4px}
+  #grid{grid-auto-rows:minmax(36px,1fr)}
+  .day .chip{padding:1px 0;font-size:12px}
+  .chip em{display:none}
+  dialog{margin:auto;width:min(560px,calc(100% - 24px));border-radius:22px;max-height:94vh;max-height:94dvh}
+  .dlg{max-height:94vh;max-height:94dvh}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -167,10 +214,12 @@ label.chk small{display:block;color:var(--muted)}
 <div class="wrap">
   <header>
     <h1 id="title"></h1>
-    <button class="icon" id="prev" aria-label="Назад">‹</button>
-    <button id="todayBtn">Сегодня</button>
-    <button class="icon" id="next" aria-label="Вперёд">›</button>
-    <button class="icon" id="menuBtn" aria-label="Меню">⚙</button>
+    <div class="nav">
+      <button class="icon" id="prev">‹</button>
+      <button id="todayBtn"></button>
+      <button class="icon" id="next">›</button>
+    </div>
+    <button class="icon" id="menuBtn">⚙</button>
   </header>
   <div class="calwrap" id="cal">
     <div class="grid" id="dow"></div>
@@ -181,25 +230,112 @@ label.chk small{display:block;color:var(--muted)}
 <dialog id="dayDlg"><div class="dlg" id="dayBody"></div></dialog>
 <dialog id="menuDlg"><div class="dlg" id="menuBody"></div></dialog>
 <dialog id="typeDlg"><div class="dlg" id="typeBody"></div></dialog>
-<div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo">Отменить</button></div>
+<div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo"></button></div>
 <input type="file" id="file" accept=".json" hidden>
 
 <script>
+/* ---------- переводы ---------- */
+const I18N={
+ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'Вперёд',menu:'Меню',close:'Закрыть',h:'ч',
+ undo:'Отменить',undoBtn:'↶ Отменить последнее действие',summary:'Итоги — {m}',totalHours:'всего часов',noHours:'без часов',
+ noteTitle:'Заметка',notePh:'Например: подмена, врач в 10:00…',overlayTitle:'Поверх смены',timeTitle:'Время смены',reset:'Сбросить',
+ clearShift:'Очистить смену',done:'Готово',add:'Добавить',update:'Обновить',remove:'Убрать',nextDay:'до следующего дня',
+ shiftChanged:'Смена изменена',shiftCleared:'Смена очищена',timeReset:'Время сброшено',otSaved:'Nadčas сохранён',removed:'Убрано',
+ timeChanged:'Время изменено',undone:'Отменено',autoConfirmed:'Автосмены подтверждены',autoCleared:'Автосмены убраны',
+ imported:'Данные импортированы',typeSaved:'Категория сохранена',typeDeleted:'Категория удалена',built:'График построен',monthCleared:'Месяц очищен',
+ categories:'Категории',addCat:'+ Своя категория',overlayTag:'поверх смены',auto:'Авто-планирование',autoOn:'На',months:'мес. вперёд',build:'Построить',
+ confirmAuto:'Подтвердить авто-смены',clearAuto:'Убрать авто-смены',autoHint:'Автосмены на календаре — пунктиром.',
+ theme:'Тема',light:'☀️ Светлая',themeAuto:'Авто',dark:'🌙 Тёмная',language:'Язык',data:'Данные',export:'Экспорт',import:'Импорт',
+ localNote:'Данные хранятся только на этом устройстве.',clearSec:'Очистка',clearMonthBtn:'Очистить: {m}',clearHint:'Удалит все смены, nadčas и заметки этого месяца.',
+ found:'Найден цикл {p} дн.: {pat} — совпадение {c}%, по {n} дням.',
+ notEnough:'Недостаточно данных: отметьте хотя бы 2 цикла смен (обычно 2–4 недели) — и я найду закономерность.',
+ badFile:'Неверный файл',cantDetect:'Пока не могу определить цикл. Заполните больше прошлых дней.',
+ confirmDelType:'Удалить категорию? Дни с ней будут очищены.',confirmClear:'Очистить всё за {m}? Смены, nadčas и заметки будут удалены (можно отменить).',
+ catTitle:'Категория',newCat:'Новая категория',name:'Название',namePh:'Например: Подработка',short:'Метка',hours:'Часы',color:'Цвет',
+ start:'Начало смены',end:'Конец смены',noTime:'Без времени',
+ timeHint:'Если время задано, часы считаются сами. Конец раньше начала — смена переходит через полночь.',
+ overlayLbl:'Ставится поверх смены',overlayHint:'Как nadčas: день сохраняет свою смену и получает бейдж с часами.',
+ ignoreLbl:'Не учитывать в анализе графика',ignoreHint:'Для отпуска, больничного и любых нерегулярных дней.',
+ delete:'Удалить',cancel:'Отмена',save:'Сохранить',
+ types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč']}},
+uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
+ undo:'Скасувати',undoBtn:'↶ Скасувати останню дію',summary:'Підсумки — {m}',totalHours:'усього годин',noHours:'без годин',
+ noteTitle:'Нотатка',notePh:'Наприклад: підміна, лікар о 10:00…',overlayTitle:'Поверх зміни',timeTitle:'Час зміни',reset:'Скинути',
+ clearShift:'Очистити зміну',done:'Готово',add:'Додати',update:'Оновити',remove:'Прибрати',nextDay:'до наступного дня',
+ shiftChanged:'Зміну змінено',shiftCleared:'Зміну очищено',timeReset:'Час скинуто',otSaved:'Nadčas збережено',removed:'Прибрано',
+ timeChanged:'Час змінено',undone:'Скасовано',autoConfirmed:'Автозміни підтверджено',autoCleared:'Автозміни прибрано',
+ imported:'Дані імпортовано',typeSaved:'Категорію збережено',typeDeleted:'Категорію видалено',built:'Графік побудовано',monthCleared:'Місяць очищено',
+ categories:'Категорії',addCat:'+ Своя категорія',overlayTag:'поверх зміни',auto:'Авто-планування',autoOn:'На',months:'міс. уперед',build:'Побудувати',
+ confirmAuto:'Підтвердити автозміни',clearAuto:'Прибрати автозміни',autoHint:'Автозміни в календарі — пунктиром.',
+ theme:'Тема',light:'☀️ Світла',themeAuto:'Авто',dark:'🌙 Темна',language:'Мова',data:'Дані',export:'Експорт',import:'Імпорт',
+ localNote:'Дані зберігаються лише на цьому пристрої.',clearSec:'Очищення',clearMonthBtn:'Очистити: {m}',clearHint:'Видалить усі зміни, nadčas і нотатки цього місяця.',
+ found:'Знайдено цикл {p} дн.: {pat} — збіг {c}%, за {n} днями.',
+ notEnough:'Недостатньо даних: позначте щонайменше 2 цикли змін (зазвичай 2–4 тижні) — і я знайду закономірність.',
+ badFile:'Неправильний файл',cantDetect:'Поки не можу визначити цикл. Заповніть більше минулих днів.',
+ confirmDelType:'Видалити категорію? Дні з нею буде очищено.',confirmClear:'Очистити все за {m}? Зміни, nadčas і нотатки буде видалено (можна скасувати).',
+ catTitle:'Категорія',newCat:'Нова категорія',name:'Назва',namePh:'Наприклад: Підробіток',short:'Мітка',hours:'Години',color:'Колір',
+ start:'Початок зміни',end:'Кінець зміни',noTime:'Без часу',
+ timeHint:'Якщо час задано, години рахуються самі. Кінець раніше за початок — зміна переходить через північ.',
+ overlayLbl:'Ставиться поверх зміни',overlayHint:'Як nadčas: день зберігає свою зміну й отримує бейдж із годинами.',
+ ignoreLbl:'Не враховувати в аналізі графіка',ignoreHint:'Для відпустки, лікарняного та будь-яких нерегулярних днів.',
+ delete:'Видалити',cancel:'Скасувати',save:'Зберегти',
+ types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč']}},
+sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
+ undo:'Späť',undoBtn:'↶ Vrátiť poslednú akciu',summary:'Súhrn — {m}',totalHours:'hodín spolu',noHours:'bez hodín',
+ noteTitle:'Poznámka',notePh:'Napr.: zastupovanie, lekár o 10:00…',overlayTitle:'Popri zmene',timeTitle:'Čas zmeny',reset:'Obnoviť',
+ clearShift:'Vymazať zmenu',done:'Hotovo',add:'Pridať',update:'Aktualizovať',remove:'Odstrániť',nextDay:'do nasledujúceho dňa',
+ shiftChanged:'Zmena upravená',shiftCleared:'Zmena vymazaná',timeReset:'Čas obnovený',otSaved:'Nadčas uložený',removed:'Odstránené',
+ timeChanged:'Čas zmenený',undone:'Vrátené späť',autoConfirmed:'Automatické zmeny potvrdené',autoCleared:'Automatické zmeny odstránené',
+ imported:'Dáta importované',typeSaved:'Kategória uložená',typeDeleted:'Kategória odstránená',built:'Rozpis vytvorený',monthCleared:'Mesiac vymazaný',
+ categories:'Kategórie',addCat:'+ Vlastná kategória',overlayTag:'popri zmene',auto:'Automatické plánovanie',autoOn:'Na',months:'mes. dopredu',build:'Vytvoriť',
+ confirmAuto:'Potvrdiť automatické zmeny',clearAuto:'Odstrániť automatické zmeny',autoHint:'Automatické zmeny sú v kalendári bodkované.',
+ theme:'Vzhľad',light:'☀️ Svetlý',themeAuto:'Auto',dark:'🌙 Tmavý',language:'Jazyk',data:'Dáta',export:'Export',import:'Import',
+ localNote:'Dáta sa ukladajú iba v tomto zariadení.',clearSec:'Vymazanie',clearMonthBtn:'Vymazať: {m}',clearHint:'Odstráni všetky zmeny, nadčas a poznámky tohto mesiaca.',
+ found:'Nájdený cyklus {p} dní: {pat} — zhoda {c} %, z {n} dní.',
+ notEnough:'Málo údajov: označte aspoň 2 cykly zmien (zvyčajne 2–4 týždne) a nájdem pravidelnosť.',
+ badFile:'Neplatný súbor',cantDetect:'Cyklus zatiaľ neviem určiť. Vyplňte viac minulých dní.',
+ confirmDelType:'Odstrániť kategóriu? Dni s ňou sa vymažú.',confirmClear:'Vymazať všetko za {m}? Zmeny, nadčas a poznámky sa odstránia (dá sa vrátiť späť).',
+ catTitle:'Kategória',newCat:'Nová kategória',name:'Názov',namePh:'Napr.: Brigáda',short:'Značka',hours:'Hodiny',color:'Farba',
+ start:'Začiatok zmeny',end:'Koniec zmeny',noTime:'Bez času',
+ timeHint:'Ak je čas zadaný, hodiny sa počítajú samy. Koniec skôr ako začiatok — zmena prechádza cez polnoc.',
+ overlayLbl:'Pridáva sa popri zmene',overlayHint:'Ako nadčas: deň si ponechá svoju zmenu a dostane odznak s hodinami.',
+ ignoreLbl:'Nezahŕňať do analýzy rozpisu',ignoreHint:'Pre dovolenku, PN a akékoľvek nepravidelné dni.',
+ delete:'Odstrániť',cancel:'Zrušiť',save:'Uložiť',
+ types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč']}}
+};
+const LANGS=[['ru','Русский'],['uk','Українська'],['sk','Slovenčina']];
+const LOC={ru:'ru-RU',uk:'uk-UA',sk:'sk-SK'};
+const LK='shiftcal.lang';
+let LANG=(()=>{try{const s=localStorage.getItem(LK);if(I18N[s])return s}catch{}
+  const n=(navigator.language||'ru').slice(0,2);return I18N[n]?n:'ru'})();
+const L=()=>I18N[LANG];
+const tr=(k,v)=>{let s=L()[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
+
+/* ---------- данные ---------- */
 const KEY='shiftcal.v1',TK='shiftcal.theme';
 const DEF={types:[
- {id:'d',name:'День',short:'Д',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
- {id:'n',name:'Ночь',short:'Н',color:'#4f46e5',hours:12,start:'19:00',end:'07:00',ignore:false},
- {id:'o',name:'Выходной',short:'В',color:'#10b981',hours:0,ignore:false},
- {id:'v',name:'Отпуск',short:'О',color:'#ec4899',hours:0,ignore:true},
- {id:'s',name:'Больничный',short:'Б',color:'#ef4444',hours:0,ignore:true},
- {id:'ot',name:'Nadčas',short:'Nč',color:'#f97316',hours:4,ignore:true,overlay:true}],days:{}};
+ {id:'d',key:'d',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
+ {id:'n',key:'n',color:'#4f46e5',hours:12,start:'19:00',end:'07:00',ignore:false},
+ {id:'o',key:'o',color:'#10b981',hours:0,ignore:false},
+ {id:'v',key:'v',color:'#ec4899',hours:0,ignore:true},
+ {id:'s',key:'s',color:'#ef4444',hours:0,ignore:true},
+ {id:'ot',key:'ot',color:'#f97316',hours:4,ignore:true,overlay:true}],days:{}};
 const SWATCH=['#e08a00','#4f46e5','#10b981','#ec4899','#ef4444','#f97316','#06b6d4','#8b5cf6','#64748b'];
 let S;try{S=JSON.parse(localStorage.getItem(KEY))||structuredClone(DEF)}catch{S=structuredClone(DEF)}
 function normalize(){
   if(!S.types.some(t=>t.overlay))S.types.push(structuredClone(DEF.types[5]));
+  // стандартные категории: имя и метка берутся из перевода, пока пользователь их не изменил
+  for(const t of S.types){
+    const ru=I18N.ru.types;
+    if(!t.key&&ru[t.id])t.key=t.id;
+    if(t.key&&ru[t.key]){
+      if(t.name===ru[t.key][0])delete t.name;
+      if(t.short===ru[t.key][1])delete t.short;
+    }
+  }
   const ot=S.types.find(t=>t.overlay).id;
   for(const k in S.days){const e=S.days[k];
-    if('ot' in e){e.ov=e.ov||{};e.ov[ot]=e.ot;delete e.ot}      // миграция со старого формата
+    if('ot' in e){e.ov=e.ov||{};e.ov[ot]=e.ot;delete e.ot}
     if(e.ov&&!Object.keys(e.ov).length)delete e.ov;
   }
 }
@@ -211,8 +347,11 @@ const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
 const dayNum=d=>Math.round(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);
 const type=id=>S.types.find(t=>t.id===id);
+const nm=t=>t.name??L().types[t.key]?.[0]??'';
+const sh=t=>t.short??L().types[t.key]?.[1]??'';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cleanup=k=>{const x=S.days[k];if(x&&!x.t&&!x.note&&!(x.ov&&Object.keys(x.ov).length))delete S.days[k]};
+const monthLabel=d=>d.toLocaleDateString(LOC[LANG],{month:'long',year:'numeric'}).replace(/\s*р\.$/,'');
 let cur=new Date();cur.setDate(1);
 
 /* ---------- время смены ---------- */
@@ -221,6 +360,20 @@ const span=(s,e)=>{let d=toMin(e)-toMin(s);if(d<=0)d+=1440;return Math.round(d/6
 const times=(e,t)=>e.s&&e.e?[e.s,e.e]:t&&t.start&&t.end?[t.start,t.end]:null;
 const dayHours=(e,t)=>{const x=times(e,t);return x?span(...x):+t.hours||0};
 const shortT=s=>s.endsWith(':00')?String(+s.slice(0,2)):s;
+
+/* ---------- язык ---------- */
+function applyStatic(){
+  document.documentElement.lang=LANG;document.title=tr('title');
+  $('todayBtn').textContent=tr('today');
+  $('prev').setAttribute('aria-label',tr('prev'));$('next').setAttribute('aria-label',tr('next'));
+  $('menuBtn').setAttribute('aria-label',tr('menu'));$('tundo').textContent=tr('undo');
+}
+function setLang(l){
+  LANG=l;try{localStorage.setItem(LK,l)}catch{}
+  applyStatic();render();
+  if($('menuDlg').open)renderMenu();
+  if($('dayDlg').open)renderDay();
+}
 
 /* ---------- отмена ---------- */
 const hist=[];
@@ -231,7 +384,7 @@ function undo(){
   if($('typeDlg').open)closeDlg($('typeDlg'));
   if($('dayDlg').open)renderDay();
   if($('menuDlg').open)renderMenu();
-  toast('Отменено',false);
+  toast(tr('undone'),false);
 }
 let tt;
 function toast(msg,canUndo=true){
@@ -294,8 +447,8 @@ mq.onchange=()=>{if(document.documentElement.dataset.mode==='auto')paintTheme('a
 
 /* ---------- календарь ---------- */
 function render(dir){
-  $('title').textContent=cur.toLocaleDateString('ru',{month:'long',year:'numeric'});
-  $('dow').innerHTML=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=>`<div class="dow">${d}</div>`).join('');
+  $('title').textContent=monthLabel(cur);
+  $('dow').innerHTML=Array.from({length:7},(_,i)=>`<div class="dow">${new Date(2024,0,1+i).toLocaleDateString(LOC[LANG],{weekday:'short'})}</div>`).join('');
   const first=new Date(cur),off=(first.getDay()+6)%7;
   const start=new Date(first);start.setDate(1-off);
   let h='';const today=fmt(new Date());
@@ -308,7 +461,7 @@ function render(dir){
     const tm=t&&!t.overlay&&times(e,t);
     h+=`<div class="day${d.getMonth()!==cur.getMonth()?' other':''}${k===today?' today':''}${e.auto?' auto':''}" data-k="${k}"${t?` style="--c:${t.color}"`:''}>
       <span class="n">${d.getDate()}</span>${e.note?'<i class="nd"></i>':''}${bd?`<div class="badges">${bd}</div>`:''}
-      ${t?`<span class="chip" style="background:${t.color}">${esc(t.short)}${tm?`<em>${shortT(tm[0])}–${shortT(tm[1])}</em>`:''}</span>`:''}</div>`;
+      ${t?`<span class="chip" style="background:${t.color}">${esc(sh(t))}${tm?`<em>${shortT(tm[0])}–${shortT(tm[1])}</em>`:''}</span>`:''}</div>`;
   }
   const g=$('grid');g.innerHTML=h;
   if(dir){g.style.setProperty('--dx',dir*18+'px');g.classList.remove('slide');void g.offsetWidth;g.classList.add('slide')}
@@ -329,36 +482,36 @@ $('cal').addEventListener('touchend',e=>{
 /* ---------- окно дня ---------- */
 let dayKey=null,noteSnap=false;
 function openDay(k){dayKey=k;noteSnap=false;renderDay();if(!$('dayDlg').open)openDlg($('dayDlg'))}
-function timeInfo(a,b){return`${span(a,b)} ч${toMin(b)<=toMin(a)?' · до следующего дня':''}`}
+function timeInfo(a,b){return`${span(a,b)} ${tr('h')}${toMin(b)<=toMin(a)?' · '+tr('nextDay'):''}`}
 function renderDay(){
   const e=S.days[dayKey]||{},cur_t=e.t&&type(e.t);
-  const title=parse(dayKey).toLocaleDateString('ru',{weekday:'long',day:'numeric',month:'long'});
+  const title=parse(dayKey).toLocaleDateString(LOC[LANG],{weekday:'long',day:'numeric',month:'long'});
   const main=S.types.filter(t=>!t.overlay),ovs=S.types.filter(t=>t.overlay);
   const tm=cur_t&&!cur_t.overlay?times(e,cur_t)||['','']:null;
   $('dayBody').innerHTML=`
-   <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="Закрыть">✕</button></div>
+   <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
    <div class="cats">${main.map(t=>`<button class="cat${e.t===t.id&&!e.auto?' on':''}" data-set="${t.id}" style="--c:${t.color}">
-      <b>${esc(t.short)}</b><span>${esc(t.name)}<small>${t.start&&t.end?t.start+'–'+t.end:t.hours?t.hours+' ч':'без часов'}</small></span></button>`).join('')}</div>
-   ${tm?`<div class="sec"><h3>Время смены</h3><div class="row">
+      <b>${esc(sh(t))}</b><span>${esc(nm(t))}<small>${t.start&&t.end?t.start+'–'+t.end:t.hours?t.hours+' '+tr('h'):tr('noHours')}</small></span></button>`).join('')}</div>
+   ${tm?`<div class="sec"><h3>${tr('timeTitle')}</h3><div class="row">
       <input type="time" id="tmS" value="${tm[0]}"><span>–</span><input type="time" id="tmE" value="${tm[1]}">
       <span class="muted" id="tmH">${tm[0]&&tm[1]?timeInfo(tm[0],tm[1]):''}</span>
-      ${e.s?'<button data-tmreset>Сбросить</button>':''}</div></div>`:''}
-   ${ovs.length?`<div class="sec"><h3>Поверх смены</h3>${ovs.map(t=>{const has=e.ov&&e.ov[t.id]!==undefined;return`
-     <div class="ovrow"><div class="cat" style="--c:${t.color}"><b>${esc(t.short)}</b><span>${esc(t.name)}</span></div>
-       <input type="number" min="0" step="0.5" id="ov_${t.id}" value="${has?e.ov[t.id]:t.hours}" style="width:76px"><span class="muted">ч</span>
-       <button class="primary" data-ov="${t.id}">${has?'Обновить':'Добавить'}</button>
-       ${has?`<button class="icon danger" data-ovdel="${t.id}" aria-label="Убрать">✕</button>`:''}</div>`}).join('')}</div>`:''}
-   <div class="sec"><h3>Заметка</h3><textarea id="dayNote" rows="3" placeholder="Например: подмена, врач в 10:00…">${esc(e.note||'')}</textarea></div>
-   <div class="foot">${e.t?`<button class="danger" data-clear>Очистить смену</button>`:''}<button class="primary" data-close>Готово</button></div>`;
+      ${e.s?`<button data-tmreset>${tr('reset')}</button>`:''}</div></div>`:''}
+   ${ovs.length?`<div class="sec"><h3>${tr('overlayTitle')}</h3>${ovs.map(t=>{const has=e.ov&&e.ov[t.id]!==undefined;return`
+     <div class="ovrow"><div class="cat" style="--c:${t.color}"><b>${esc(sh(t))}</b><span>${esc(nm(t))}</span></div>
+       <input type="number" min="0" step="0.5" id="ov_${t.id}" value="${has?e.ov[t.id]:t.hours}" style="width:76px"><span class="muted">${tr('h')}</span>
+       <button class="primary" data-ov="${t.id}">${has?tr('update'):tr('add')}</button>
+       ${has?`<button class="icon danger" data-ovdel="${t.id}" aria-label="${tr('remove')}">✕</button>`:''}</div>`}).join('')}</div>`:''}
+   <div class="sec"><h3>${tr('noteTitle')}</h3><textarea id="dayNote" rows="3" placeholder="${esc(tr('notePh'))}">${esc(e.note||'')}</textarea></div>
+   <div class="foot">${e.t?`<button class="danger" data-clear>${tr('clearShift')}</button>`:''}<button class="primary" data-close>${tr('done')}</button></div>`;
 }
 $('dayBody').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;
   const x=S.days[dayKey]||{};
-  if(b.dataset.set){snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;done('Смена изменена');closeDlg($('dayDlg'))}
-  else if('clear' in b.dataset){snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);done('Смена очищена');renderDay()}
-  else if('tmreset' in b.dataset){snap();delete x.s;delete x.e;done('Время сброшено');renderDay()}
-  else if(b.dataset.ov){snap();const v=+$('ov_'+b.dataset.ov).value||0;x.ov=x.ov||{};x.ov[b.dataset.ov]=v;S.days[dayKey]=x;done('Nadčas сохранён');closeDlg($('dayDlg'))}
-  else if(b.dataset.ovdel){snap();delete x.ov[b.dataset.ovdel];if(!Object.keys(x.ov).length)delete x.ov;S.days[dayKey]=x;cleanup(dayKey);done('Убрано');renderDay()}
+  if(b.dataset.set){snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;done(tr('shiftChanged'));closeDlg($('dayDlg'))}
+  else if('clear' in b.dataset){snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);done(tr('shiftCleared'));renderDay()}
+  else if('tmreset' in b.dataset){snap();delete x.s;delete x.e;done(tr('timeReset'));renderDay()}
+  else if(b.dataset.ov){snap();const v=+$('ov_'+b.dataset.ov).value||0;x.ov=x.ov||{};x.ov[b.dataset.ov]=v;S.days[dayKey]=x;done(tr('otSaved'));closeDlg($('dayDlg'))}
+  else if(b.dataset.ovdel){snap();delete x.ov[b.dataset.ovdel];if(!Object.keys(x.ov).length)delete x.ov;S.days[dayKey]=x;cleanup(dayKey);done(tr('removed'));renderDay()}
 };
 $('dayBody').addEventListener('input',e=>{
   if(e.target.id!=='dayNote')return;
@@ -371,14 +524,15 @@ $('dayBody').addEventListener('change',e=>{
   if(e.target.id!=='tmS'&&e.target.id!=='tmE')return;
   const a=$('tmS').value,b=$('tmE').value,x=S.days[dayKey];
   if(!x||!a||!b)return;
-  snap();x.s=a;x.e=b;done('Время изменено');
+  snap();x.s=a;x.e=b;done(tr('timeChanged'));
   $('tmH').textContent=timeInfo(a,b);
 });
 
 /* ---------- меню ---------- */
 $('menuBtn').onclick=()=>{renderMenu();openDlg($('menuDlg'))};
+const monthKey=()=>`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
 function monthStats(){
-  const ym=`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
+  const ym=monthKey();
   let hours=0,over={},cnt={};
   for(const[k,e]of Object.entries(S.days)){
     if(!k.startsWith(ym))continue;
@@ -388,41 +542,56 @@ function monthStats(){
   }
   const ovTotal=Object.values(over).reduce((a,b)=>a+b,0);
   const r=n=>Math.round(n*100)/100;
-  return`<div class="stat big"><b>${r(hours+ovTotal)}</b><span class="muted">всего часов</span></div>`+
-    S.types.filter(t=>t.overlay&&over[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${r(over[t.id])}</b><span class="muted">${esc(t.name)}, ч</span></div>`).join('')+
-    S.types.filter(t=>cnt[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${cnt[t.id]}</b><span class="muted">${esc(t.name)}</span></div>`).join('');
+  return`<div class="stat big"><b>${r(hours+ovTotal)}</b><span class="muted">${tr('totalHours')}</span></div>`+
+    S.types.filter(t=>t.overlay&&over[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${r(over[t.id])}</b><span class="muted">${esc(nm(t))}, ${tr('h')}</span></div>`).join('')+
+    S.types.filter(t=>cnt[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${cnt[t.id]}</b><span class="muted">${esc(nm(t))}</span></div>`).join('');
 }
 function renderMenu(){
   const m=document.documentElement.dataset.mode;
+  const ym=monthKey(),hasData=Object.keys(S.days).some(k=>k.startsWith(ym));
   $('menuBody').innerHTML=`
-   <div class="dhead"><h2>Меню</h2><button class="icon ghost" data-close aria-label="Закрыть">✕</button></div>
-   <button data-undo ${hist.length?'':'disabled'} style="width:100%">↶ Отменить последнее действие</button>
-   <div class="sec"><h3>Итоги — ${cur.toLocaleDateString('ru',{month:'long',year:'numeric'})}</h3><div class="stats">${monthStats()}</div></div>
-   <div class="sec"><h3>Категории</h3>
-     <div class="catlist">${S.types.map(t=>`<button data-edit="${t.id}"><span class="dot" style="background:${t.color}">${esc(t.short)}</span>
-       <span class="nm">${esc(t.name)}</span><span class="muted">${t.overlay?'поверх смены':(t.start&&t.end?t.start+'–'+t.end+' · ':'')+t.hours+' ч'}</span><span class="muted">›</span></button>`).join('')}
-       <button class="primary" data-add>+ Своя категория</button></div></div>
-   <div class="sec"><h3>Авто-планирование</h3>
+   <div class="dhead"><h2>${tr('menu')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+   <button data-undo ${hist.length?'':'disabled'} style="width:100%">${tr('undoBtn')}</button>
+   <div class="sec"><h3>${tr('summary',{m:monthLabel(cur)})}</h3><div class="stats">${monthStats()}</div></div>
+   <div class="sec"><h3>${tr('categories')}</h3>
+     <div class="catlist">${S.types.map(t=>`<button data-edit="${t.id}"><span class="dot" style="background:${t.color}">${esc(sh(t))}</span>
+       <span class="nm">${esc(nm(t))}</span><span class="muted">${t.overlay?tr('overlayTag'):(t.start&&t.end?t.start+'–'+t.end+' · ':'')+t.hours+' '+tr('h')}</span><span class="muted">›</span></button>`).join('')}
+       <button class="primary" data-add>${tr('addCat')}</button></div></div>
+   <div class="sec"><h3>${tr('auto')}</h3>
      <div class="muted" id="analysis" style="margin-bottom:10px">${analysisText()}</div>
-     <div class="row"><span>На</span><input id="months" type="number" min="1" max="12" value="3" style="width:64px"><span>мес. вперёд</span>
-       <button class="primary" data-gen>Построить</button></div>
-     <div class="row" style="margin-top:8px"><button data-confirm>Подтвердить авто-смены</button><button class="ghost" data-clearauto>Убрать авто-смены</button></div>
-     <div class="muted" style="margin-top:8px">Автосмены на календаре — пунктиром.</div></div>
-   <div class="sec"><h3>Тема</h3>
-     <div class="seg" id="theme"><button data-m="light" class="${m==='light'?'on':''}">☀️ Светлая</button><button data-m="auto" class="${m==='auto'?'on':''}">Авто</button><button data-m="dark" class="${m==='dark'?'on':''}">🌙 Тёмная</button></div></div>
-   <div class="sec"><h3>Данные</h3>
-     <div class="row"><button data-exp>Экспорт</button><button data-imp>Импорт</button></div>
-     <div class="muted" style="margin-top:8px">Данные хранятся только на этом устройстве.</div></div>`;
+     <div class="row"><span>${tr('autoOn')}</span><input id="months" type="number" min="1" max="12" value="3" style="width:64px"><span>${tr('months')}</span>
+       <button class="primary" data-gen>${tr('build')}</button></div>
+     <div class="row" style="margin-top:8px"><button data-confirm>${tr('confirmAuto')}</button><button class="ghost" data-clearauto>${tr('clearAuto')}</button></div>
+     <div class="muted" style="margin-top:8px">${tr('autoHint')}</div></div>
+   <div class="sec"><h3>${tr('theme')}</h3>
+     <div class="seg" id="theme"><button data-m="light" class="${m==='light'?'on':''}">${tr('light')}</button><button data-m="auto" class="${m==='auto'?'on':''}">${tr('themeAuto')}</button><button data-m="dark" class="${m==='dark'?'on':''}">${tr('dark')}</button></div></div>
+   <div class="sec"><h3>${tr('language')}</h3>
+     <div class="seg" id="lang">${LANGS.map(([c,n])=>`<button data-lang="${c}" class="${c===LANG?'on':''}">${n}</button>`).join('')}</div></div>
+   <div class="sec"><h3>${tr('data')}</h3>
+     <div class="row"><button data-exp>${tr('export')}</button><button data-imp>${tr('import')}</button></div>
+     <div class="muted" style="margin-top:8px">${tr('localNote')}</div></div>
+   <div class="sec"><h3>${tr('clearSec')}</h3>
+     <button class="danger" data-clearmonth ${hasData?'':'disabled'} style="width:100%">🗑 ${tr('clearMonthBtn',{m:monthLabel(cur)})}</button>
+     <div class="muted" style="margin-top:8px">${tr('clearHint')}</div></div>`;
+}
+function clearMonth(){
+  const ym=monthKey();
+  if(!confirm(tr('confirmClear',{m:monthLabel(cur)})))return;
+  snap();
+  for(const k of Object.keys(S.days))if(k.startsWith(ym))delete S.days[k];
+  done(tr('monthCleared'));renderMenu();
 }
 $('menuBody').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.m)setTheme(d.m,e);
+  else if(d.lang)setLang(d.lang);
   else if('undo' in d)undo();
   else if(d.edit)openType(d.edit);
   else if('add' in d)openType(null);
   else if('gen' in d)generate();
-  else if('confirm' in d){snap();for(const k in S.days)delete S.days[k].auto;done('Автосмены подтверждены');renderMenu()}
-  else if('clearauto' in d){snap();for(const k in S.days)if(S.days[k].auto){delete S.days[k].t;delete S.days[k].auto;delete S.days[k].s;delete S.days[k].e;cleanup(k)}done('Автосмены убраны');renderMenu()}
+  else if('clearmonth' in d)clearMonth();
+  else if('confirm' in d){snap();for(const k in S.days)delete S.days[k].auto;done(tr('autoConfirmed'));renderMenu()}
+  else if('clearauto' in d){snap();for(const k in S.days)if(S.days[k].auto){delete S.days[k].t;delete S.days[k].auto;delete S.days[k].s;delete S.days[k].e;cleanup(k)}done(tr('autoCleared'));renderMenu()}
   else if('exp' in d){
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
     a.download='shifts.json';a.click();
@@ -430,7 +599,7 @@ $('menuBody').onclick=e=>{
   else if('imp' in d)$('file').click();
 };
 $('file').onchange=async e=>{
-  try{const n=JSON.parse(await e.target.files[0].text());snap();S=n;normalize();done('Данные импортированы');renderMenu()}catch{alert('Неверный файл')}
+  try{const n=JSON.parse(await e.target.files[0].text());snap();S=n;normalize();done(tr('imported'));renderMenu()}catch{alert(tr('badFile'))}
   e.target.value='';
 };
 
@@ -445,25 +614,25 @@ function openType(id){
   editColor=t?t.color:SWATCH[Math.floor(Math.random()*SWATCH.length)];
   shortTouched=!!t;
   $('typeBody').innerHTML=`
-   <div class="dhead"><h2>${t?'Категория':'Новая категория'}</h2><button class="icon ghost" data-close aria-label="Закрыть">✕</button></div>
-   <label class="f"><span>Название</span><input type="text" id="tName" value="${t?esc(t.name):''}" placeholder="Например: Подработка" maxlength="30"></label>
+   <div class="dhead"><h2>${t?tr('catTitle'):tr('newCat')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+   <label class="f"><span>${tr('name')}</span><input type="text" id="tName" value="${t?esc(nm(t)):''}" placeholder="${esc(tr('namePh'))}" maxlength="30"></label>
    <div class="row" style="margin-top:12px;align-items:flex-end">
-     <label class="f" style="margin:0;width:90px"><span>Метка</span><input type="text" id="tShort" value="${t?esc(t.short):''}" maxlength="3"></label>
-     <label class="f" style="margin:0;width:100px"><span>Часы</span><input type="number" id="tHours" min="0" step="0.5" value="${t?t.hours:8}"></label>
-     <label class="f" style="margin:0"><span>Цвет</span><input type="color" id="tColor" value="${editColor}"></label>
+     <label class="f" style="margin:0;width:90px"><span>${tr('short')}</span><input type="text" id="tShort" value="${t?esc(sh(t)):''}" maxlength="3"></label>
+     <label class="f" style="margin:0;width:100px"><span>${tr('hours')}</span><input type="number" id="tHours" min="0" step="0.5" value="${t?t.hours:8}"></label>
+     <label class="f" style="margin:0"><span>${tr('color')}</span><input type="color" id="tColor" value="${editColor}"></label>
    </div>
    <div class="swatches" id="tSw">${SWATCH.map(c=>`<button data-c="${c}" style="background:${c}" class="${c===editColor?'on':''}" aria-label="${c}"></button>`).join('')}</div>
    <div id="tTimeRow" class="row" style="margin-top:12px;align-items:flex-end" ${t&&t.overlay?'hidden':''}>
-     <label class="f" style="margin:0"><span>Начало смены</span><input type="time" id="tStart" value="${t&&t.start||''}"></label>
-     <label class="f" style="margin:0"><span>Конец смены</span><input type="time" id="tEnd" value="${t&&t.end||''}"></label>
-     <button data-cleartime>Без времени</button>
+     <label class="f" style="margin:0"><span>${tr('start')}</span><input type="time" id="tStart" value="${t&&t.start||''}"></label>
+     <label class="f" style="margin:0"><span>${tr('end')}</span><input type="time" id="tEnd" value="${t&&t.end||''}"></label>
+     <button data-cleartime>${tr('noTime')}</button>
    </div>
-   <div class="muted" id="tTimeHint" style="margin-top:6px" ${t&&t.overlay?'hidden':''}>Если время задано, часы считаются сами. Конец раньше начала — смена переходит через полночь.</div>
+   <div class="muted" id="tTimeHint" style="margin-top:6px" ${t&&t.overlay?'hidden':''}>${tr('timeHint')}</div>
    <label class="chk"><input type="checkbox" id="tOverlay" ${t&&t.overlay?'checked':''} ${t?'disabled':''}>
-     <span>Ставится поверх смены<small>Как nadčas: день сохраняет свою смену и получает бейдж с часами.</small></span></label>
+     <span>${tr('overlayLbl')}<small>${tr('overlayHint')}</small></span></label>
    <label class="chk"><input type="checkbox" id="tIgnore" ${t&&t.ignore?'checked':''}>
-     <span>Не учитывать в анализе графика<small>Для отпуска, больничного и любых нерегулярных дней.</small></span></label>
-   <div class="foot">${t?`<button class="danger" data-del>Удалить</button>`:''}<button data-close>Отмена</button><button class="primary" data-save>Сохранить</button></div>`;
+     <span>${tr('ignoreLbl')}<small>${tr('ignoreHint')}</small></span></label>
+   <div class="foot">${t?`<button class="danger" data-del>${tr('delete')}</button>`:''}<button data-close>${tr('cancel')}</button><button class="primary" data-save>${tr('save')}</button></div>`;
   syncHours();
   openDlg($('typeDlg'));
   if(!t)setTimeout(()=>$('tName').focus(),50);
@@ -485,25 +654,32 @@ $('typeBody').onclick=e=>{
   else if('save' in b.dataset){
     const name=$('tName').value.trim();
     if(!name){$('tName').focus();return}
-    const overlay=editId?!!type(editId).overlay:$('tOverlay').checked;
+    const o=editId?type(editId):null;
+    const overlay=o?!!o.overlay:$('tOverlay').checked;
     const s=$('tStart').value,en=$('tEnd').value,timed=!overlay&&s&&en;
-    const v={name,short:$('tShort').value.trim()||name[0].toUpperCase(),color:editColor,
-      hours:timed?span(s,en):+$('tHours').value||0,ignore:$('tIgnore').checked};
+    const shortV=$('tShort').value.trim()||name[0].toUpperCase();
+    const v={color:editColor,hours:timed?span(s,en):+$('tHours').value||0,ignore:$('tIgnore').checked};
     if(timed){v.start=s;v.end=en}
     snap();
-    if(editId){const o=type(editId);delete o.start;delete o.end;Object.assign(o,v)}
-    else{const n={id:'t'+Date.now(),...v};if(overlay)n.overlay=true;S.types.push(n)}
-    done('Категория сохранена');renderMenu();closeDlg($('typeDlg'));
+    if(o){
+      delete o.start;delete o.end;Object.assign(o,v);
+      // стандартные имя и метка остаются переводимыми, пока не изменены
+      if(o.key&&name===L().types[o.key][0])delete o.name;else o.name=name;
+      if(o.key&&shortV===L().types[o.key][1])delete o.short;else o.short=shortV;
+    }else{
+      const n={id:'t'+Date.now(),name,short:shortV,...v};if(overlay)n.overlay=true;S.types.push(n);
+    }
+    done(tr('typeSaved'));renderMenu();closeDlg($('typeDlg'));
   }
   else if('del' in b.dataset){
-    if(!confirm('Удалить категорию? Дни с ней будут очищены.'))return;
+    if(!confirm(tr('confirmDelType')))return;
     snap();
     const t=type(editId);S.types=S.types.filter(x=>x.id!==editId);
     for(const k in S.days){const x=S.days[k];
       if(t.overlay&&x.ov){delete x.ov[t.id];if(!Object.keys(x.ov).length)delete x.ov}
       else if(x.t===t.id){delete x.t;delete x.auto;delete x.s;delete x.e}
       cleanup(k)}
-    normalize();done('Категория удалена');renderMenu();closeDlg($('typeDlg'));
+    normalize();done(tr('typeDeleted'));renderMenu();closeDlg($('typeDlg'));
   }
 };
 
@@ -530,11 +706,10 @@ function detect(){
 }
 function analysisText(){
   const r=detect();
-  return r?`Найден цикл ${r.p} дн.: ${r.pat.map(id=>esc(type(id).short)).join(' ')} — совпадение ${Math.round(r.conf*100)}%, по ${r.n} дням.`
-   :'Недостаточно данных: отметьте хотя бы 2 цикла смен (обычно 2–4 недели) — и я найду закономерность.';
+  return r?esc(tr('found',{p:r.p,pat:r.pat.map(id=>sh(type(id))).join(' '),c:Math.round(r.conf*100),n:r.n})):tr('notEnough');
 }
 function generate(){
-  const r=detect();if(!r){alert('Пока не могу определить цикл. Заполните больше прошлых дней.');return}
+  const r=detect();if(!r){alert(tr('cantDetect'));return}
   snap();
   const end=new Date();end.setDate(1);end.setMonth(end.getMonth()+ +$('months').value+1);end.setDate(0);
   const endN=dayNum(end);
@@ -543,10 +718,11 @@ function generate(){
     const x=S.days[k]||{};if(x.t)continue;
     x.t=r.pat[((d%r.p)+r.p)%r.p];x.auto=true;S.days[k]=x;
   }
-  done('График построен');closeDlg($('menuDlg'));
+  done(tr('built'));closeDlg($('menuDlg'));
 }
 
 paintTheme(document.documentElement.dataset.mode);
+applyStatic();
 render();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
