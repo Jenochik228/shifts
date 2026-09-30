@@ -1,6 +1,6 @@
 // Кэширует приложение, чтобы оно работало без интернета.
 // Обновления подтягиваются в фоне и появляются при следующем открытии.
-const CACHE = 'shifts-v1';
+const CACHE = 'shifts-v4';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
