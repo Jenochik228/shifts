@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="ru" data-theme="light" data-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f5f9">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Смены">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Мои смены</title>
+<script>
+// применяем тему до отрисовки, чтобы не было вспышки
+(function(){try{
+  var m=localStorage.getItem('shiftcal.theme')||'auto';
+  var d=m==='auto'?matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light':m;
+  document.documentElement.dataset.mode=m;document.documentElement.dataset.theme=d;
+}catch(e){}})();
+</script>
+<style>
+:root{
+  --bg:#f4f5f9;--bg2:#eceef5;--card:#ffffff;--text:#151a27;--muted:#7b8397;--line:#e5e8f0;
+  --accent:#4f6bff;--accent-soft:rgba(79,107,255,.12);--shadow:0 1px 2px rgba(20,30,60,.05),0 8px 24px rgba(20,30,60,.06);
+  --radius:16px;color-scheme:light;
+}
+:root[data-theme=dark]{
+  --bg:#0e1118;--bg2:#141822;--card:#181d29;--text:#eaedf5;--muted:#8a93a8;--line:#262d3d;
+  --accent:#7b93ff;--accent-soft:rgba(123,147,255,.16);--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:radial-gradient(1200px 500px at 80% -10%,var(--accent-soft),transparent 60%),var(--bg);
+  padding-bottom:env(safe-area-inset-bottom)}
+body:has(dialog[open]){overflow:hidden}
+.wrap{max-width:920px;margin:0 auto;padding:16px;padding-top:max(16px,env(safe-area-inset-top))}
+
+/* анимация смены темы */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}
+.theming,.theming *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease!important}
+
+header{display:flex;align-items:center;gap:8px;margin:4px 0 14px}
+h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 auto 0 0;text-transform:capitalize}
+button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer;
+  transition:transform .12s,border-color .2s,background .2s,box-shadow .2s,opacity .2s}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.96)}
+button:disabled{opacity:.45;pointer-events:none}
+button.icon{width:40px;height:40px;padding:0;display:grid;place-items:center;font-size:18px;flex:none}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;box-shadow:0 4px 14px var(--accent-soft)}
+button.danger{color:#ef4444}
+button.ghost{background:transparent}
+.muted{color:var(--muted);font-size:13px}
+
+/* календарь */
+.calwrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow);touch-action:pan-y}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dow{text-align:center;color:var(--muted);font-size:12px;font-weight:600;padding:6px 0;text-transform:uppercase;letter-spacing:.04em}
+.slide{animation:slide .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes slide{from{opacity:0;transform:translateX(var(--dx,14px))}to{opacity:1;transform:none}}
+.day{background:var(--bg2);border:1px solid transparent;border-radius:12px;min-height:80px;padding:6px;cursor:pointer;position:relative;
+  display:flex;flex-direction:column;user-select:none;transition:transform .12s,background .3s,border-color .2s}
+.day:hover{border-color:var(--accent)}
+.day:active{transform:scale(.95)}
+.day.other{opacity:.38}
+.day .n{font-size:12px;font-weight:600;color:var(--muted);width:22px;height:22px;display:grid;place-items:center;border-radius:50%}
+.day.today .n{background:var(--accent);color:#fff}
+.day .nd{position:absolute;top:10px;left:32px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.day .chip{margin-top:auto;font-weight:700;font-size:14px;border-radius:8px;padding:3px 0;text-align:center;color:#fff;
+  animation:pop .25s cubic-bezier(.3,1.5,.5,1)}
+.chip em{display:block;font-style:normal;font-size:10px;font-weight:500;opacity:.9;line-height:1.15}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.day.auto{border:1px dashed var(--line)}
+.day.auto .chip{background:transparent!important;color:var(--c);border:1.5px dashed var(--c);padding:1.5px 0}
+.badges{position:absolute;top:5px;right:5px;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.badges span{font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;color:#fff;animation:pop .25s}
+
+/* всплывающие окна */
+dialog{border:0;padding:0;border-radius:22px;background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(0,0,0,.35);
+  width:calc(100% - 24px);max-width:520px;max-height:calc(100vh - 32px);overflow:hidden}
+dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.9,.3,1.1)}
+dialog.closing{animation:dlgOut .18s ease forwards}
+dialog::backdrop{background:rgba(10,14,25,.5);backdrop-filter:blur(5px);animation:fade .25s}
+dialog.closing::backdrop{animation:fade .18s reverse forwards}
+@keyframes dlgIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes dlgOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+@keyframes fade{from{opacity:0}}
+.dlg{padding:18px;overflow:auto;max-height:calc(100vh - 32px)}
+.dhead{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.dhead h2{margin:0 auto 0 0;font-size:18px;letter-spacing:-.01em;text-transform:capitalize}
+.sec{margin-top:18px}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;font-weight:650}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.cat{--c:#888;display:flex;align-items:center;gap:8px;text-align:left;padding:10px 12px;border-radius:14px;
+  border:1.5px solid color-mix(in srgb,var(--c) 40%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.cat:hover{border-color:var(--c)}
+.cat b{display:grid;place-items:center;min-width:30px;height:30px;padding:0 4px;border-radius:9px;background:var(--c);color:#fff;font-size:13px}
+.cat small{display:block;color:var(--muted);font-size:12px}
+.cat.on{background:color-mix(in srgb,var(--c) 22%,transparent);border-color:var(--c)}
+.ovrow{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.ovrow .cat{flex:1;min-width:130px;cursor:default}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.stat{background:var(--bg2);border-radius:12px;padding:10px 12px}
+.stat b{font-size:22px;letter-spacing:-.02em;display:block}
+.stat.big{background:var(--accent-soft)}
+
+.seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:9px;font-size:13px;color:var(--muted)}
+.seg button.on{color:var(--text);background:var(--card);box-shadow:var(--shadow)}
+
+.catlist{display:flex;flex-direction:column;gap:6px}
+.catlist button{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:8px 12px}
+.catlist .dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:9px;color:#fff;font-weight:700;font-size:13px;padding:0 4px}
+.catlist .nm{flex:1}
+
+input,select,textarea{font:inherit;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;transition:border-color .2s,background .3s}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+input:disabled{opacity:.6}
+textarea{width:100%;resize:vertical;min-height:70px}
+input[type=color]{padding:2px;width:44px;height:36px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px}
+label.f{display:block;margin-top:12px}
+label.f>span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+label.f input[type=text],label.f input[type=number]{width:100%}
+label.chk{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px}
+label.chk small{display:block;color:var(--muted)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.swatches button{width:28px;height:28px;border-radius:50%;padding:0;border:2px solid transparent}
+.swatches button.on{border-color:var(--text)}
+.foot{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.foot .danger{margin-right:auto}
+
+/* уведомление с отменой */
+#toast{position:fixed;top:auto;right:auto;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));margin:0;transform:translateX(-50%);
+  display:none;align-items:center;gap:12px;padding:10px 10px 10px 16px;border:0;border-radius:14px;background:var(--text);color:var(--bg);
+  box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;z-index:50;width:max-content;max-width:calc(100% - 24px);overflow:visible}
+#toast.on{display:flex;animation:tin .25s cubic-bezier(.2,.9,.3,1.1)}
+#toast button{background:transparent;border:0;color:var(--accent);font-weight:700;padding:6px 10px}
+:root[data-theme=dark] #toast button{color:#3b54e0}
+@keyframes tin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+
+@media(max-width:560px){
+  .wrap{padding:12px;padding-top:max(12px,env(safe-area-inset-top))}
+  h1{font-size:22px}
+  .grid{gap:3px}.calwrap{padding:6px}
+  .day{min-height:62px;padding:4px;border-radius:9px}
+  .day .nd{top:7px;left:28px}
+  .chip em{display:none}
+  .badges{top:3px;right:3px}.badges span{font-size:10px;padding:0 4px}
+  dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:22px 22px 0 0}
+  @keyframes dlgIn{from{opacity:.6;transform:translateY(60px)}to{opacity:1;transform:none}}
+  @keyframes dlgOut{to{opacity:0;transform:translateY(60px)}}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title"></h1>
+    <button class="icon" id="prev" aria-label="Назад">‹</button>
+    <button id="todayBtn">Сегодня</button>
+    <button class="icon" id="next" aria-label="Вперёд">›</button>
+    <button class="icon" id="menuBtn" aria-label="Меню">⚙</button>
+  </header>
+  <div class="calwrap" id="cal">
+    <div class="grid" id="dow"></div>
+    <div class="grid" id="grid" style="margin-top:4px"></div>
+  </div>
+</div>
+
+<dialog id="dayDlg"><div class="dlg" id="dayBody"></div></dialog>
+<dialog id="menuDlg"><div class="dlg" id="menuBody"></div></dialog>
+<dialog id="typeDlg"><div class="dlg" id="typeBody"></div></dialog>
+<div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo">Отменить</button></div>
+<input type="file" id="file" accept=".json" hidden>
+
+<script>
+const KEY='shiftcal.v1',TK='shiftcal.theme';
+const DEF={types:[
+ {id:'d',name:'День',short:'Д',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
+ {id:'n',name:'Ночь',short:'Н',color:'#4f46e5',hours:12,start:'19:00',end:'07:00',ignore:false},
+ {id:'o',name:'Выходной',short:'В',color:'#10b981',hours:0,ignore:false},
+ {id:'v',name:'Отпуск',short:'О',color:'#ec4899',hours:0,ignore:true},
+ {id:'s',name:'Больничный',short:'Б',color:'#ef4444',hours:0,ignore:true},
+ {id:'ot',name:'Nadčas',short:'Nč',color:'#f97316',hours:4,ignore:true,overlay:true}],days:{}};
+const SWATCH=['#e08a00','#4f46e5','#10b981','#ec4899','#ef4444','#f97316','#06b6d4','#8b5cf6','#64748b'];
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||structuredClone(DEF)}catch{S=structuredClone(DEF)}
+function normalize(){
+  if(!S.types.some(t=>t.overlay))S.types.push(structuredClone(DEF.types[5]));
+  const ot=S.types.find(t=>t.overlay).id;
+  for(const k in S.days){const e=S.days[k];
+    if('ot' in e){e.ov=e.ov||{};e.ov[ot]=e.ot;delete e.ot}      // миграция со старого формата
+    if(e.ov&&!Object.keys(e.ov).length)delete e.ov;
+  }
+}
+normalize();
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const dayNum=d=>Math.round(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);
+const type=id=>S.types.find(t=>t.id===id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cleanup=k=>{const x=S.days[k];if(x&&!x.t&&!x.note&&!(x.ov&&Object.keys(x.ov).length))delete S.days[k]};
+let cur=new Date();cur.setDate(1);
+
+/* ---------- время смены ---------- */
+const toMin=s=>{const[a,b]=s.split(':').map(Number);return a*60+b};
+const span=(s,e)=>{let d=toMin(e)-toMin(s);if(d<=0)d+=1440;return Math.round(d/60*100)/100};   // ночная смена переходит через полночь
+const times=(e,t)=>e.s&&e.e?[e.s,e.e]:t&&t.start&&t.end?[t.start,t.end]:null;
+const dayHours=(e,t)=>{const x=times(e,t);return x?span(...x):+t.hours||0};
+const shortT=s=>s.endsWith(':00')?String(+s.slice(0,2)):s;
+
+/* ---------- отмена ---------- */
+const hist=[];
+function snap(){hist.push(JSON.stringify(S));if(hist.length>50)hist.shift()}
+function undo(){
+  if(!hist.length)return;
+  S=JSON.parse(hist.pop());normalize();save();render();
+  if($('typeDlg').open)closeDlg($('typeDlg'));
+  if($('dayDlg').open)renderDay();
+  if($('menuDlg').open)renderMenu();
+  toast('Отменено',false);
+}
+let tt;
+function toast(msg,canUndo=true){
+  const T=$('toast');$('tmsg').textContent=msg;
+  $('tundo').hidden=!(canUndo&&hist.length);
+  T.classList.add('on');
+  if(T.showPopover&&!T.matches(':popover-open'))T.showPopover();   // поверх открытых окон
+  clearTimeout(tt);
+  tt=setTimeout(()=>{T.classList.remove('on');if(T.hidePopover&&T.matches(':popover-open'))T.hidePopover()},4500);
+}
+function done(msg){save();render();toast(msg)}
+$('tundo').onclick=undo;
+document.addEventListener('keydown',e=>{
+  const typing=/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){e.preventDefault();undo()}
+  else if(!typing&&!document.querySelector('dialog[open]')&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){
+    const d=e.key==='ArrowLeft'?-1:1;cur.setMonth(cur.getMonth()+d);render(d);
+  }
+});
+
+/* ---------- окна ---------- */
+function openDlg(d){d.showModal()}
+function closeDlg(d){
+  if(!d.open||d.classList.contains('closing'))return;
+  d.classList.add('closing');
+  setTimeout(()=>{d.close();d.classList.remove('closing')},180);
+}
+document.querySelectorAll('dialog').forEach(d=>{
+  d.addEventListener('cancel',e=>{e.preventDefault();closeDlg(d)});
+  d.addEventListener('click',e=>{if(e.target===d)closeDlg(d)});      // клик по фону
+});
+document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)closeDlg(c.closest('dialog'))});
+
+/* ---------- тема ---------- */
+const mq=matchMedia('(prefers-color-scheme:dark)');
+const resolve=m=>m==='auto'?(mq.matches?'dark':'light'):m;
+function paintTheme(m){
+  const r=document.documentElement;r.dataset.mode=m;r.dataset.theme=resolve(m);
+  document.querySelector('meta[name=theme-color]').content=r.dataset.theme==='dark'?'#0e1118':'#f4f5f9';
+  document.querySelectorAll('#theme button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+}
+function setTheme(m,ev){
+  try{localStorage.setItem(TK,m)}catch{}
+  const same=resolve(m)===document.documentElement.dataset.theme;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(same||reduce){paintTheme(m);return}
+  if(document.startViewTransition&&ev){
+    const x=ev.clientX,y=ev.clientY;
+    const r=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+    document.startViewTransition(()=>paintTheme(m)).ready.then(()=>
+      document.documentElement.animate(
+        {clipPath:[`circle(0 at ${x}px ${y}px)`,`circle(${r}px at ${x}px ${y}px)`]},
+        {duration:650,easing:'cubic-bezier(.4,0,.2,1)',pseudoElement:'::view-transition-new(root)'}));
+  }else{
+    const r=document.documentElement;r.classList.add('theming');paintTheme(m);
+    setTimeout(()=>r.classList.remove('theming'),500);
+  }
+}
+mq.onchange=()=>{if(document.documentElement.dataset.mode==='auto')paintTheme('auto')};
+
+/* ---------- календарь ---------- */
+function render(dir){
+  $('title').textContent=cur.toLocaleDateString('ru',{month:'long',year:'numeric'});
+  $('dow').innerHTML=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=>`<div class="dow">${d}</div>`).join('');
+  const first=new Date(cur),off=(first.getDay()+6)%7;
+  const start=new Date(first);start.setDate(1-off);
+  let h='';const today=fmt(new Date());
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    if(i>=35&&d.getMonth()!==cur.getMonth())break;
+    const k=fmt(d),e=S.days[k]||{},t=e.t&&type(e.t);
+    const bd=Object.entries(e.ov||{}).filter(([id])=>type(id))
+      .map(([id,hh])=>`<span style="background:${type(id).color}">+${hh}</span>`).join('');
+    const tm=t&&!t.overlay&&times(e,t);
+    h+=`<div class="day${d.getMonth()!==cur.getMonth()?' other':''}${k===today?' today':''}${e.auto?' auto':''}" data-k="${k}"${t?` style="--c:${t.color}"`:''}>
+      <span class="n">${d.getDate()}</span>${e.note?'<i class="nd"></i>':''}${bd?`<div class="badges">${bd}</div>`:''}
+      ${t?`<span class="chip" style="background:${t.color}">${esc(t.short)}${tm?`<em>${shortT(tm[0])}–${shortT(tm[1])}</em>`:''}</span>`:''}</div>`;
+  }
+  const g=$('grid');g.innerHTML=h;
+  if(dir){g.style.setProperty('--dx',dir*18+'px');g.classList.remove('slide');void g.offsetWidth;g.classList.add('slide')}
+}
+$('grid').onclick=e=>{const c=e.target.closest('.day');if(c)openDay(c.dataset.k)};
+$('prev').onclick=()=>{cur.setMonth(cur.getMonth()-1);render(-1)};
+$('next').onclick=()=>{cur.setMonth(cur.getMonth()+1);render(1)};
+$('todayBtn').onclick=()=>{cur=new Date();cur.setDate(1);render(1)};
+
+// свайп между месяцами
+let tx=0,ty=0;
+$('cal').addEventListener('touchstart',e=>{const t=e.touches[0];tx=t.clientX;ty=t.clientY},{passive:true});
+$('cal').addEventListener('touchend',e=>{
+  const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6){const d=dx<0?1:-1;cur.setMonth(cur.getMonth()+d);render(d)}
+},{passive:true});
+
+/* ---------- окно дня ---------- */
+let dayKey=null,noteSnap=false;
+function openDay(k){dayKey=k;noteSnap=false;renderDay();if(!$('dayDlg').open)openDlg($('dayDlg'))}
+function timeInfo(a,b){return`${span(a,b)} ч${toMin(b)<=toMin(a)?' · до следующего дня':''}`}
+function renderDay(){
+  const e=S.days[dayKey]||{},cur_t=e.t&&type(e.t);
+  const title=parse(dayKey).toLocaleDateString('ru',{weekday:'long',day:'numeric',month:'long'});
+  const main=S.types.filter(t=>!t.overlay),ovs=S.types.filter(t=>t.overlay);
+  const tm=cur_t&&!cur_t.overlay?times(e,cur_t)||['','']:null;
+  $('dayBody').innerHTML=`
+   <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="Закрыть">✕</button></div>
+   <div class="cats">${main.map(t=>`<button class="cat${e.t===t.id&&!e.auto?' on':''}" data-set="${t.id}" style="--c:${t.color}">
+      <b>${esc(t.short)}</b><span>${esc(t.name)}<small>${t.start&&t.end?t.start+'–'+t.end:t.hours?t.hours+' ч':'без часов'}</small></span></button>`).join('')}</div>
+   ${tm?`<div class="sec"><h3>Время смены</h3><div class="row">
+      <input type="time" id="tmS" value="${tm[0]}"><span>–</span><input type="time" id="tmE" value="${tm[1]}">
+      <span class="muted" id="tmH">${tm[0]&&tm[1]?timeInfo(tm[0],tm[1]):''}</span>
+      ${e.s?'<button data-tmreset>Сбросить</button>':''}</div></div>`:''}
+   ${ovs.length?`<div class="sec"><h3>Поверх смены</h3>${ovs.map(t=>{const has=e.ov&&e.ov[t.id]!==undefined;return`
+     <div class="ovrow"><div class="cat" style="--c:${t.color}"><b>${esc(t.short)}</b><span>${esc(t.name)}</span></div>
+       <input type="number" min="0" step="0.5" id="ov_${t.id}" value="${has?e.ov[t.id]:t.hours}" style="width:76px"><span class="muted">ч</span>
+       <button class="primary" data-ov="${t.id}">${has?'Обновить':'Добавить'}</button>
+       ${has?`<button class="icon danger" data-ovdel="${t.id}" aria-label="Убрать">✕</button>`:''}</div>`}).join('')}</div>`:''}
+   <div class="sec"><h3>Заметка</h3><textarea id="dayNote" rows="3" placeholder="Например: подмена, врач в 10:00…">${esc(e.note||'')}</textarea></div>
+   <div class="foot">${e.t?`<button class="danger" data-clear>Очистить смену</button>`:''}<button class="primary" data-close>Готово</button></div>`;
+}
+$('dayBody').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const x=S.days[dayKey]||{};
+  if(b.dataset.set){snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;done('Смена изменена');closeDlg($('dayDlg'))}
+  else if('clear' in b.dataset){snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);done('Смена очищена');renderDay()}
+  else if('tmreset' in b.dataset){snap();delete x.s;delete x.e;done('Время сброшено');renderDay()}
+  else if(b.dataset.ov){snap();const v=+$('ov_'+b.dataset.ov).value||0;x.ov=x.ov||{};x.ov[b.dataset.ov]=v;S.days[dayKey]=x;done('Nadčas сохранён');closeDlg($('dayDlg'))}
+  else if(b.dataset.ovdel){snap();delete x.ov[b.dataset.ovdel];if(!Object.keys(x.ov).length)delete x.ov;S.days[dayKey]=x;cleanup(dayKey);done('Убрано');renderDay()}
+};
+$('dayBody').addEventListener('input',e=>{
+  if(e.target.id!=='dayNote')return;
+  if(!noteSnap){snap();noteSnap=true}
+  const x=S.days[dayKey]||{},v=e.target.value;
+  if(v.trim())x.note=v;else delete x.note;
+  S.days[dayKey]=x;cleanup(dayKey);save();render();
+});
+$('dayBody').addEventListener('change',e=>{
+  if(e.target.id!=='tmS'&&e.target.id!=='tmE')return;
+  const a=$('tmS').value,b=$('tmE').value,x=S.days[dayKey];
+  if(!x||!a||!b)return;
+  snap();x.s=a;x.e=b;done('Время изменено');
+  $('tmH').textContent=timeInfo(a,b);
+});
+
+/* ---------- меню ---------- */
+$('menuBtn').onclick=()=>{renderMenu();openDlg($('menuDlg'))};
+function monthStats(){
+  const ym=`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
+  let hours=0,over={},cnt={};
+  for(const[k,e]of Object.entries(S.days)){
+    if(!k.startsWith(ym))continue;
+    const t=e.t&&type(e.t);
+    if(t){hours+=dayHours(e,t);cnt[t.id]=(cnt[t.id]||0)+1}
+    for(const[id,hh]of Object.entries(e.ov||{}))over[id]=(over[id]||0)+(+hh||0);
+  }
+  const ovTotal=Object.values(over).reduce((a,b)=>a+b,0);
+  const r=n=>Math.round(n*100)/100;
+  return`<div class="stat big"><b>${r(hours+ovTotal)}</b><span class="muted">всего часов</span></div>`+
+    S.types.filter(t=>t.overlay&&over[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${r(over[t.id])}</b><span class="muted">${esc(t.name)}, ч</span></div>`).join('')+
+    S.types.filter(t=>cnt[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${cnt[t.id]}</b><span class="muted">${esc(t.name)}</span></div>`).join('');
+}
+function renderMenu(){
+  const m=document.documentElement.dataset.mode;
+  $('menuBody').innerHTML=`
+   <div class="dhead"><h2>Меню</h2><button class="icon ghost" data-close aria-label="Закрыть">✕</button></div>
+   <button data-undo ${hist.length?'':'disabled'} style="width:100%">↶ Отменить последнее действие</button>
+   <div class="sec"><h3>Итоги — ${cur.toLocaleDateString('ru',{month:'long',year:'numeric'})}</h3><div class="stats">${monthStats()}</div></div>
+   <div class="sec"><h3>Категории</h3>
+     <div class="catlist">${S.types.map(t=>`<button data-edit="${t.id}"><span class="dot" style="background:${t.color}">${esc(t.short)}</span>
+       <span class="nm">${esc(t.name)}</span><span class="muted">${t.overlay?'поверх смены':(t.start&&t.end?t.start+'–'+t.end+' · ':'')+t.hours+' ч'}</span><span class="muted">›</span></button>`).join('')}
+       <button class="primary" data-add>+ Своя категория</button></div></div>
+   <div class="sec"><h3>Авто-планирование</h3>
+     <div class="muted" id="analysis" style="margin-bottom:10px">${analysisText()}</div>
+     <div class="row"><span>На</span><input id="months" type="number" min="1" max="12" value="3" style="width:64px"><span>мес. вперёд</span>
+       <button class="primary" data-gen>Построить</button></div>
+     <div class="row" style="margin-top:8px"><button data-confirm>Подтвердить авто-смены</button><button class="ghost" data-clearauto>Убрать авто-смены</button></div>
+     <div class="muted" style="margin-top:8px">Автосмены на календаре — пунктиром.</div></div>
+   <div class="sec"><h3>Тема</h3>
+     <div class="seg" id="theme"><button data-m="light" class="${m==='light'?'on':''}">☀️ Светлая</button><button data-m="auto" class="${m==='auto'?'on':''}">Авто</button><button data-m="dark" class="${m==='dark'?'on':''}">🌙 Тёмная</button></div></div>
+   <div class="sec"><h3>Данные</h3>
+     <div class="row"><button data-exp>Экспорт</button><button data-imp>Импорт</button></div>
+     <div class="muted" style="margin-top:8px">Данные хранятся только на этом устройстве.</div></div>`;
+}
+$('menuBody').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.m)setTheme(d.m,e);
+  else if('undo' in d)undo();
+  else if(d.edit)openType(d.edit);
+  else if('add' in d)openType(null);
+  else if('gen' in d)generate();
+  else if('confirm' in d){snap();for(const k in S.days)delete S.days[k].auto;done('Автосмены подтверждены');renderMenu()}
+  else if('clearauto' in d){snap();for(const k in S.days)if(S.days[k].auto){delete S.days[k].t;delete S.days[k].auto;delete S.days[k].s;delete S.days[k].e;cleanup(k)}done('Автосмены убраны');renderMenu()}
+  else if('exp' in d){
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
+    a.download='shifts.json';a.click();
+  }
+  else if('imp' in d)$('file').click();
+};
+$('file').onchange=async e=>{
+  try{const n=JSON.parse(await e.target.files[0].text());snap();S=n;normalize();done('Данные импортированы');renderMenu()}catch{alert('Неверный файл')}
+  e.target.value='';
+};
+
+/* ---------- редактор категории ---------- */
+let editId=null,editColor=SWATCH[6],shortTouched=false;
+function syncHours(){
+  const s=$('tStart').value,e=$('tEnd').value,h=$('tHours');
+  if(s&&e){h.value=span(s,e);h.disabled=true}else h.disabled=false;
+}
+function openType(id){
+  editId=id;const t=id?type(id):null;
+  editColor=t?t.color:SWATCH[Math.floor(Math.random()*SWATCH.length)];
+  shortTouched=!!t;
+  $('typeBody').innerHTML=`
+   <div class="dhead"><h2>${t?'Категория':'Новая категория'}</h2><button class="icon ghost" data-close aria-label="Закрыть">✕</button></div>
+   <label class="f"><span>Название</span><input type="text" id="tName" value="${t?esc(t.name):''}" placeholder="Например: Подработка" maxlength="30"></label>
+   <div class="row" style="margin-top:12px;align-items:flex-end">
+     <label class="f" style="margin:0;width:90px"><span>Метка</span><input type="text" id="tShort" value="${t?esc(t.short):''}" maxlength="3"></label>
+     <label class="f" style="margin:0;width:100px"><span>Часы</span><input type="number" id="tHours" min="0" step="0.5" value="${t?t.hours:8}"></label>
+     <label class="f" style="margin:0"><span>Цвет</span><input type="color" id="tColor" value="${editColor}"></label>
+   </div>
+   <div class="swatches" id="tSw">${SWATCH.map(c=>`<button data-c="${c}" style="background:${c}" class="${c===editColor?'on':''}" aria-label="${c}"></button>`).join('')}</div>
+   <div id="tTimeRow" class="row" style="margin-top:12px;align-items:flex-end" ${t&&t.overlay?'hidden':''}>
+     <label class="f" style="margin:0"><span>Начало смены</span><input type="time" id="tStart" value="${t&&t.start||''}"></label>
+     <label class="f" style="margin:0"><span>Конец смены</span><input type="time" id="tEnd" value="${t&&t.end||''}"></label>
+     <button data-cleartime>Без времени</button>
+   </div>
+   <div class="muted" id="tTimeHint" style="margin-top:6px" ${t&&t.overlay?'hidden':''}>Если время задано, часы считаются сами. Конец раньше начала — смена переходит через полночь.</div>
+   <label class="chk"><input type="checkbox" id="tOverlay" ${t&&t.overlay?'checked':''} ${t?'disabled':''}>
+     <span>Ставится поверх смены<small>Как nadčas: день сохраняет свою смену и получает бейдж с часами.</small></span></label>
+   <label class="chk"><input type="checkbox" id="tIgnore" ${t&&t.ignore?'checked':''}>
+     <span>Не учитывать в анализе графика<small>Для отпуска, больничного и любых нерегулярных дней.</small></span></label>
+   <div class="foot">${t?`<button class="danger" data-del>Удалить</button>`:''}<button data-close>Отмена</button><button class="primary" data-save>Сохранить</button></div>`;
+  syncHours();
+  openDlg($('typeDlg'));
+  if(!t)setTimeout(()=>$('tName').focus(),50);
+}
+$('typeBody').oninput=e=>{
+  if(e.target.id==='tShort')shortTouched=true;
+  if(e.target.id==='tName'&&!shortTouched)$('tShort').value=e.target.value.trim().slice(0,2);
+  if(e.target.id==='tColor')setColor(e.target.value);
+  if(e.target.id==='tStart'||e.target.id==='tEnd')syncHours();
+};
+$('typeBody').onchange=e=>{
+  if(e.target.id==='tOverlay')$('tTimeRow').hidden=$('tTimeHint').hidden=e.target.checked;
+};
+function setColor(c){editColor=c;$('tColor').value=c;document.querySelectorAll('#tSw button').forEach(b=>b.classList.toggle('on',b.dataset.c===c))}
+$('typeBody').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.c)setColor(b.dataset.c);
+  else if('cleartime' in b.dataset){$('tStart').value=$('tEnd').value='';syncHours()}
+  else if('save' in b.dataset){
+    const name=$('tName').value.trim();
+    if(!name){$('tName').focus();return}
+    const overlay=editId?!!type(editId).overlay:$('tOverlay').checked;
+    const s=$('tStart').value,en=$('tEnd').value,timed=!overlay&&s&&en;
+    const v={name,short:$('tShort').value.trim()||name[0].toUpperCase(),color:editColor,
+      hours:timed?span(s,en):+$('tHours').value||0,ignore:$('tIgnore').checked};
+    if(timed){v.start=s;v.end=en}
+    snap();
+    if(editId){const o=type(editId);delete o.start;delete o.end;Object.assign(o,v)}
+    else{const n={id:'t'+Date.now(),...v};if(overlay)n.overlay=true;S.types.push(n)}
+    done('Категория сохранена');renderMenu();closeDlg($('typeDlg'));
+  }
+  else if('del' in b.dataset){
+    if(!confirm('Удалить категорию? Дни с ней будут очищены.'))return;
+    snap();
+    const t=type(editId);S.types=S.types.filter(x=>x.id!==editId);
+    for(const k in S.days){const x=S.days[k];
+      if(t.overlay&&x.ov){delete x.ov[t.id];if(!Object.keys(x.ov).length)delete x.ov}
+      else if(x.t===t.id){delete x.t;delete x.auto;delete x.s;delete x.e}
+      cleanup(k)}
+    normalize();done('Категория удалена');renderMenu();closeDlg($('typeDlg'));
+  }
+};
+
+/* ---------- анализ цикла ---------- */
+function detect(){
+  const real=Object.entries(S.days).filter(([k,e])=>!e.auto&&e.t&&type(e.t)&&!type(e.t).ignore)
+    .map(([k,e])=>[dayNum(parse(k)),e.t]).sort((a,b)=>a[0]-b[0]);
+  if(real.length<6)return null;
+  const last=real[real.length-1][0],from=last-89;
+  const m=new Map(real.filter(r=>r[0]>=from));
+  const pts=[...m.keys()];
+  for(let p=2;p<=14;p++){
+    let ok=0,tot=0;
+    for(const d of pts){if(m.has(d+p)){tot++;if(m.get(d+p)===m.get(d))ok++}}
+    if(tot>=p&&ok/tot>=0.9){
+      const votes=Array.from({length:p},()=>({}));
+      for(const[d,t]of m){const r=((d%p)+p)%p;votes[r][t]=(votes[r][t]||0)+1}
+      const pat=votes.map(v=>Object.entries(v).sort((a,b)=>b[1]-a[1])[0]?.[0]);
+      if(pat.some(x=>!x))continue;
+      return{p,pat,last,conf:ok/tot,n:m.size};
+    }
+  }
+  return null;
+}
+function analysisText(){
+  const r=detect();
+  return r?`Найден цикл ${r.p} дн.: ${r.pat.map(id=>esc(type(id).short)).join(' ')} — совпадение ${Math.round(r.conf*100)}%, по ${r.n} дням.`
+   :'Недостаточно данных: отметьте хотя бы 2 цикла смен (обычно 2–4 недели) — и я найду закономерность.';
+}
+function generate(){
+  const r=detect();if(!r){alert('Пока не могу определить цикл. Заполните больше прошлых дней.');return}
+  snap();
+  const end=new Date();end.setDate(1);end.setMonth(end.getMonth()+ +$('months').value+1);end.setDate(0);
+  const endN=dayNum(end);
+  for(let d=r.last+1;d<=endN;d++){
+    const dt=new Date(d*864e5);const k=fmt(new Date(dt.getUTCFullYear(),dt.getUTCMonth(),dt.getUTCDate()));
+    const x=S.days[k]||{};if(x.t)continue;
+    x.t=r.pat[((d%r.p)+r.p)%r.p];x.auto=true;S.days[k]=x;
+  }
+  done('График построен');closeDlg($('menuDlg'));
+}
+
+paintTheme(document.documentElement.dataset.mode);
+render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
