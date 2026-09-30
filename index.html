@@ -238,7 +238,7 @@ label.chk small{display:block;color:var(--muted)}
 const I18N={
 ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'Вперёд',menu:'Меню',close:'Закрыть',h:'ч',
  undo:'Отменить',undoBtn:'↶ Отменить последнее действие',summary:'Итоги — {m}',totalHours:'всего часов',noHours:'без часов',
- noteTitle:'Заметка',notePh:'Например: подмена, врач в 10:00…',overlayTitle:'Поверх смены',timeTitle:'Время смены',reset:'Сбросить',
+ noteTitle:'Заметка',notePh:'Например: подмена, врач в 10:00…',overlayTitle:'Поверх смены',pDay:'День',pNight:'Ночь',timeTitle:'Время смены',reset:'Сбросить',
  clearShift:'Очистить смену',done:'Готово',add:'Добавить',update:'Обновить',remove:'Убрать',nextDay:'до следующего дня',
  shiftChanged:'Смена изменена',shiftCleared:'Смена очищена',timeReset:'Время сброшено',otSaved:'Nadčas сохранён',removed:'Убрано',
  timeChanged:'Время изменено',undone:'Отменено',autoConfirmed:'Автосмены подтверждены',autoCleared:'Автосмены убраны',
@@ -260,7 +260,7 @@ ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'В�
  types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč']}},
 uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
  undo:'Скасувати',undoBtn:'↶ Скасувати останню дію',summary:'Підсумки — {m}',totalHours:'усього годин',noHours:'без годин',
- noteTitle:'Нотатка',notePh:'Наприклад: підміна, лікар о 10:00…',overlayTitle:'Поверх зміни',timeTitle:'Час зміни',reset:'Скинути',
+ noteTitle:'Нотатка',notePh:'Наприклад: підміна, лікар о 10:00…',overlayTitle:'Поверх зміни',pDay:'День',pNight:'Ніч',timeTitle:'Час зміни',reset:'Скинути',
  clearShift:'Очистити зміну',done:'Готово',add:'Додати',update:'Оновити',remove:'Прибрати',nextDay:'до наступного дня',
  shiftChanged:'Зміну змінено',shiftCleared:'Зміну очищено',timeReset:'Час скинуто',otSaved:'Nadčas збережено',removed:'Прибрано',
  timeChanged:'Час змінено',undone:'Скасовано',autoConfirmed:'Автозміни підтверджено',autoCleared:'Автозміни прибрано',
@@ -282,7 +282,7 @@ uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'�
  types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč']}},
 sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
  undo:'Späť',undoBtn:'↶ Vrátiť poslednú akciu',summary:'Súhrn — {m}',totalHours:'hodín spolu',noHours:'bez hodín',
- noteTitle:'Poznámka',notePh:'Napr.: zastupovanie, lekár o 10:00…',overlayTitle:'Popri zmene',timeTitle:'Čas zmeny',reset:'Obnoviť',
+ noteTitle:'Poznámka',notePh:'Napr.: zastupovanie, lekár o 10:00…',overlayTitle:'Popri zmene',pDay:'Deň',pNight:'Noc',timeTitle:'Čas zmeny',reset:'Obnoviť',
  clearShift:'Vymazať zmenu',done:'Hotovo',add:'Pridať',update:'Aktualizovať',remove:'Odstrániť',nextDay:'do nasledujúceho dňa',
  shiftChanged:'Zmena upravená',shiftCleared:'Zmena vymazaná',timeReset:'Čas obnovený',otSaved:'Nadčas uložený',removed:'Odstránené',
  timeChanged:'Čas zmenený',undone:'Vrátené späť',autoConfirmed:'Automatické zmeny potvrdené',autoCleared:'Automatické zmeny odstránené',
@@ -351,6 +351,7 @@ const nm=t=>t.name??L().types[t.key]?.[0]??'';
 const sh=t=>t.short??L().types[t.key]?.[1]??'';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cleanup=k=>{const x=S.days[k];if(x&&!x.t&&!x.note&&!(x.ov&&Object.keys(x.ov).length))delete S.days[k]};
+const PIC={d:'☀️',n:'🌙'};   // смена, во время которой был nadčas
 const monthLabel=d=>d.toLocaleDateString(LOC[LANG],{month:'long',year:'numeric'}).replace(/\s*р\.$/,'');
 let cur=new Date();cur.setDate(1);
 
@@ -457,7 +458,7 @@ function render(dir){
     if(i>=35&&d.getMonth()!==cur.getMonth())break;
     const k=fmt(d),e=S.days[k]||{},t=e.t&&type(e.t);
     const bd=Object.entries(e.ov||{}).filter(([id])=>type(id))
-      .map(([id,hh])=>`<span style="background:${type(id).color}">+${hh}</span>`).join('');
+      .map(([id,hh])=>`<span style="background:${type(id).color}">${PIC[e.ovp&&e.ovp[id]]||''}+${hh}</span>`).join('');
     const tm=t&&!t.overlay&&times(e,t);
     h+=`<div class="day${d.getMonth()!==cur.getMonth()?' other':''}${k===today?' today':''}${e.auto?' auto':''}" data-k="${k}"${t?` style="--c:${t.color}"`:''}>
       <span class="n">${d.getDate()}</span>${e.note?'<i class="nd"></i>':''}${bd?`<div class="badges">${bd}</div>`:''}
@@ -499,6 +500,7 @@ function renderDay(){
    ${ovs.length?`<div class="sec"><h3>${tr('overlayTitle')}</h3>${ovs.map(t=>{const has=e.ov&&e.ov[t.id]!==undefined;return`
      <div class="ovrow"><div class="cat" style="--c:${t.color}"><b>${esc(sh(t))}</b><span>${esc(nm(t))}</span></div>
        <input type="number" min="0" step="0.5" id="ov_${t.id}" value="${has?e.ov[t.id]:t.hours}" style="width:76px"><span class="muted">${tr('h')}</span>
+       <div class="seg" id="per_${t.id}">${['d','n'].map(p=>`<button data-per="${p}" class="${p===((e.ovp&&e.ovp[t.id])||(e.t==='n'?'n':'d'))?'on':''}">${PIC[p]} ${tr(p==='d'?'pDay':'pNight')}</button>`).join('')}</div>
        <button class="primary" data-ov="${t.id}">${has?tr('update'):tr('add')}</button>
        ${has?`<button class="icon danger" data-ovdel="${t.id}" aria-label="${tr('remove')}">✕</button>`:''}</div>`}).join('')}</div>`:''}
    <div class="sec"><h3>${tr('noteTitle')}</h3><textarea id="dayNote" rows="3" placeholder="${esc(tr('notePh'))}">${esc(e.note||'')}</textarea></div>
@@ -510,8 +512,18 @@ $('dayBody').onclick=e=>{
   if(b.dataset.set){snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;done(tr('shiftChanged'));closeDlg($('dayDlg'))}
   else if('clear' in b.dataset){snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);done(tr('shiftCleared'));renderDay()}
   else if('tmreset' in b.dataset){snap();delete x.s;delete x.e;done(tr('timeReset'));renderDay()}
-  else if(b.dataset.ov){snap();const v=+$('ov_'+b.dataset.ov).value||0;x.ov=x.ov||{};x.ov[b.dataset.ov]=v;S.days[dayKey]=x;done(tr('otSaved'));closeDlg($('dayDlg'))}
-  else if(b.dataset.ovdel){snap();delete x.ov[b.dataset.ovdel];if(!Object.keys(x.ov).length)delete x.ov;S.days[dayKey]=x;cleanup(dayKey);done(tr('removed'));renderDay()}
+  else if(b.dataset.per){b.parentElement.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b))}
+  else if(b.dataset.ov){
+    snap();const id=b.dataset.ov,v=+$('ov_'+id).value||0;
+    x.ov=x.ov||{};x.ov[id]=v;
+    x.ovp=x.ovp||{};x.ovp[id]=$('per_'+id).querySelector('.on').dataset.per;
+    S.days[dayKey]=x;done(tr('otSaved'));closeDlg($('dayDlg'));
+  }
+  else if(b.dataset.ovdel){
+    snap();const id=b.dataset.ovdel;delete x.ov[id];if(!Object.keys(x.ov).length)delete x.ov;
+    if(x.ovp){delete x.ovp[id];if(!Object.keys(x.ovp).length)delete x.ovp}
+    S.days[dayKey]=x;cleanup(dayKey);done(tr('removed'));renderDay();
+  }
 };
 $('dayBody').addEventListener('input',e=>{
   if(e.target.id!=='dayNote')return;
@@ -533,17 +545,23 @@ $('menuBtn').onclick=()=>{renderMenu();openDlg($('menuDlg'))};
 const monthKey=()=>`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
 function monthStats(){
   const ym=monthKey();
-  let hours=0,over={},cnt={};
+  let hours=0,over={},cnt={},per={};
   for(const[k,e]of Object.entries(S.days)){
     if(!k.startsWith(ym))continue;
     const t=e.t&&type(e.t);
     if(t){hours+=dayHours(e,t);cnt[t.id]=(cnt[t.id]||0)+1}
-    for(const[id,hh]of Object.entries(e.ov||{}))over[id]=(over[id]||0)+(+hh||0);
+    for(const[id,hh]of Object.entries(e.ov||{})){
+      over[id]=(over[id]||0)+(+hh||0);
+      const p=e.ovp&&e.ovp[id];
+      if(p){per[id]=per[id]||{};per[id][p]=(per[id][p]||0)+(+hh||0)}
+    }
   }
   const ovTotal=Object.values(over).reduce((a,b)=>a+b,0);
   const r=n=>Math.round(n*100)/100;
   return`<div class="stat big"><b>${r(hours+ovTotal)}</b><span class="muted">${tr('totalHours')}</span></div>`+
-    S.types.filter(t=>t.overlay&&over[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${r(over[t.id])}</b><span class="muted">${esc(nm(t))}, ${tr('h')}</span></div>`).join('')+
+    S.types.filter(t=>t.overlay&&over[t.id]).map(t=>{const p=per[t.id]||{};
+      const sub=Object.keys(PIC).filter(k=>p[k]).map(k=>`${PIC[k]} ${r(p[k])}`).join(' · ');
+      return`<div class="stat"><b style="color:${t.color}">${r(over[t.id])}</b><span class="muted">${esc(nm(t))}, ${tr('h')}</span>${sub?`<span class="muted" style="display:block;font-size:12px">${sub}</span>`:''}</div>`}).join('')+
     S.types.filter(t=>cnt[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${cnt[t.id]}</b><span class="muted">${esc(nm(t))}</span></div>`).join('');
 }
 function renderMenu(){
@@ -676,7 +694,7 @@ $('typeBody').onclick=e=>{
     snap();
     const t=type(editId);S.types=S.types.filter(x=>x.id!==editId);
     for(const k in S.days){const x=S.days[k];
-      if(t.overlay&&x.ov){delete x.ov[t.id];if(!Object.keys(x.ov).length)delete x.ov}
+      if(t.overlay&&x.ov){delete x.ov[t.id];if(!Object.keys(x.ov).length)delete x.ov;if(x.ovp){delete x.ovp[t.id];if(!Object.keys(x.ovp).length)delete x.ovp}}
       else if(x.t===t.id){delete x.t;delete x.auto;delete x.s;delete x.e}
       cleanup(k)}
     normalize();done(tr('typeDeleted'));renderMenu();closeDlg($('typeDlg'));
