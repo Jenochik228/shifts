@@ -1,6 +1,6 @@
 // Кэширует приложение, чтобы оно работало без интернета.
 // Сначала всегда пробуем сеть (свежая версия), а кэш — запасной вариант, когда интернета нет.
-const CACHE = 'shifts-v6';
+const CACHE = 'shifts-v13';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -14,6 +14,12 @@ self.addEventListener('activate', e => {
       .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+// нажатие на системное уведомление открывает приложение
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: 'window' }).then(list => list.length ? list[0].focus() : clients.openWindow('./')));
 });
 
 self.addEventListener('fetch', e => {

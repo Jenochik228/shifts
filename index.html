@@ -12,6 +12,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Мои смены</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;700&display=swap">
 <script>
 // применяем тему до отрисовки, чтобы не было вспышки
 (function(){try{
@@ -25,6 +26,8 @@
   --bg:#f4f5f9;--bg2:#eceef5;--card:#ffffff;--text:#151a27;--muted:#7b8397;--line:#e5e8f0;
   --accent:#4f6bff;--accent-soft:rgba(79,107,255,.12);--shadow:0 1px 2px rgba(20,30,60,.05),0 8px 24px rgba(20,30,60,.06);
   --radius:16px;color-scheme:light;
+  --ds:clamp(30px,10.5vw,42px);   /* размер круга дня */
+  --f-soft:"Geologica",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 :root[data-theme=dark]{
   --bg:#0e1118;--bg2:#141822;--card:#181d29;--text:#eaedf5;--muted:#8a93a8;--line:#262d3d;
@@ -37,7 +40,7 @@ html{background:var(--bg);-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;min-height:100vh;min-height:100dvh;color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
   background:radial-gradient(1200px 500px at 80% -10%,var(--accent-soft),transparent 60%),var(--bg)}
 body:has(dialog[open]){overflow:hidden}
-.wrap{max-width:920px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+.wrap{max-width:560px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;
   padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 
 /* анимация смены темы */
@@ -45,48 +48,91 @@ body:has(dialog[open]){overflow:hidden}
 ::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}
 .theming,.theming *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease!important}
 
-header{display:flex;align-items:center;gap:8px;margin:4px 0 14px;flex:none}
+header{display:flex;align-items:flex-end;gap:8px;margin:2px 0 6px;flex:none}
 header .nav{display:flex;gap:8px;align-items:center}
-h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 auto 0 0;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer;
+header button.icon{border-radius:50%;box-shadow:var(--shadow)}
+.ttl{margin-right:auto;min-width:0}
+.ttl small{display:block;font-size:12px;color:var(--muted);letter-spacing:.04em}
+h1{font:700 32px/1.1 var(--f-soft);letter-spacing:-.02em;margin:0;text-transform:capitalize;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs{display:flex;align-items:center;gap:18px;margin:0 2px 12px;flex:none;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+#sum{display:flex;gap:18px;min-width:0}
+#sum span{display:block}
+#sum b{display:block;font:700 20px/1.2 var(--f-soft);color:var(--text)}
+#todayBtn{margin-left:auto;border-radius:999px;padding:6px 14px;font-size:13px;box-shadow:var(--shadow)}
+button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;
   transition:transform .12s,border-color .2s,background .2s,box-shadow .2s,opacity .2s}
 button:hover{border-color:var(--accent)}
 button:active{transform:scale(.96)}
 button:disabled{opacity:.45;pointer-events:none}
-button.icon{width:40px;height:40px;padding:0;display:grid;place-items:center;font-size:18px;flex:none}
+button.icon{width:40px;height:40px;padding:0;border-radius:50%;display:grid;place-items:center;font-size:18px;flex:none}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;box-shadow:0 4px 14px var(--accent-soft)}
 button.danger{color:#ef4444}
 button.ghost{background:transparent}
 .muted{color:var(--muted);font-size:13px}
 
 /* календарь */
-.calwrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow);touch-action:pan-y;overflow:hidden}
-#vp{overflow:hidden;margin-top:4px;display:flex;flex-direction:column;touch-action:pan-y}
-#track{flex:1;display:flex;width:100%;transform:translate3d(-100%,0,0);will-change:transform;backface-visibility:hidden}
-#track .grid{flex:0 0 100%;min-width:0}
-.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-.dow{text-align:center;color:var(--muted);font-size:12px;font-weight:600;padding:6px 0;text-transform:uppercase;letter-spacing:.04em}
-label.btn{display:inline-flex;align-items:center;font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer;transition:border-color .2s}
+.calwrap{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--card);border-radius:26px;padding:12px 6px 10px;box-shadow:var(--shadow);touch-action:pan-y;overflow:hidden}
+#dow,.pn{display:grid;grid-template-columns:16px repeat(7,minmax(0,1fr))}
+#dow{flex:none;padding-bottom:6px;font-size:11px;font-weight:500;color:var(--muted);text-align:center;text-transform:capitalize}
+#vp{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;touch-action:pan-y}
+#track{flex:1;min-height:0;display:flex;width:100%;transform:translate3d(-100%,0,0);will-change:transform;backface-visibility:hidden}
+.pn{flex:0 0 100%;min-width:0;grid-auto-rows:minmax(0,1fr);align-items:center;justify-items:center}
+.lg{flex:none;display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 10px 0;font-size:11px;color:var(--muted)}
+.lg:empty{display:none}
+.lg span{display:flex;align-items:center;gap:5px}
+.lg i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.lg i.off{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--muted) 55%,transparent)}
+label.btn{display:inline-flex;align-items:center;font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;transition:border-color .2s}
 label.btn:hover{border-color:var(--accent)}
 label.btn input{display:none}
-.day{background:var(--bg2);border:1px solid transparent;border-radius:12px;min-height:80px;min-width:0;padding:6px;cursor:pointer;position:relative;
-  display:flex;flex-direction:column;user-select:none;transition:transform .12s,background .3s,border-color .2s}
-.day:hover{border-color:var(--accent)}
-.day:active{transform:scale(.95)}
-.day.other{opacity:.38}
-.day .n{font-size:12px;font-weight:600;color:var(--muted);width:22px;height:22px;display:grid;place-items:center;border-radius:50%}
-.day.today .n{background:var(--accent);color:#fff}
-.day .nd{position:absolute;top:10px;left:32px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.day .chip{margin-top:auto;font-weight:700;font-size:14px;border-radius:8px;padding:3px 0;text-align:center;color:#fff;overflow:hidden}
-.chip em{display:block;font-style:normal;font-size:10px;font-weight:500;opacity:.9;line-height:1.15}
-@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
-.day.auto{border:1px dashed var(--line)}
-.day.auto .chip{background:transparent!important;color:var(--c);border:1.5px dashed var(--c);padding:1.5px 0}
-.badges{position:absolute;top:5px;right:5px;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
-.badges span{font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;color:#fff}
+/* день — круг: смена закрашена цветом, выходной — пустое кольцо, автосмена — пунктир */
+.wn{font-size:9px;color:color-mix(in srgb,var(--muted) 70%,transparent);font-variant-numeric:tabular-nums}
+.dc{width:100%;height:100%;min-height:0;display:grid;place-items:center;cursor:pointer;user-select:none}
+.disc{--c:transparent;--ink:var(--text);position:relative;width:var(--ds);height:var(--ds);border-radius:50%;display:grid;place-items:center;
+  font:500 13px var(--f-soft);color:var(--text);font-variant-numeric:tabular-nums;transition:transform .12s}
+.dc:active .disc{transform:scale(.9)}
+.disc.on{background:var(--c);color:var(--ink)}
+.disc.off{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--muted) 45%,transparent)}
+.disc.auto{background:transparent;color:var(--c);border:1.5px dashed var(--c)}
+.dc.other{opacity:.3}
+.dc.today .disc::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--text)}
+.ob{position:absolute;right:-4px;top:-4px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;display:grid;place-items:center;
+  font:700 8.5px var(--f-soft);color:#fff;text-decoration:none;box-shadow:0 0 0 2px var(--card)}
+.nt{position:absolute;left:50%;bottom:3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:currentColor;opacity:.7}
+.hl{position:absolute;left:1px;top:1px;width:7px;height:7px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 1.5px var(--card)}
+.hnote{margin:-6px 0 12px;font-size:13px;color:#e5484d;font-weight:500}
+/* остатки на главном экране */
+.pills{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0 2px 10px;flex:none}
+.pills:empty{display:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:13px;box-shadow:var(--shadow)}
+.pill i{width:9px;height:9px;border-radius:50%;flex:none}
+.pill b{font:700 15px var(--f-soft);font-variant-numeric:tabular-nums}
+.pill span{color:var(--muted);font-size:12px}
+.pill.over b{color:#e5484d}
+/* остатки и переключатель */
+.bal{background:var(--bg2);border-radius:20px;padding:10px 12px;margin-bottom:8px}
+.bh{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bh .nm{flex:1;min-width:0;font-weight:600}
+.bh .dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;padding:0 4px}
+.bbar{height:6px;border-radius:3px;background:color-mix(in srgb,var(--muted) 25%,transparent);overflow:hidden;margin-bottom:6px}
+.bbar i{display:block;height:100%;border-radius:3px;transition:width .3s}
+.hrow{display:flex;align-items:center;gap:12px}.hrow>div{flex:1;min-width:0}
+.sw{position:relative;display:inline-block;width:46px;height:28px;flex:none}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;border-radius:999px;background:color-mix(in srgb,var(--muted) 40%,transparent);transition:background .2s;cursor:pointer}
+.sw span::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked+span{background:var(--accent)}
+.sw input:checked+span::after{transform:translateX(18px)}
+.sw input:disabled+span{opacity:.4;cursor:default}
+/* нижняя плашка */
+.bar{flex:none;margin-top:12px;background:var(--text);color:var(--bg);border-radius:999px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 24px rgba(20,25,45,.28)}
+.bar .bd{width:26px;height:26px;border-radius:50%;flex:none;background:color-mix(in srgb,var(--bg) 35%,var(--text))}
+.bar div{flex:1;min-width:0;font-size:13px;line-height:1.25;font-weight:500}
+.bar small{display:block;font-size:11px;opacity:.65;font-weight:400}
+.bar button{border:0;background:var(--bg);color:var(--text);border-radius:999px;font:500 12px var(--f-soft);padding:8px 14px}
 
 /* всплывающие окна */
-dialog{border:0;padding:0;border-radius:22px;background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(0,0,0,.35);
+dialog{border:0;padding:0;border-radius:28px;background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(0,0,0,.35);
   width:calc(100% - 24px);max-width:520px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:hidden}
 dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.9,.3,1.1)}
 dialog.closing{animation:dlgOut .18s ease forwards}
@@ -96,6 +142,10 @@ dialog.closing::backdrop{animation:fade .18s reverse forwards}
 @keyframes dlgOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
 @keyframes fade{from{opacity:0}}
 .dlg{padding:18px;overflow:auto;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overscroll-behavior:contain}
+.dlg{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 45%,transparent) transparent}
+.dlg::-webkit-scrollbar{width:8px}
+.dlg::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 45%,transparent);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+.catlist button{border-radius:20px}
 .dhead{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .dhead h2{margin:0 auto 0 0;font-size:18px;letter-spacing:-.01em;text-transform:capitalize}
 .sec{margin-top:18px}
@@ -103,35 +153,43 @@ dialog.closing::backdrop{animation:fade .18s reverse forwards}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-.cat{--c:#888;display:flex;align-items:center;gap:8px;text-align:left;padding:10px 12px;border-radius:14px;
+.cat{--c:#888;display:flex;align-items:center;gap:8px;text-align:left;padding:10px 12px;border-radius:20px;
   border:1.5px solid color-mix(in srgb,var(--c) 40%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent)}
 .cat:hover{border-color:var(--c)}
-.cat b{display:grid;place-items:center;min-width:30px;height:30px;padding:0 4px;border-radius:9px;background:var(--c);color:#fff;font-size:13px}
+.cat b{display:grid;place-items:center;min-width:30px;height:30px;padding:0 4px;border-radius:999px;background:var(--c);color:#fff;font-size:13px}
 .cat small{display:block;color:var(--muted);font-size:12px}
 .cat.on{background:color-mix(in srgb,var(--c) 22%,transparent);border-color:var(--c)}
 .ovrow{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
 .ovrow .cat{flex:1;min-width:130px;cursor:default}
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
-.stat{background:var(--bg2);border-radius:12px;padding:10px 12px}
+.stat{background:var(--bg2);border-radius:20px;padding:10px 12px}
 .stat b{font-size:22px;letter-spacing:-.02em;display:block}
 .stat.big{background:var(--accent-soft)}
 
-.seg{display:inline-flex;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:3px}
-.seg button{border:0;background:transparent;padding:6px 12px;border-radius:9px;font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--muted)}
 .seg button.on{color:var(--text);background:var(--card);box-shadow:var(--shadow)}
 
 .catlist{display:flex;flex-direction:column;gap:6px}
 .catlist button{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:8px 12px}
-.catlist .dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:9px;color:#fff;font-weight:700;font-size:13px;padding:0 4px}
+.catlist .dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;padding:0 4px}
 .catlist .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 
-input,select,textarea{font:inherit;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;transition:border-color .2s,background .3s}
+input,select,textarea{font:inherit;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:8px 12px;transition:border-color .2s,background .3s}
 input:focus,textarea:focus{outline:none;border-color:var(--accent)}
 input:disabled{opacity:.6}
 textarea{width:100%;resize:vertical;min-height:70px}
-input[type=color]{padding:2px;width:44px;height:36px;cursor:pointer}
-input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px;flex:none}
+input[type=color]{padding:0;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);overflow:hidden;cursor:pointer}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+input[type=color]::-webkit-color-swatch{border:0;border-radius:50%}
+input[type=color]::-moz-color-swatch{border:0;border-radius:50%}
+/* круглые флажки в общей стилистике */
+input[type=checkbox]{appearance:none;-webkit-appearance:none;width:22px;height:22px;flex:none;border-radius:50%;padding:0;cursor:pointer;
+  border:2px solid color-mix(in srgb,var(--muted) 55%,transparent);background:transparent;display:inline-grid;place-items:center;transition:background .2s,border-color .2s}
+input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+input[type=checkbox]:checked::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+input[type=checkbox]:disabled{opacity:.5;cursor:default}
 label.f{display:block;margin-top:12px}
 label.f>span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
 label.f input[type=text],label.f input[type=number]{width:100%}
@@ -145,7 +203,7 @@ label.chk small{display:block;color:var(--muted)}
 
 /* уведомление с отменой */
 #toast{position:fixed;top:auto;right:auto;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));margin:0;transform:translateX(-50%);
-  display:none;align-items:center;gap:12px;padding:10px 10px 10px 16px;border:0;border-radius:14px;background:var(--text);color:var(--bg);
+  display:none;align-items:center;gap:12px;padding:10px 10px 10px 16px;border:0;border-radius:24px;background:var(--text);color:var(--bg);
   box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;z-index:50;width:max-content;max-width:calc(100% - 24px);overflow:visible}
 #toast.on{display:flex;animation:tin .25s cubic-bezier(.2,.9,.3,1.1)}
 #toast button{background:transparent;border:0;color:var(--accent);font-weight:700;padding:6px 10px}
@@ -154,40 +212,26 @@ label.chk small{display:block;color:var(--muted)}
 
 /* ---------- адаптация под телефон ---------- */
 @media(max-width:700px){
-  /* календарь занимает всю высоту экрана, строки растягиваются */
-  .calwrap{flex:1;display:flex;flex-direction:column;min-height:0}
-  #vp{flex:1;min-height:0}
-  #track .grid{grid-auto-rows:minmax(54px,1fr)}
-  .day{min-height:54px}
   input,select,textarea{font-size:16px}          /* iOS не приближает страницу при фокусе */
 }
 @media(max-width:560px){
   .wrap{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
-  h1{font-size:22px}
-  .grid{gap:3px}.calwrap{padding:6px}
-  .day{padding:4px;border-radius:9px}
-  .day .nd{top:7px;left:28px}
-  .day .chip{font-size:clamp(12px,3.6vw,15px)}
-  .chip em{display:none}
-  .badges{top:3px;right:3px}.badges span{font-size:10px;padding:0 4px}
-  dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:22px 22px 0 0}
+  h1{font-size:28px}
+  dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:28px 28px 0 0}
   .dlg{padding-bottom:calc(18px + env(safe-area-inset-bottom));max-height:92vh;max-height:92dvh}
   dialog{max-height:92vh;max-height:92dvh}
   @keyframes dlgIn{from{opacity:.6;transform:translateY(60px)}to{opacity:1;transform:none}}
   @keyframes dlgOut{to{opacity:0;transform:translateY(60px)}}
 }
 @media(max-width:420px){
-  /* заголовок в первой строке, навигация — на всю ширину во второй */
-  header{flex-wrap:wrap}
-  header .nav{order:3;width:100%}
-  header .nav #todayBtn{flex:1}
-  .dow{font-size:11px;letter-spacing:0}
+  #sum{gap:14px}
+  #sum b{font-size:18px}
   .cats{grid-template-columns:1fr 1fr}
   .stats{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:340px){
-  .day .n{width:18px;height:18px;font-size:11px}
-  .day .nd{display:none}
+  h1{font-size:24px}
+  .hs{gap:10px}#sum{gap:10px}
   .cats{grid-template-columns:1fr}
 }
 @media(pointer:coarse){
@@ -203,12 +247,11 @@ label.chk small{display:block;color:var(--muted)}
   h1{font-size:20px}
   button.icon{width:36px;height:36px}
   button{min-height:0}
-  .dow{padding:2px 0}
-  .day{min-height:36px;padding:2px 4px}
-  #track .grid{grid-auto-rows:minmax(36px,1fr)}
-  .day .chip{padding:1px 0;font-size:12px}
-  .chip em{display:none}
-  dialog{margin:auto;width:min(560px,calc(100% - 24px));border-radius:22px;max-height:94vh;max-height:94dvh}
+  :root{--ds:28px}
+  .hs,.pills{display:none}
+  .bar{margin-top:6px;padding-block:6px}
+  .lg{display:none}
+  dialog{margin:auto;width:min(560px,calc(100% - 24px));border-radius:28px;max-height:94vh;max-height:94dvh}
   .dlg{max-height:94vh;max-height:94dvh}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -217,18 +260,21 @@ label.chk small{display:block;color:var(--muted)}
 <body>
 <div class="wrap">
   <header>
-    <h1 id="title"></h1>
+    <div class="ttl"><small id="yr"></small><h1 id="title"></h1></div>
     <div class="nav">
       <button class="icon" id="prev">‹</button>
-      <button id="todayBtn"></button>
       <button class="icon" id="next">›</button>
     </div>
     <button class="icon" id="menuBtn">⚙</button>
   </header>
+  <div class="hs"><div id="sum"></div><button id="todayBtn"></button></div>
+  <div class="pills" id="pills"></div>
   <div class="calwrap" id="cal">
-    <div class="grid" id="dow"></div>
+    <div id="dow"></div>
     <div id="vp"><div id="track"></div></div>
+    <div class="lg" id="lg"></div>
   </div>
+  <div class="bar" id="bar"></div>
 </div>
 
 <dialog id="dayDlg"><div class="dlg" id="dayBody"></div></dialog>
@@ -257,11 +303,18 @@ ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'В�
  catTitle:'Категория',newCat:'Новая категория',name:'Название',namePh:'Например: Подработка',short:'Метка',hours:'Часы',color:'Цвет',
  start:'Начало смены',end:'Конец смены',noTime:'Без времени',
  timeHint:'Если время задано, часы считаются сами (конец раньше начала — смена через полночь). Обед вычитается из часов.',
- lunch:'Обед, мин',net:'Итого с вычетом обеда: {h} ч',lunchShort:'обед {m} мин',update:'Обновить приложение',version:'Версия',
+ lunch:'Обед, мин',net:'Итого с вычетом обеда: {h} ч',lunchShort:'обед {m} мин',update:'Обновить приложение',version:'Версия',shiftsWord:'смен',netWord:'чистых',offsWord:'выходных',edit:'Изменить',noShiftToday:'Сегодня · нет смены',
+ holTitle:'Праздники',holShow:'Показывать праздники',holNone:'Для русского языка праздники не показываются. Выберите украинский или словацкий.',holiday:'Праздник',
+ balTitle:'Остатки · {y}',daysShort:'дн.',marked:'отмечено',left:'осталось',limit:'Лимит',limitHint:'Задайте лимит дней в год, чтобы видеть остаток.',limitSaved:'Лимит сохранён',
+ remTitle:'Уведомления',remShifts:'Напоминать о сменах',remShiftsHint:'За день до смены. По умолчанию включено, здесь можно выключить.',remTime:'Напоминать накануне в',
+ remPerm:'Разрешить системные уведомления',remPermOn:'Системные уведомления разрешены',remPermDenied:'Уведомления запрещены в настройках браузера',
+ remIcs:'Добавить смены в календарь телефона',remIcsHint:'Так напоминания приходят, даже когда приложение закрыто. Откройте полученный файл .ics и выберите «Добавить в календарь». Повторный экспорт обновит события.',
+ remNote:'Само приложение показывает напоминание, когда вы его открываете. Для сигналов при закрытом приложении используйте календарь телефона.',
+ remOt:'Напомнить',remTomorrow:'Завтра: {list}',remNotifTitle:'Смена завтра',icsEmpty:'Нет предстоящих смен или nadčas с напоминанием',
  overlayLbl:'Ставится поверх смены',overlayHint:'Как nadčas: день сохраняет свою смену и получает бейдж с часами.',
  ignoreLbl:'Не учитывать в анализе графика',ignoreHint:'Для отпуска, больничного и любых нерегулярных дней.',
  delete:'Удалить',cancel:'Отмена',save:'Сохранить',
- types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč']}},
+ types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
 uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
  undo:'Скасувати',undoBtn:'↶ Скасувати останню дію',summary:'Підсумки — {m}',totalHours:'усього годин',noHours:'без годин',
  noteTitle:'Нотатка',notePh:'Наприклад: підміна, лікар о 10:00…',overlayTitle:'Поверх зміни',pDay:'День',pNight:'Ніч',timeTitle:'Час зміни',reset:'Скинути',
@@ -280,11 +333,18 @@ uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'�
  catTitle:'Категорія',newCat:'Нова категорія',name:'Назва',namePh:'Наприклад: Підробіток',short:'Мітка',hours:'Години',color:'Колір',
  start:'Початок зміни',end:'Кінець зміни',noTime:'Без часу',
  timeHint:'Якщо час задано, години рахуються самі (кінець раніше за початок — зміна через північ). Обід віднімається від годин.',
- lunch:'Обід, хв',net:'Разом з вирахуванням обіду: {h} год',lunchShort:'обід {m} хв',update:'Оновити застосунок',version:'Версія',
+ lunch:'Обід, хв',net:'Разом з вирахуванням обіду: {h} год',lunchShort:'обід {m} хв',update:'Оновити застосунок',version:'Версія',shiftsWord:'змін',netWord:'чистих',offsWord:'вихідних',edit:'Змінити',noShiftToday:'Сьогодні · немає зміни',
+ holTitle:'Свята',holShow:'Показувати свята',holInfo:'Державні свята України',holiday:'Свято',
+ balTitle:'Залишки · {y}',daysShort:'дн.',marked:'позначено',left:'залишилось',limit:'Ліміт',limitHint:'Вкажіть ліміт днів на рік, щоб бачити залишок.',limitSaved:'Ліміт збережено',
+ remTitle:'Сповіщення',remShifts:'Нагадувати про зміни',remShiftsHint:'За день до зміни. За замовчуванням увімкнено, тут можна вимкнути.',remTime:'Нагадувати напередодні о',
+ remPerm:'Дозволити системні сповіщення',remPermOn:'Системні сповіщення дозволено',remPermDenied:'Сповіщення заборонено в налаштуваннях браузера',
+ remIcs:'Додати зміни до календаря телефона',remIcsHint:'Так нагадування приходять, навіть коли застосунок закритий. Відкрийте отриманий файл .ics і виберіть «Додати до календаря». Повторний експорт оновить події.',
+ remNote:'Сам застосунок показує нагадування, коли ви його відкриваєте. Для сигналів при закритому застосунку користуйтеся календарем телефона.',
+ remOt:'Нагадати',remTomorrow:'Завтра: {list}',remNotifTitle:'Зміна завтра',icsEmpty:'Немає майбутніх змін або nadčas із нагадуванням',
  overlayLbl:'Ставиться поверх зміни',overlayHint:'Як nadčas: день зберігає свою зміну й отримує бейдж із годинами.',
  ignoreLbl:'Не враховувати в аналізі графіка',ignoreHint:'Для відпустки, лікарняного та будь-яких нерегулярних днів.',
  delete:'Видалити',cancel:'Скасувати',save:'Зберегти',
- types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč']}},
+ types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
 sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
  undo:'Späť',undoBtn:'↶ Vrátiť poslednú akciu',summary:'Súhrn — {m}',totalHours:'hodín spolu',noHours:'bez hodín',
  noteTitle:'Poznámka',notePh:'Napr.: zastupovanie, lekár o 10:00…',overlayTitle:'Popri zmene',pDay:'Deň',pNight:'Noc',timeTitle:'Čas zmeny',reset:'Obnoviť',
@@ -303,11 +363,18 @@ sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',
  catTitle:'Kategória',newCat:'Nová kategória',name:'Názov',namePh:'Napr.: Brigáda',short:'Značka',hours:'Hodiny',color:'Farba',
  start:'Začiatok zmeny',end:'Koniec zmeny',noTime:'Bez času',
  timeHint:'Ak je čas zadaný, hodiny sa počítajú samy (koniec skôr ako začiatok — zmena cez polnoc). Obed sa odpočíta z hodín.',
- lunch:'Obed, min',net:'Spolu po odpočítaní obeda: {h} h',lunchShort:'obed {m} min',update:'Aktualizovať aplikáciu',version:'Verzia',
+ lunch:'Obed, min',net:'Spolu po odpočítaní obeda: {h} h',lunchShort:'obed {m} min',update:'Aktualizovať aplikáciu',version:'Verzia',shiftsWord:'zmien',netWord:'čisté',offsWord:'voľných',edit:'Upraviť',noShiftToday:'Dnes · bez zmeny',
+ holTitle:'Sviatky',holShow:'Zobrazovať sviatky',holInfo:'Štátne sviatky Slovenska',holiday:'Sviatok',
+ balTitle:'Zostatky · {y}',daysShort:'dní',marked:'označené',left:'zostáva',limit:'Limit',limitHint:'Zadajte ročný limit dní, aby ste videli zostatok.',limitSaved:'Limit uložený',
+ remTitle:'Upozornenia',remShifts:'Pripomínať zmeny',remShiftsHint:'Deň vopred. Predvolene zapnuté, tu sa dá vypnúť.',remTime:'Pripomenúť deň vopred o',
+ remPerm:'Povoliť systémové upozornenia',remPermOn:'Systémové upozornenia sú povolené',remPermDenied:'Upozornenia sú zakázané v nastaveniach prehliadača',
+ remIcs:'Pridať zmeny do kalendára telefónu',remIcsHint:'Takto pripomienky prídu, aj keď je aplikácia zatvorená. Otvorte získaný súbor .ics a vyberte „Pridať do kalendára“. Opakovaný export udalosti aktualizuje.',
+ remNote:'Samotná aplikácia zobrazí pripomienku, keď ju otvoríte. Pre upozornenia pri zatvorenej aplikácii použite kalendár telefónu.',
+ remOt:'Pripomenúť',remTomorrow:'Zajtra: {list}',remNotifTitle:'Zajtra zmena',icsEmpty:'Žiadne nadchádzajúce zmeny ani nadčas s pripomienkou',
  overlayLbl:'Pridáva sa popri zmene',overlayHint:'Ako nadčas: deň si ponechá svoju zmenu a dostane odznak s hodinami.',
  ignoreLbl:'Nezahŕňať do analýzy rozpisu',ignoreHint:'Pre dovolenku, PN a akékoľvek nepravidelné dni.',
  delete:'Odstrániť',cancel:'Zrušiť',save:'Uložiť',
- types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč']}}
+ types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}}
 };
 const LANGS=[['ru','Русский'],['uk','Українська'],['sk','Slovenčina']];
 const LOC={ru:'ru-RU',uk:'uk-UA',sk:'sk-SK'};
@@ -318,7 +385,7 @@ const L=()=>I18N[LANG];
 const tr=(k,v)=>{let s=L()[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
 
 /* ---------- данные ---------- */
-const APP_VERSION='1.6';
+const APP_VERSION='2.6';
 const KEY='shiftcal.v1',TK='shiftcal.theme';
 const DEF={types:[
  {id:'d',key:'d',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
@@ -326,11 +393,18 @@ const DEF={types:[
  {id:'o',key:'o',color:'#10b981',hours:0,ignore:false},
  {id:'v',key:'v',color:'#ec4899',hours:0,ignore:true},
  {id:'s',key:'s',color:'#ef4444',hours:0,ignore:true},
- {id:'ot',key:'ot',color:'#f97316',hours:4,ignore:true,overlay:true}],days:{}};
+ {id:'ot',key:'ot',color:'#f97316',hours:4,ignore:true,overlay:true},
+ {id:'pg',key:'pg',color:'#0ea5a4',hours:0,ignore:true}],seed:['pg'],days:{}};
 const SWATCH=['#e08a00','#4f46e5','#10b981','#ec4899','#ef4444','#f97316','#06b6d4','#8b5cf6','#64748b'];
 let S;try{S=JSON.parse(localStorage.getItem(KEY))||structuredClone(DEF)}catch{S=structuredClone(DEF)}
 function normalize(){
   if(!S.types.some(t=>t.overlay))S.types.push(structuredClone(DEF.types[5]));
+  // новые стандартные категории добавляются один раз; удалённую пользователем второй раз не возвращаем
+  S.seed=S.seed||[];
+  if(!S.seed.includes('pg')){
+    if(!S.types.some(t=>t.key==='pg'))S.types.push(structuredClone(DEF.types[6]));
+    S.seed.push('pg');
+  }
   // стандартные категории: имя и метка берутся из перевода, пока пользователь их не изменил
   for(const t of S.types){
     const ru=I18N.ru.types;
@@ -400,13 +474,13 @@ function undo(){
   toast(tr('undone'),false);
 }
 let tt;
-function toast(msg,canUndo=true){
+function toast(msg,canUndo=true,ms=4500){
   const T=$('toast');$('tmsg').textContent=msg;
   $('tundo').hidden=!(canUndo&&hist.length);
   T.classList.add('on');
   if(T.showPopover&&!T.matches(':popover-open'))T.showPopover();   // поверх открытых окон
   clearTimeout(tt);
-  tt=setTimeout(()=>{T.classList.remove('on');if(T.hidePopover&&T.matches(':popover-open'))T.hidePopover()},4500);
+  tt=setTimeout(()=>{T.classList.remove('on');if(T.hidePopover&&T.matches(':popover-open'))T.hidePopover()},ms);
 }
 function done(msg){save();render();toast(msg)}
 $('tundo').onclick=undo;
@@ -460,33 +534,115 @@ mq.onchange=()=>{if(document.documentElement.dataset.mode==='auto')paintTheme('a
 
 /* ---------- календарь ---------- */
 const track=$('track'),vp=$('vp'),cal=$('cal');
+/* ---------- праздники ---------- */
+// Страна определяется языком: словацкий — Словакия, украинский — Украина. Для русского праздники не показываются.
+const HK='shiftcal.hol',COUNTRY={uk:'UA',sk:'SK'};
+let HOL=(()=>{try{return localStorage.getItem(HK)==='1'}catch{return false}})();
+const HDATA={
+  SK:{west:true,fixed:{'01-01':'Deň vzniku Slovenskej republiky','01-06':'Zjavenie Pána (Traja králi)','05-01':'Sviatok práce','05-08':'Deň víťazstva nad fašizmom',
+    '07-05':'Sviatok svätého Cyrila a Metoda','08-29':'Výročie Slovenského národného povstania','09-01':'Deň Ústavy Slovenskej republiky',
+    '09-15':'Sedembolestná Panna Mária','11-01':'Sviatok všetkých svätých','11-17':'Deň boja za slobodu a demokraciu',
+    '12-24':'Štedrý deň','12-25':'Prvý sviatok vianočný','12-26':'Druhý sviatok vianočný'},
+    easter:{'-2':'Veľký piatok','1':'Veľkonočný pondelok'}},
+  UA:{west:false,fixed:{'01-01':'Новий рік','03-08':'Міжнародний жіночий день','05-01':'День праці','05-08':'День пам’яті та перемоги над нацизмом',
+    '06-28':'День Конституції України','07-15':'День Української Державності','08-24':'День Незалежності України',
+    '10-01':'День захисників і захисниць України','12-25':'Різдво Христове'},
+    easter:{'0':'Великдень','49':'Трійця'}}
+};
+// Пасха: западная (григорианская) и православная (юлианская + 13 дней)
+const easterW=y=>{const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),
+  h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  return new Date(y,Math.floor((h+l-7*m+114)/31)-1,((h+l-7*m+114)%31)+1)};
+const easterO=y=>{const a=y%4,b=y%7,c=y%19,d=(19*c+15)%30,e=(2*a+4*b-d+34)%7;
+  return new Date(y,Math.floor((d+e+114)/31)-1,((d+e+114)%31)+1+13)};
+const hcache={};
+function holidayMap(y){
+  const c=COUNTRY[LANG];if(!c||!HOL)return{};
+  const ck=`${c}${y}`;if(hcache[ck])return hcache[ck];
+  const D=HDATA[c],out={};
+  for(const[md,name]of Object.entries(D.fixed))out[`${y}-${md}`]=name;
+  const e=D.west?easterW(y):easterO(y);
+  for(const[off,name]of Object.entries(D.easter))out[fmt(new Date(e.getFullYear(),e.getMonth(),e.getDate()+ +off))]=name;
+  return hcache[ck]=out;
+}
+const holidayOf=k=>holidayMap(+k.slice(0,4))[k];
+
 const monthAt=o=>{const d=new Date(cur);d.setDate(1);d.setMonth(d.getMonth()+o);return d};
+const nf=n=>String(r2(n)).replace('.',',');
+function isoWeek(dt){
+  const t=new Date(Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate()));
+  t.setUTCDate(t.getUTCDate()+4-(t.getUTCDay()||7));
+  return Math.ceil(((t-new Date(Date.UTC(t.getUTCFullYear(),0,1)))/864e5+1)/7);
+}
+// выходной: рабочая категория без часов и времени (рисуется пустым кольцом)
+const isOff=t=>!t.overlay&&!t.ignore&&!t.start&&!(+t.hours>0);
+// читаемый цвет цифры на цветном круге
+function inkOn(hex){
+  if(!/^#[0-9a-f]{6}$/i.test(hex))return '#fff';
+  const n=parseInt(hex.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255;
+  return .299*r+.587*g+.114*b>170?'#2a1e00':'#fff';
+}
+
+// Месяц: недели строками, слева номер недели, день — круг цвета смены.
 function gridHtml(m){
-  const first=new Date(m),off=(first.getDay()+6)%7;
-  const start=new Date(first);start.setDate(1-off);
-  let h='';const today=fmt(new Date());
-  for(let i=0;i<42;i++){
-    const d=new Date(start);d.setDate(start.getDate()+i);
-    if(i>=35&&d.getMonth()!==m.getMonth())break;
-    const k=fmt(d),e=S.days[k]||{},t=e.t&&type(e.t);
-    const bd=Object.entries(e.ov||{}).filter(([id])=>type(id))
-      .map(([id,hh])=>`<span style="background:${type(id).color}">${PIC[e.ovp&&e.ovp[id]]||''}+${hh}</span>`).join('');
-    const tm=t&&!t.overlay&&times(e,t);
-    h+=`<div class="day${d.getMonth()!==m.getMonth()?' other':''}${k===today?' today':''}${e.auto?' auto':''}" data-k="${k}"${t?` style="--c:${t.color}"`:''}>
-      <span class="n">${d.getDate()}</span>${e.note?'<i class="nd"></i>':''}${bd?`<div class="badges">${bd}</div>`:''}
-      ${t?`<span class="chip" style="background:${t.color}">${esc(sh(t))}${tm?`<em>${shortT(tm[0])}–${shortT(tm[1])}</em>`:''}</span>`:''}</div>`;
+  const y=m.getFullYear(),mo=m.getMonth(),lead=(new Date(y,mo,1).getDay()+6)%7;
+  const cells=Math.ceil((lead+new Date(y,mo+1,0).getDate())/7)*7;
+  const today=fmt(new Date());let h='';
+  for(let i=0;i<cells;i++){
+    const d=new Date(y,mo,1-lead+i);
+    if(i%7===0)h+=`<span class="wn">${isoWeek(d)}</span>`;
+    const k=fmt(d),e=S.days[k]||{},t=e.t&&type(e.t),other=d.getMonth()!==mo;
+    let cls='disc',st='';
+    if(t&&!t.overlay){cls+=isOff(t)?' off':e.auto?' on auto':' on';st=` style="--c:${t.color};--ink:${inkOn(t.color)}"`}
+    const ov=Object.entries(e.ov||{}).filter(([id])=>type(id));
+    const ob=ov.length?`<u class="ob" style="background:${type(ov[0][0]).color}">+${nf(ov.reduce((a,[,v])=>a+(+v||0),0))}</u>`:'';
+    const hn=holidayOf(k);
+    h+=`<div class="dc${other?' other':''}${k===today?' today':''}" data-k="${k}"${hn?` title="${esc(hn)}"`:''}><span class="${cls}"${st}>${d.getDate()}${ob}${e.note?'<i class="nt"></i>':''}${hn?'<i class="hl"></i>':''}</span></div>`;
   }
   return h;
+}
+function monthTotals(m){
+  const ym=`${m.getFullYear()}-${pad(m.getMonth()+1)}`;let h=0,s=0,o=0;
+  for(const[k,e]of Object.entries(S.days)){
+    if(!k.startsWith(ym))continue;
+    const t=e.t&&type(e.t);
+    if(t&&!t.overlay){const x=dayHours(e,t);h+=x;if(x>0)s++;if(isOff(t))o++}
+    for(const v of Object.values(e.ov||{}))h+=+v||0;
+  }
+  return{h,s,o};
+}
+// нижняя плашка: что сегодня
+function renderBar(){
+  const k=fmt(new Date()),e=S.days[k]||{},t=e.t&&type(e.t);
+  let l1=tr('noShiftToday'),l2='',dot='';
+  if(t&&!t.overlay){
+    const tm=times(e,t),hh=dayHours(e,t),ot=Object.values(e.ov||{}).reduce((a,v)=>a+(+v||0),0);
+    l1=`${tr('today')} · ${esc(nm(t))}`;dot=t.color;
+    l2=[tm?`${tm[0]}–${tm[1]}`:'',hh?`${nf(hh)} ${tr('h')}`:'',ot?`+${nf(ot)} ${tr('h')}`:''].filter(Boolean).join(' · ');
+  }
+  $('bar').innerHTML=`<span class="bd"${dot?` style="background:${dot}"`:''}></span><div>${l1}<small>${l2}</small></div><button>${t?tr('edit'):tr('add')}</button>`;
 }
 // Три панели рядом: предыдущий, текущий и следующий месяц. Во время свайпа соседний месяц уже на экране,
 // анимируется только transform (GPU), перерисовка происходит один раз — когда анимация закончилась.
 function render(){
-  $('title').textContent=monthLabel(cur);
-  $('dow').innerHTML=Array.from({length:7},(_,i)=>`<div class="dow">${new Date(2024,0,1+i).toLocaleDateString(LOC[LANG],{weekday:'short'})}</div>`).join('');
+  $('title').textContent=cur.toLocaleDateString(LOC[LANG],{month:'long'});
+  $('yr').textContent=cur.getFullYear();
+  $('dow').innerHTML='<span></span>'+Array.from({length:7},(_,i)=>`<span>${new Date(2024,0,1+i).toLocaleDateString(LOC[LANG],{weekday:'short'})}</span>`).join('');
+  const tt=monthTotals(cur),now=new Date();
+  $('sum').innerHTML=`<span><b>${nf(tt.h)} ${tr('h')}</b>${tr('netWord')}</span><span><b>${tt.s}</b>${tr('shiftsWord')}</span><span><b>${tt.o}</b>${tr('offsWord')}</span>`;
+  $('todayBtn').hidden=cur.getFullYear()===now.getFullYear()&&cur.getMonth()===now.getMonth();
+  // легенда: категории, которые есть в этом месяце
+  const ym=`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`,used=new Set();
+  for(const[k,e]of Object.entries(S.days))if(k.startsWith(ym)){if(e.t)used.add(e.t);for(const id of Object.keys(e.ov||{}))used.add(id)}
+  const hasHol=Object.keys(holidayMap(cur.getFullYear())).some(k=>k.startsWith(ym));
+  $('lg').innerHTML=S.types.filter(t=>used.has(t.id)).map(t=>`<span><i${isOff(t)?' class="off"':` style="background:${t.color}"`}></i>${esc(nm(t))}</span>`).join('')
+    +(hasHol?`<span><i style="background:#e5484d"></i>${tr('holiday')}</span>`:'');
+  renderBar();renderPills();
   track.style.transition='none';track.style.transform='';
-  track.innerHTML=[-1,0,1].map(o=>`<div class="grid">${gridHtml(monthAt(o))}</div>`).join('');
+  track.innerHTML=[-1,0,1].map(o=>`<div class="pn">${gridHtml(monthAt(o))}</div>`).join('');
 }
-track.onclick=e=>{const c=e.target.closest('.day');if(c)openDay(c.dataset.k)};
+track.onclick=e=>{const c=e.target.closest('.dc');if(c)openDay(c.dataset.k)};
+$('bar').onclick=e=>{if(e.target.closest('button'))openDay(fmt(new Date()))};
 
 let busy=false;
 const EASE='cubic-bezier(.22,.85,.3,1)';
@@ -568,6 +724,7 @@ function renderDay(){
   const tm=cur_t&&!cur_t.overlay?times(e,cur_t)||['','']:null;
   $('dayBody').innerHTML=`
    <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+   ${holidayOf(dayKey)?`<div class="hnote">${tr('holiday')}: ${esc(holidayOf(dayKey))}</div>`:''}
    <div class="cats">${main.map(t=>`<button class="cat${e.t===t.id&&!e.auto?' on':''}" data-set="${t.id}" style="--c:${t.color}">
       <b>${esc(sh(t))}</b><span>${esc(nm(t))}<small>${t.start&&t.end?t.start+'–'+t.end+' · ':''}${typeNet(t)?typeNet(t)+' '+tr('h'):tr('noHours')}</small></span></button>`).join('')}</div>
    ${tm?`<div class="sec"><h3>${tr('timeTitle')}</h3><div class="row">
@@ -578,6 +735,7 @@ function renderDay(){
      <div class="ovrow"><div class="cat" style="--c:${t.color}"><b>${esc(sh(t))}</b><span>${esc(nm(t))}</span></div>
        <input type="number" min="0" step="0.5" id="ov_${t.id}" value="${has?e.ov[t.id]:t.hours}" style="width:76px"><span class="muted">${tr('h')}</span>
        <div class="seg" id="per_${t.id}">${['d','n'].map(p=>`<button data-per="${p}" class="${p===((e.ovp&&e.ovp[t.id])||(e.t==='n'?'n':'d'))?'on':''}">${PIC[p]} ${tr(p==='d'?'pDay':'pNight')}</button>`).join('')}</div>
+       <label class="muted" style="display:flex;align-items:center;gap:6px;white-space:nowrap"><input type="checkbox" id="rem_${t.id}" ${e.ovr&&e.ovr[t.id]?'checked':''}> 🔔 ${tr('remOt')}</label>
        <button class="primary" data-ov="${t.id}">${has?tr('update'):tr('add')}</button>
        ${has?`<button class="icon danger" data-ovdel="${t.id}" aria-label="${tr('remove')}">✕</button>`:''}</div>`}).join('')}</div>`:''}
    <div class="sec"><h3>${tr('noteTitle')}</h3><textarea id="dayNote" rows="3" placeholder="${esc(tr('notePh'))}">${esc(e.note||'')}</textarea></div>
@@ -594,11 +752,14 @@ $('dayBody').onclick=e=>{
     snap();const id=b.dataset.ov,v=+$('ov_'+id).value||0;
     x.ov=x.ov||{};x.ov[id]=v;
     x.ovp=x.ovp||{};x.ovp[id]=$('per_'+id).querySelector('.on').dataset.per;
+    x.ovr=x.ovr||{};if($('rem_'+id).checked)x.ovr[id]=1;else delete x.ovr[id];
+    if(!Object.keys(x.ovr).length)delete x.ovr;
     S.days[dayKey]=x;done(tr('otSaved'));closeDlg($('dayDlg'));
   }
   else if(b.dataset.ovdel){
     snap();const id=b.dataset.ovdel;delete x.ov[id];if(!Object.keys(x.ov).length)delete x.ov;
     if(x.ovp){delete x.ovp[id];if(!Object.keys(x.ovp).length)delete x.ovp}
+    if(x.ovr){delete x.ovr[id];if(!Object.keys(x.ovr).length)delete x.ovr}
     S.days[dayKey]=x;cleanup(dayKey);done(tr('removed'));renderDay();
   }
 };
@@ -641,6 +802,39 @@ function monthStats(){
       return`<div class="stat"><b style="color:${t.color}">${r(over[t.id])}</b><span class="muted">${esc(nm(t))}, ${tr('h')}</span>${sub?`<span class="muted" style="display:block;font-size:12px">${sub}</span>`:''}</div>`}).join('')+
     S.types.filter(t=>cnt[t.id]).map(t=>`<div class="stat"><b style="color:${t.color}">${cnt[t.id]}</b><span class="muted">${esc(nm(t))}</span></div>`).join('');
 }
+// сколько дней категории отмечено за год и какой лимит задан
+function balStat(t,y){
+  let days=0,hrs=0;
+  for(const[k,e]of Object.entries(S.days)){if(!k.startsWith(y+'-')||e.t!==t.id)continue;days++;hrs+=dayHours(e,t)}
+  return{days,hrs,q:+t.quota||0};
+}
+// плашки на главном экране: отпуск и Paragraf
+function renderPills(){
+  const y=cur.getFullYear();
+  $('pills').innerHTML=S.types.filter(t=>!t.overlay&&(t.key==='v'||t.key==='pg')).map(t=>{
+    const{days,q}=balStat(t,y),left=q-days;
+    const body=q?`<span>${tr('left')}</span><b>${left}</b><span>/ ${q}</span>`:`<span>${tr('marked')}</span><b>${days}</b>`;
+    return`<button class="pill${q&&left<0?' over':''}" title="${esc(nm(t))}"><i style="background:${t.color}"></i>${esc(nm(t))} ${body}</button>`;
+  }).join('');
+}
+$('pills').onclick=e=>{
+  if(!e.target.closest('.pill'))return;
+  renderMenu();openDlg($('menuDlg'));
+  requestAnimationFrame(()=>{const s=$('balSec');if(s)s.scrollIntoView({block:'start'})});   // сразу к остаткам и лимитам
+};
+// остатки по отпуску и Paragraf за календарный год открытого месяца
+function balancesHtml(){
+  const y=cur.getFullYear(),list=S.types.filter(t=>!t.overlay&&(t.key==='v'||t.key==='pg'));
+  let noLimit=false;
+  const rows=list.map(t=>{
+    const{days,hrs,q}=balStat(t,y),left=q-days;if(!q)noLimit=true;
+    return`<div class="bal"><div class="bh"><span class="dot" style="background:${t.color}">${esc(sh(t))}</span><span class="nm">${esc(nm(t))}</span>
+      <label class="muted">${tr('limit')} <input type="number" min="0" step="1" data-quota="${t.id}" value="${q||''}" placeholder="—" style="width:64px"> ${tr('daysShort')}</label></div>
+      <div class="bbar"><i style="width:${q?Math.min(100,days/q*100):0}%;background:${t.color}"></i></div>
+      <div class="muted">${tr('marked')}: <b>${days}</b> ${tr('daysShort')}${hrs?` · ${nf(hrs)} ${tr('h')}`:''}${q?` · ${tr('left')}: <b style="color:${left<0?'#e5484d':'var(--text)'}">${left}</b>`:''}</div></div>`;
+  }).join('');
+  return rows+(noLimit?`<div class="muted">${tr('limitHint')}</div>`:'');
+}
 function renderMenu(){
   const m=document.documentElement.dataset.mode;
   const ym=monthKey(),hasData=Object.keys(S.days).some(k=>k.startsWith(ym));
@@ -648,6 +842,7 @@ function renderMenu(){
    <div class="dhead"><h2>${tr('menu')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
    <button data-undo ${hist.length?'':'disabled'} style="width:100%">${tr('undoBtn')}</button>
    <div class="sec"><h3>${tr('summary',{m:monthLabel(cur)})}</h3><div class="stats">${monthStats()}</div></div>
+   <div class="sec" id="balSec"><h3>${tr('balTitle',{y:cur.getFullYear()})}</h3>${balancesHtml()}</div>
    <div class="sec"><h3>${tr('categories')}</h3>
      <div class="catlist">${S.types.map(t=>`<button data-edit="${t.id}"><span class="dot" style="background:${t.color}">${esc(sh(t))}</span>
        <span class="nm">${esc(nm(t))}</span><span class="muted">${t.overlay?tr('overlayTag'):(t.start&&t.end?t.start+'–'+t.end+' · ':'')+typeNet(t)+' '+tr('h')}</span><span class="muted">›</span></button>`).join('')}
@@ -658,6 +853,19 @@ function renderMenu(){
        <button class="primary" data-gen>${tr('build')}</button></div>
      <div class="row" style="margin-top:8px"><button data-confirm>${tr('confirmAuto')}</button><button class="ghost" data-clearauto>${tr('clearAuto')}</button></div>
      <div class="muted" style="margin-top:8px">${tr('autoHint')}</div></div>
+   <div class="sec"><h3>${tr('holTitle')}</h3>
+     <div class="hrow"><div>${tr('holShow')}<div class="muted">${tr(COUNTRY[LANG]?'holInfo':'holNone')}</div></div>
+       <label class="sw"><input type="checkbox" id="holToggle" ${HOL&&COUNTRY[LANG]?'checked':''} ${COUNTRY[LANG]?'':'disabled'}><span></span></label></div></div>
+   <div class="sec"><h3>${tr('remTitle')}</h3>
+     <div class="hrow"><div>${tr('remShifts')}<div class="muted">${tr('remShiftsHint')}</div></div>
+       <label class="sw"><input type="checkbox" id="remOn" ${getRem().on?'checked':''}><span></span></label></div>
+     <div class="row" style="margin-top:10px"><span>${tr('remTime')}</span><input type="time" id="remTime" value="${getRem().time}"></div>
+     ${'Notification' in window?(Notification.permission==='granted'?`<div class="muted" style="margin-top:10px">✓ ${tr('remPermOn')}</div>`
+       :Notification.permission==='denied'?`<div class="muted" style="margin-top:10px">${tr('remPermDenied')}</div>`
+       :`<button data-notif style="width:100%;margin-top:10px">🔔 ${tr('remPerm')}</button>`):''}
+     <button data-ics style="width:100%;margin-top:10px">📅 ${tr('remIcs')}</button>
+     <div class="muted" style="margin-top:8px">${tr('remIcsHint')}</div>
+     <div class="muted" style="margin-top:6px">${tr('remNote')}</div></div>
    <div class="sec"><h3>${tr('theme')}</h3>
      <div class="seg" id="theme"><button data-m="light" class="${m==='light'?'on':''}">${tr('light')}</button><button data-m="auto" class="${m==='auto'?'on':''}">${tr('themeAuto')}</button><button data-m="dark" class="${m==='dark'?'on':''}">${tr('dark')}</button></div></div>
    <div class="sec"><h3>${tr('language')}</h3>
@@ -671,6 +879,20 @@ function renderMenu(){
      <button class="danger" data-clearmonth ${hasData?'':'disabled'} style="width:100%">🗑 ${tr('clearMonthBtn',{m:monthLabel(cur)})}</button>
      <div class="muted" style="margin-top:8px">${tr('clearHint')}</div></div>`;
 }
+$('menuBody').addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='remOn'){setRem({on:t.checked});try{localStorage.removeItem(RL)}catch{}}
+  else if(t.id==='remTime'){if(t.value){setRem({time:t.value});try{localStorage.removeItem(RL)}catch{}}}
+  else if(t.id==='holToggle'){
+    HOL=t.checked;try{localStorage.setItem(HK,HOL?'1':'0')}catch{}
+    render();renderMenu();
+  }else if(t.dataset.quota){
+    const ty=type(t.dataset.quota);if(!ty)return;
+    snap();const v=Math.max(0,Math.floor(+t.value||0));
+    if(v)ty.quota=v;else delete ty.quota;
+    done(tr('limitSaved'));renderMenu();
+  }
+});
 function clearMonth(){
   const ym=monthKey();
   if(!confirm(tr('confirmClear',{m:monthLabel(cur)})))return;
@@ -690,6 +912,8 @@ $('menuBody').onclick=e=>{
   else if('confirm' in d){snap();for(const k in S.days)delete S.days[k].auto;done(tr('autoConfirmed'));renderMenu()}
   else if('clearauto' in d){snap();for(const k in S.days)if(S.days[k].auto){delete S.days[k].t;delete S.days[k].auto;delete S.days[k].s;delete S.days[k].e;cleanup(k)}done(tr('autoCleared'));renderMenu()}
   else if('exp' in d)exportData();
+  else if('ics' in d)exportIcs();
+  else if('notif' in d)Notification.requestPermission().then(()=>renderMenu());
   else if('update' in d)forceUpdate();
 };
 // Сбрасывает кэш приложения и загружает свежую версию. Данные (смены) не затрагиваются.
@@ -702,10 +926,8 @@ async function forceUpdate(){
   location.href=location.pathname+'?r='+Date.now();
 }
 // На телефоне — системное меню «Поделиться» (сохранить в Файлы/отправить), на компьютере — обычная загрузка.
-async function exportData(){
-  const name=`shifts-${fmt(new Date())}.json`;
-  const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
-  const file=new File([blob],name,{type:'application/json'});
+async function saveFile(blob,name){
+  const file=new File([blob],name,{type:blob.type});
   if(navigator.canShare&&matchMedia('(pointer:coarse)').matches&&navigator.canShare({files:[file]})){
     try{await navigator.share({files:[file],title:name});return}
     catch(err){if(err.name==='AbortError')return}
@@ -714,6 +936,86 @@ async function exportData(){
   a.href=url;a.download=name;
   $('menuBody').appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+const exportData=()=>saveFile(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),`shifts-${fmt(new Date())}.json`);
+
+/* ---------- напоминания ---------- */
+// Приложение без сервера не может само будить телефон, пока закрыто. Поэтому два способа:
+// 1) напоминание при открытии приложения (и системное уведомление, если разрешено);
+// 2) экспорт смен в календарь телефона (.ics) со встроенными сигналами — они работают всегда.
+const RK='shiftcal.rem',RL='shiftcal.remlast';
+const getRem=()=>{try{return{on:true,time:'18:00',...JSON.parse(localStorage.getItem(RK)||'{}')}}catch{return{on:true,time:'18:00'}}};
+const setRem=p=>{try{localStorage.setItem(RK,JSON.stringify({...getRem(),...p}))}catch{}};
+const isWork=t=>t&&!t.overlay&&!t.ignore&&!isOff(t);
+// что напомнить про день k: смена (если включено) и nadčas с галочкой «Напомнить»
+function reminderItems(k){
+  const e=S.days[k];if(!e)return[];
+  const out=[],t=e.t&&type(e.t);
+  if(getRem().on&&isWork(t)){const tm=times(e,t);out.push(`${nm(t)}${tm?' '+tm[0]+'–'+tm[1]:''}`)}
+  for(const[id,v]of Object.entries(e.ov||{}))if(e.ovr&&e.ovr[id]&&type(id))out.push(`${nm(type(id))} +${nf(v)} ${tr('h')}`);
+  return out;
+}
+function notify(title,body,tag){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const opt={body,icon:'icon-192.png',tag};
+  if('serviceWorker' in navigator)navigator.serviceWorker.ready.then(r=>r.showNotification(title,opt)).catch(()=>{try{new Notification(title,opt)}catch{}});
+  else try{new Notification(title,opt)}catch{}
+}
+function checkReminders(){
+  const now=new Date(),[hh,mm]=getRem().time.split(':').map(Number);
+  if(now<new Date(now.getFullYear(),now.getMonth(),now.getDate(),hh,mm))return;   // ещё рано
+  const k=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1));
+  let last;try{last=localStorage.getItem(RL)}catch{}
+  if(last===k)return;
+  const items=reminderItems(k);if(!items.length)return;
+  try{localStorage.setItem(RL,k)}catch{}
+  const text=tr('remTomorrow',{list:items.join(' · ')});
+  toast(text,false,9000);notify(tr('remNotifTitle'),text,'rem-'+k);
+}
+
+// .ics: смены и nadčas с сигналом «накануне в заданное время»
+const pad2=n=>String(n).padStart(2,'0');
+const icsMin=m=>pad2(Math.floor(m/60))+pad2(m%60)+'00';
+const icsDay=(k,add=0)=>{const d=parse(k);d.setDate(d.getDate()+add);return fmt(d).replace(/-/g,'')};
+const icsEsc=s=>String(s).replace(/[\\;,]/g,c=>'\\'+c).replace(/\n/g,'\\n');
+function buildIcs(){
+  const R=getRem(),rm=toMin(R.time),today=fmt(new Date());
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
+  const out=[];
+  const add=(uid,sum,desc,k,sMin,eMin,alarmText)=>{
+    const before=1440+sMin-rm;                  // минут от напоминания накануне до начала
+    const L=['BEGIN:VEVENT',`UID:${uid}@shiftcal`,`DTSTAMP:${stamp}`,`SUMMARY:${icsEsc(sum)}`];
+    if(desc)L.push(`DESCRIPTION:${icsEsc(desc)}`);
+    if(sMin===null){L.push(`DTSTART;VALUE=DATE:${icsDay(k)}`,`DTEND;VALUE=DATE:${icsDay(k,1)}`)}
+    else{
+      const over=eMin>=1440;
+      L.push(`DTSTART:${icsDay(k)}T${icsMin(sMin)}`,`DTEND:${icsDay(k,over||eMin<=sMin?1:0)}T${icsMin(over?eMin-1440:eMin)}`);
+    }
+    L.push('BEGIN:VALARM','ACTION:DISPLAY',`DESCRIPTION:${icsEsc(alarmText)}`,`TRIGGER:-PT${sMin===null?1440-rm:before}M`,'END:VALARM','END:VEVENT');
+    out.push(...L);
+  };
+  for(const k of Object.keys(S.days).sort()){
+    if(k<today)continue;
+    const e=S.days[k],t=e.t&&type(e.t),tm=t&&!t.overlay?times(e,t):null;
+    if(R.on&&isWork(t)){
+      const hrs=dayHours(e,t);
+      add(`${k}-${t.id}`,nm(t),hrs?`${nf(hrs)} ${tr('h')}`:'',k,tm?toMin(tm[0]):null,tm?toMin(tm[1])+(toMin(tm[1])<=toMin(tm[0])?1440:0):0,tr('remTomorrow',{list:nm(t)+(tm?' '+tm[0]+'–'+tm[1]:'')}));
+    }
+    for(const[id,v]of Object.entries(e.ov||{})){
+      const ty=type(id);if(!ty||!(e.ovr&&e.ovr[id]))continue;
+      const h=+v||0,p=e.ovp&&e.ovp[id],night=p?p==='n':!!tm&&toMin(tm[1])<=toMin(tm[0]);
+      let s=night?(tm?toMin(tm[0]):1140)-h*60:(tm?toMin(tm[1]):1140);
+      s=Math.max(0,Math.min(1439,s));
+      add(`${k}-ot-${id}`,`${nm(ty)} +${nf(h)} ${tr('h')}`,'',k,s,Math.min(1440,s+h*60),tr('remTomorrow',{list:`${nm(ty)} +${nf(h)} ${tr('h')}`}));
+    }
+  }
+  if(!out.length)return null;
+  return['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ShiftCal//RU','CALSCALE:GREGORIAN',`X-WR-CALNAME:${icsEsc(tr('title'))}`,...out,'END:VCALENDAR'].join('\r\n');
+}
+async function exportIcs(){
+  const ics=buildIcs();
+  if(!ics){toast(tr('icsEmpty'),false);return}
+  await saveFile(new Blob([ics],{type:'text/calendar'}),`shifts-${fmt(new Date())}.ics`);
 }
 // поле выбора файла живёт внутри окна меню — снаружи модального окна браузер блокирует к нему доступ
 $('menuBody').addEventListener('change',async e=>{
@@ -852,6 +1154,8 @@ function generate(){
 paintTheme(document.documentElement.dataset.mode);
 applyStatic();
 render();
+checkReminders();setInterval(checkReminders,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   const had=!!navigator.serviceWorker.controller;let reloaded=false;
   navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});
