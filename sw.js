@@ -1,10 +1,10 @@
 // Кэширует приложение, чтобы оно работало без интернета.
-// Обновления подтягиваются в фоне и появляются при следующем открытии.
-const CACHE = 'shifts-v4';
+// Сначала всегда пробуем сеть (свежая версия), а кэш — запасной вариант, когда интернета нет.
+const CACHE = 'shifts-v6';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(a => new Request(a, { cache: 'reload' })))));
   self.skipWaiting();
 });
 
@@ -19,12 +19,10 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request, { ignoreSearch: true }).then(hit => {
-      const net = fetch(e.request).then(r => {
-        if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
-        return r;
-      }).catch(() => hit);
-      return hit || net;
-    })
+    // cache:'no-cache' — не доверять HTTP-кэшу браузера, всегда сверяться с сервером
+    fetch(e.request, { cache: 'no-cache' }).then(r => {
+      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+      return r;
+    }).catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });
