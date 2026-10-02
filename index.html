@@ -81,7 +81,7 @@ button.ghost{background:transparent}
 .lg:empty{display:none}
 .lg span{display:flex;align-items:center;gap:5px}
 .lg i{width:9px;height:9px;border-radius:50%;display:inline-block}
-.lg i.off{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--muted) 55%,transparent)}
+.lg i.off{background:color-mix(in srgb,var(--c) 16%,transparent);box-shadow:inset 0 0 0 2px var(--c)}
 label.btn{display:inline-flex;align-items:center;font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;transition:border-color .2s}
 label.btn:hover{border-color:var(--accent)}
 label.btn input{display:none}
@@ -92,7 +92,7 @@ label.btn input{display:none}
   font:500 13px var(--f-soft);color:var(--text);font-variant-numeric:tabular-nums;transition:transform .12s}
 .dc:active .disc{transform:scale(.9)}
 .disc.on{background:var(--c);color:var(--ink)}
-.disc.off{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--muted) 45%,transparent)}
+.disc.off{background:color-mix(in srgb,var(--c) 16%,transparent);box-shadow:inset 0 0 0 2px var(--c);color:var(--text)}
 .disc.auto{background:transparent;color:var(--c);border:1.5px dashed var(--c)}
 .dc.other{opacity:.3}
 .dc.today .disc::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--text)}
@@ -101,6 +101,27 @@ label.btn input{display:none}
 .nt{position:absolute;left:50%;bottom:3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:currentColor;opacity:.7}
 .hl{position:absolute;left:1px;top:1px;width:7px;height:7px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 1.5px var(--card)}
 .hnote{margin:-6px 0 12px;font-size:13px;color:#e5484d;font-weight:500}
+/* зарплата */
+.payopt{display:block;width:100%;text-align:left;padding:14px 18px;border-radius:24px;margin-bottom:8px}
+.payopt b{display:block;font-size:15px;margin-bottom:2px}
+.payopt small{display:block;color:var(--muted);font-size:12px;line-height:1.35;white-space:normal}
+.payopt.skip{background:transparent}
+.paymon{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;text-transform:capitalize;font-weight:600}
+.paybig{background:var(--accent-soft);border-radius:24px;padding:14px 18px;margin-bottom:12px}
+.paybig small{display:block;color:var(--muted);font-size:12px}
+.paybig b{display:block;font:700 34px/1.15 var(--f-soft);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.pr{display:flex;justify-content:space-between;gap:12px;padding:8px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.pr small{color:var(--muted);font-size:12px}
+.pr b{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pr.tot{font-weight:700;border-bottom:0}
+.pr.neg b{color:#e5484d}
+.paydet{margin-top:14px;background:var(--bg2);border-radius:24px;padding:4px 16px 16px}
+.paydet summary{cursor:pointer;padding:12px 0;font-weight:600}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.bonus{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.bonus input[type=text]{flex:1 1 100%;min-width:0}
+.bonus input[type=number]{width:96px;min-width:0}
+.bonus select{flex:1;min-width:0}
 /* остатки на главном экране */
 .pills{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0 2px 10px;flex:none}
 .pills:empty{display:none}
@@ -280,6 +301,7 @@ label.chk small{display:block;color:var(--muted)}
 <dialog id="dayDlg"><div class="dlg" id="dayBody"></div></dialog>
 <dialog id="menuDlg"><div class="dlg" id="menuBody"></div></dialog>
 <dialog id="typeDlg"><div class="dlg" id="typeBody"></div></dialog>
+<dialog id="payDlg"><div class="dlg" id="payBody"></div></dialog>
 <div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo"></button></div>
 
 <script>
@@ -311,6 +333,25 @@ ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'В�
  remIcs:'Добавить смены в календарь телефона',remIcsHint:'Так напоминания приходят, даже когда приложение закрыто. Откройте полученный файл .ics и выберите «Добавить в календарь». Повторный экспорт обновит события.',
  remNote:'Само приложение показывает напоминание, когда вы его открываете. Для сигналов при закрытом приложении используйте календарь телефона.',
  remOt:'Напомнить',remTomorrow:'Завтра: {list}',remNotifTitle:'Смена завтра',icsEmpty:'Нет предстоящих смен или nadčas с напоминанием',
+ payTitle:'Зарплата',payMenuBtn:'Расчёт зарплаты',payWizTitle:'Как вы работаете?',
+ payModeStudent:'Бригадник (студент)',payModeStudentHint:'Dohoda o brigádnickej práci študentov. По умолчанию: взносы 4 % + 3 % с вычетом 200 €, налог 19 % (так на листах одной фирмы). У вашей может быть иначе: настройте по своему листу.',
+ payModeRegular:'Обычный работник',payModeRegularHint:'Pracovná zmluva: взносы 13,4 %, налог 15 % с необлагаемой частью. Параметры ориентировочные, их нужно сверить со своим листом.',
+ payModeSkip:'Не считать зарплату',payRateTitle:'Часовая ставка',payRateHint:'Сколько вам платят за час до налогов (hrubá). Остальное можно настроить позже.',payRate:'Ставка, €/ч',payBack:'Назад',payContinue:'Продолжить',
+ payNet:'На руки (Čistá mzda)',payGross:'Грязными (Hrubá mzda)',payHoursPay:'Часы × ставка',payNight:'Ночные',paySat:'Суббота',paySun:'Воскресенье',payHol:'Праздники',payVac:'Отпуск',payPg:'Paragraf',payPn:'PN (платит фирма)',payTax:'Налог (Daň)',
+ payFootnote:'Расчёт по календарю, включая запланированные смены. Это оценка, а не расчётный лист: сверьте её с листом.',payStudentNote:'У бригадников фирма не оплачивает отпуск, PN и Paragraf.',
+ paySettings:'Настройки расчёта',payPremH:'Надбавка, €/час',payPremHint:'Для обычного работника подставлены минимумы по закону, сверьте со своим листом.',payOtPct:'Nadčas: надбавка, %',payVacH:'Часов за день отпуска',payPgH:'Часов за день Paragraf',
+ payAvgNem:'Priemer na nemoc, €/ч',payAvgNah:'Priemer pre náhrady, €/ч',payAvgHint:'Значения из оранжевых окошек расчётного листа.',payNem1:'PN дни 1–3, %',payNem2:'PN дни 4–10, %',
+ payDeduct:'Вычет из базы взносов, €/мес',payTaxRate:'Налог, %',payTaxFree:'Необлагаемая часть, €/мес',payChild:'Налоговый бонус на детей, €/мес',payContribRates:'Взносы работника',
+ payOfficial:'Официальные часы',payOfficialSplit:'На листе: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Сверка с листом',payCheckHint:'Введите «Čistá mzda» из расчётного листа за этот месяц.',payCheckApply:'Подогнать расчёт',payCheckDiff:'Разница с расчётом: {d} €',payCalib:'Поправка расчёта: ×{k}',payCalibReset:'Сбросить',
+ paySaved:'Настройки зарплаты сохранены',payChange:'Сменить режим',
+ payTypeLbl:'Тип оплаты',payTypeHourly:'Почасовая',payTypeMonthly:'Оклад в месяц',payBase:'Оклад (hrubá mzda), €/мес',payBaseHint:'Сколько у вас hrubá mzda в месяц по договору, до налогов. Надбавки добавятся сверху.',
+ payBaseLine:'Оклад за отработанное',payFund:'Фонд часов',payDayH:'Часов в рабочем дне',
+ payLearn:'Настроить по расчётному листу',payLearnHint:'Введите числа с листа: программа найдёт вычет, взносы и налог именно вашей фирмы.',
+ payG:'Hrubá mzda',payB:'База для взносов (vymeriavací základ)',payO:'Odvody celkom (взносы работника)',payT:'Daň (налог)',payN:'Необлагаемая часть, €/мес (если есть)',
+ payLearnBtn:'Определить',payLearnRes:'Найдено: вычет из базы {d} €, взносы {c} %, налог {t} %',payApply:'Применить',payLearnNeed:'Введите «Hrubá mzda» и хотя бы «Odvody» или «Daň».',
+ payBonuses:'Бонусы и премии',payBonusHint:'входят в брутто, с них считаются взносы и налог',payBonusName:'Название, например «премия за качество»',payBonusAdd:'Добавить бонус',payBonus:'Бонус',payExtra:'Разовая премия',
+ payBU1:'€ в месяц',payBU2:'% от оклада',payBU3:'€ за час',payBU4:'€ за смену',
  overlayLbl:'Ставится поверх смены',overlayHint:'Как nadčas: день сохраняет свою смену и получает бейдж с часами.',
  ignoreLbl:'Не учитывать в анализе графика',ignoreHint:'Для отпуска, больничного и любых нерегулярных дней.',
  delete:'Удалить',cancel:'Отмена',save:'Сохранить',
@@ -341,6 +382,25 @@ uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'�
  remIcs:'Додати зміни до календаря телефона',remIcsHint:'Так нагадування приходять, навіть коли застосунок закритий. Відкрийте отриманий файл .ics і виберіть «Додати до календаря». Повторний експорт оновить події.',
  remNote:'Сам застосунок показує нагадування, коли ви його відкриваєте. Для сигналів при закритому застосунку користуйтеся календарем телефона.',
  remOt:'Нагадати',remTomorrow:'Завтра: {list}',remNotifTitle:'Зміна завтра',icsEmpty:'Немає майбутніх змін або nadčas із нагадуванням',
+ payTitle:'Зарплата',payMenuBtn:'Розрахунок зарплати',payWizTitle:'Як ви працюєте?',
+ payModeStudent:'Бригадник (студент)',payModeStudentHint:'Dohoda o brigádnickej práci študentov. За замовчуванням: внески 4 % + 3 % з відрахуванням 200 €, податок 19 % (так у листках однієї фірми). У вашої може бути інакше: налаштуйте за своїм листком.',
+ payModeRegular:'Звичайний працівник',payModeRegularHint:'Pracovná zmluva: внески 13,4 %, податок 15 % із неоподатковуваною частиною. Параметри орієнтовні, їх треба звірити зі своїм листком.',
+ payModeSkip:'Не рахувати зарплату',payRateTitle:'Погодинна ставка',payRateHint:'Скільки вам платять за годину до податків (hrubá). Решту можна налаштувати пізніше.',payRate:'Ставка, €/год',payBack:'Назад',payContinue:'Продовжити',
+ payNet:'На руки (Čistá mzda)',payGross:'Брутто (Hrubá mzda)',payHoursPay:'Години × ставка',payNight:'Нічні',paySat:'Субота',paySun:'Неділя',payHol:'Свята',payVac:'Відпустка',payPg:'Paragraf',payPn:'PN (платить фірма)',payTax:'Податок (Daň)',
+ payFootnote:'Розрахунок за календарем, разом із запланованими змінами. Це оцінка, а не розрахунковий листок: звірте її з листком.',payStudentNote:'У бригадників фірма не оплачує відпустку, PN і Paragraf.',
+ paySettings:'Налаштування розрахунку',payPremH:'Надбавка, €/год',payPremHint:'Для звичайного працівника підставлено мінімуми за законом, звірте зі своїм листком.',payOtPct:'Nadčas: надбавка, %',payVacH:'Годин за день відпустки',payPgH:'Годин за день Paragraf',
+ payAvgNem:'Priemer na nemoc, €/год',payAvgNah:'Priemer pre náhrady, €/год',payAvgHint:'Значення з помаранчевих віконець розрахункового листка.',payNem1:'PN дні 1–3, %',payNem2:'PN дні 4–10, %',
+ payDeduct:'Відрахування з бази внесків, €/міс',payTaxRate:'Податок, %',payTaxFree:'Неоподатковувана частина, €/міс',payChild:'Податковий бонус на дітей, €/міс',payContribRates:'Внески працівника',
+ payOfficial:'Офіційні години',payOfficialSplit:'У листку: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Звірка з листком',payCheckHint:'Введіть «Čistá mzda» з розрахункового листка за цей місяць.',payCheckApply:'Підігнати розрахунок',payCheckDiff:'Різниця з розрахунком: {d} €',payCalib:'Поправка розрахунку: ×{k}',payCalibReset:'Скинути',
+ paySaved:'Налаштування зарплати збережено',payChange:'Змінити режим',
+ payTypeLbl:'Тип оплати',payTypeHourly:'Погодинна',payTypeMonthly:'Оклад на місяць',payBase:'Оклад (hrubá mzda), €/міс',payBaseHint:'Скільки у вас hrubá mzda на місяць за договором, до податків. Надбавки додадуться зверху.',
+ payBaseLine:'Оклад за відпрацьоване',payFund:'Фонд годин',payDayH:'Годин у робочому дні',
+ payLearn:'Налаштувати за розрахунковим листком',payLearnHint:'Введіть числа з листка: програма знайде відрахування, внески й податок саме вашої фірми.',
+ payG:'Hrubá mzda',payB:'База для внесків (vymeriavací základ)',payO:'Odvody celkom (внески працівника)',payT:'Daň (податок)',payN:'Неоподатковувана частина, €/міс (якщо є)',
+ payLearnBtn:'Визначити',payLearnRes:'Знайдено: відрахування з бази {d} €, внески {c} %, податок {t} %',payApply:'Застосувати',payLearnNeed:'Введіть «Hrubá mzda» і хоча б «Odvody» або «Daň».',
+ payBonuses:'Бонуси та премії',payBonusHint:'входять у брутто, з них рахуються внески й податок',payBonusName:'Назва, наприклад «премія за якість»',payBonusAdd:'Додати бонус',payBonus:'Бонус',payExtra:'Разова премія',
+ payBU1:'€ на місяць',payBU2:'% від окладу',payBU3:'€ за годину',payBU4:'€ за зміну',
  overlayLbl:'Ставиться поверх зміни',overlayHint:'Як nadčas: день зберігає свою зміну й отримує бейдж із годинами.',
  ignoreLbl:'Не враховувати в аналізі графіка',ignoreHint:'Для відпустки, лікарняного та будь-яких нерегулярних днів.',
  delete:'Видалити',cancel:'Скасувати',save:'Зберегти',
@@ -371,6 +431,25 @@ sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',
  remIcs:'Pridať zmeny do kalendára telefónu',remIcsHint:'Takto pripomienky prídu, aj keď je aplikácia zatvorená. Otvorte získaný súbor .ics a vyberte „Pridať do kalendára“. Opakovaný export udalosti aktualizuje.',
  remNote:'Samotná aplikácia zobrazí pripomienku, keď ju otvoríte. Pre upozornenia pri zatvorenej aplikácii použite kalendár telefónu.',
  remOt:'Pripomenúť',remTomorrow:'Zajtra: {list}',remNotifTitle:'Zajtra zmena',icsEmpty:'Žiadne nadchádzajúce zmeny ani nadčas s pripomienkou',
+ payTitle:'Mzda',payMenuBtn:'Výpočet mzdy',payWizTitle:'Ako pracujete?',
+ payModeStudent:'Brigádnik (študent)',payModeStudentHint:'Dohoda o brigádnickej práci študentov. Predvolene: odvody 4 % + 3 % s odpočtom 200 €, daň 19 % (tak je to na páskach jednej firmy). Vaša firma môže mať inak: nastavte podľa svojej pásky.',
+ payModeRegular:'Bežný zamestnanec',payModeRegularHint:'Pracovná zmluva: odvody 13,4 %, daň 15 % s nezdaniteľnou časťou. Parametre sú orientačné, porovnajte ich so svojou páskou.',
+ payModeSkip:'Nepočítať mzdu',payRateTitle:'Hodinová sadzba',payRateHint:'Koľko vám platia za hodinu pred zdanením (hrubá). Ostatné môžete nastaviť neskôr.',payRate:'Sadzba, €/h',payBack:'Späť',payContinue:'Pokračovať',
+ payNet:'Čistá mzda',payGross:'Hrubá mzda',payHoursPay:'Hodiny × sadzba',payNight:'Nočná',paySat:'Sobota',paySun:'Nedeľa',payHol:'Sviatky',payVac:'Dovolenka',payPg:'Paragraf',payPn:'PN (platí firma)',payTax:'Daň zo mzdy',
+ payFootnote:'Výpočet podľa kalendára vrátane naplánovaných zmien. Je to odhad, nie výplatná páska: porovnajte ho s páskou.',payStudentNote:'Brigádnikom firma neplatí dovolenku, PN ani Paragraf.',
+ paySettings:'Nastavenia výpočtu',payPremH:'Príplatok, €/h',payPremHint:'Pre bežného zamestnanca sú predvyplnené zákonné minimá, porovnajte so svojou páskou.',payOtPct:'Nadčas: príplatok, %',payVacH:'Hodín za deň dovolenky',payPgH:'Hodín za deň Paragraf',
+ payAvgNem:'Priemer na nemoc, €/h',payAvgNah:'Priemer pre náhrady, €/h',payAvgHint:'Hodnoty z oranžových okienok výplatnej pásky.',payNem1:'PN dni 1–3, %',payNem2:'PN dni 4–10, %',
+ payDeduct:'Odpočet zo základu odvodov, €/mes.',payTaxRate:'Daň, %',payTaxFree:'Nezdaniteľná časť, €/mes.',payChild:'Daňový bonus na deti, €/mes.',payContribRates:'Odvody zamestnanca',
+ payOfficial:'Oficiálne hodiny',payOfficialSplit:'Na páske: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Porovnanie s páskou',payCheckHint:'Zadajte „Čistá mzda“ z výplatnej pásky za tento mesiac.',payCheckApply:'Upraviť výpočet',payCheckDiff:'Rozdiel oproti výpočtu: {d} €',payCalib:'Korekcia výpočtu: ×{k}',payCalibReset:'Zrušiť',
+ paySaved:'Nastavenia mzdy uložené',payChange:'Zmeniť režim',
+ payTypeLbl:'Typ odmeňovania',payTypeHourly:'Hodinová',payTypeMonthly:'Mesačná mzda',payBase:'Mesačná hrubá mzda, €',payBaseHint:'Koľko je vaša hrubá mzda mesačne podľa zmluvy, pred zdanením. Príplatky sa pripočítajú navyše.',
+ payBaseLine:'Mzda za odpracované',payFund:'Fond hodín',payDayH:'Hodín v pracovnom dni',
+ payLearn:'Nastaviť podľa výplatnej pásky',payLearnHint:'Zadajte čísla z pásky: program nájde odpočet, odvody a daň práve vašej firmy.',
+ payG:'Hrubá mzda',payB:'Základ pre odvody (vymeriavací základ)',payO:'Odvody celkom (zamestnanec)',payT:'Daň zo mzdy',payN:'Nezdaniteľná časť, €/mes. (ak je)',
+ payLearnBtn:'Zistiť',payLearnRes:'Nájdené: odpočet zo základu {d} €, odvody {c} %, daň {t} %',payApply:'Použiť',payLearnNeed:'Zadajte „Hrubá mzda“ a aspoň „Odvody“ alebo „Daň“.',
+ payBonuses:'Bonusy a odmeny',payBonusHint:'sú súčasťou hrubej mzdy, platia sa z nich odvody aj daň',payBonusName:'Názov, napr. „odmena za kvalitu“',payBonusAdd:'Pridať bonus',payBonus:'Bonus',payExtra:'Jednorazová odmena',
+ payBU1:'€ mesačne',payBU2:'% z mzdy',payBU3:'€ za hodinu',payBU4:'€ za zmenu',
  overlayLbl:'Pridáva sa popri zmene',overlayHint:'Ako nadčas: deň si ponechá svoju zmenu a dostane odznak s hodinami.',
  ignoreLbl:'Nezahŕňať do analýzy rozpisu',ignoreHint:'Pre dovolenku, PN a akékoľvek nepravidelné dni.',
  delete:'Odstrániť',cancel:'Zrušiť',save:'Uložiť',
@@ -385,7 +464,7 @@ const L=()=>I18N[LANG];
 const tr=(k,v)=>{let s=L()[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
 
 /* ---------- данные ---------- */
-const APP_VERSION='2.6';
+const APP_VERSION='2.9.1';
 const KEY='shiftcal.v1',TK='shiftcal.theme';
 const DEF={types:[
  {id:'d',key:'d',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
@@ -556,8 +635,8 @@ const easterW=y=>{const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b
 const easterO=y=>{const a=y%4,b=y%7,c=y%19,d=(19*c+15)%30,e=(2*a+4*b-d+34)%7;
   return new Date(y,Math.floor((d+e+114)/31)-1,((d+e+114)%31)+1+13)};
 const hcache={};
-function holidayMap(y){
-  const c=COUNTRY[LANG];if(!c||!HOL)return{};
+const holidayMap=y=>{const c=COUNTRY[LANG];return c&&HOL?holidaysFor(c,y):{}};   // для показа: зависит от языка и переключателя
+function holidaysFor(c,y){   // для расчётов: страна задана явно
   const ck=`${c}${y}`;if(hcache[ck])return hcache[ck];
   const D=HDATA[c],out={};
   for(const[md,name]of Object.entries(D.fixed))out[`${y}-${md}`]=name;
@@ -635,7 +714,7 @@ function render(){
   const ym=`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`,used=new Set();
   for(const[k,e]of Object.entries(S.days))if(k.startsWith(ym)){if(e.t)used.add(e.t);for(const id of Object.keys(e.ov||{}))used.add(id)}
   const hasHol=Object.keys(holidayMap(cur.getFullYear())).some(k=>k.startsWith(ym));
-  $('lg').innerHTML=S.types.filter(t=>used.has(t.id)).map(t=>`<span><i${isOff(t)?' class="off"':` style="background:${t.color}"`}></i>${esc(nm(t))}</span>`).join('')
+  $('lg').innerHTML=S.types.filter(t=>used.has(t.id)).map(t=>`<span><i${isOff(t)?` class="off" style="--c:${t.color}"`:` style="background:${t.color}"`}></i>${esc(nm(t))}</span>`).join('')
     +(hasHol?`<span><i style="background:#e5484d"></i>${tr('holiday')}</span>`:'');
   renderBar();renderPills();
   track.style.transition='none';track.style.transform='';
@@ -815,9 +894,10 @@ function renderPills(){
     const{days,q}=balStat(t,y),left=q-days;
     const body=q?`<span>${tr('left')}</span><b>${left}</b><span>/ ${q}</span>`:`<span>${tr('marked')}</span><b>${days}</b>`;
     return`<button class="pill${q&&left<0?' over':''}" title="${esc(nm(t))}"><i style="background:${t.color}"></i>${esc(nm(t))} ${body}</button>`;
-  }).join('');
+  }).join('')+payPill();
 }
 $('pills').onclick=e=>{
+  if(e.target.closest('[data-pay]')){openPay();return}
   if(!e.target.closest('.pill'))return;
   renderMenu();openDlg($('menuDlg'));
   requestAnimationFrame(()=>{const s=$('balSec');if(s)s.scrollIntoView({block:'start'})});   // сразу к остаткам и лимитам
@@ -856,6 +936,7 @@ function renderMenu(){
    <div class="sec"><h3>${tr('holTitle')}</h3>
      <div class="hrow"><div>${tr('holShow')}<div class="muted">${tr(COUNTRY[LANG]?'holInfo':'holNone')}</div></div>
        <label class="sw"><input type="checkbox" id="holToggle" ${HOL&&COUNTRY[LANG]?'checked':''} ${COUNTRY[LANG]?'':'disabled'}><span></span></label></div></div>
+   <div class="sec"><h3>${tr('payTitle')}</h3><button data-pay style="width:100%">💶 ${tr('payMenuBtn')}</button></div>
    <div class="sec"><h3>${tr('remTitle')}</h3>
      <div class="hrow"><div>${tr('remShifts')}<div class="muted">${tr('remShiftsHint')}</div></div>
        <label class="sw"><input type="checkbox" id="remOn" ${getRem().on?'checked':''}><span></span></label></div>
@@ -912,6 +993,7 @@ $('menuBody').onclick=e=>{
   else if('confirm' in d){snap();for(const k in S.days)delete S.days[k].auto;done(tr('autoConfirmed'));renderMenu()}
   else if('clearauto' in d){snap();for(const k in S.days)if(S.days[k].auto){delete S.days[k].t;delete S.days[k].auto;delete S.days[k].s;delete S.days[k].e;cleanup(k)}done(tr('autoCleared'));renderMenu()}
   else if('exp' in d)exportData();
+  else if('pay' in d){closeDlg($('menuDlg'));openPay()}
   else if('ics' in d)exportIcs();
   else if('notif' in d)Notification.requestPermission().then(()=>renderMenu());
   else if('update' in d)forceUpdate();
@@ -1151,10 +1233,281 @@ function generate(){
   done(tr('built'));closeDlg($('menuDlg'));
 }
 
+/* ---------- зарплата (Словакия) ---------- */
+// Два типа оплаты: почасовая и оклад в месяц (hrubá mzda). Надбавки — в €/ч или в % от часовой ставки.
+// Значения по умолчанию взяты из листов бригадника (июнь–август 2026, сходятся до цента): взносы 4 % + 3 % с базы «брутто − 200 €» (вниз),
+// налог 19 % от «брутто − взносы». Вычет 200 € может быть не у всех фирм, поэтому есть «Настроить по расчётному листу».
+const fx=n=>(Math.round(n*100)/100).toFixed(2).replace('.',',');
+const trunc2=n=>Math.floor(n*100+1e-6)/100;
+function payDefaults(mode,v,ptype='hourly'){
+  const E=x=>({v:x,unit:'€'});
+  const c={mode,payType:ptype,rate:ptype==='hourly'?v:0,base:ptype==='monthly'?v:0,dayH:8,fund:{},otPct:0,vacH:8,pgH:4,avgNem:0,avgNah:0,nem1:25,nem2:55,calib:1,official:{},childBonus:0};
+  return mode==='student'
+    ?{...c,prem:{night:E(0),sat:E(2.63),sun:E(0),hol:E(0)},contrib:[['Starobné poistenie',4],['Invalidné poistenie',3]],deduct:200,taxRate:19,taxFree:0}
+    :{...c,otPct:25,prem:{night:E(1.05),sat:E(2.63),sun:E(5.26),hol:E(5.26)},
+      contrib:[['Zdravotné poistenie',4],['Nemocenské poistenie',1.4],['Starobné poistenie',4],['Invalidné poistenie',3],['Poistenie v nezamestnanosti',1]],
+      deduct:0,taxRate:15,taxFree:479.48};
+}
+// приводит настройки старого формата к новому
+function payFix(P){
+  P.payType=P.payType||'hourly';P.base=+P.base||0;P.dayH=+P.dayH||8;P.fund=P.fund||{};P.official=P.official||{};P.bonus=P.bonus||[];P.extra=P.extra||{};
+  for(const k of ['night','sat','sun','hol']){const x=P.prem[k];if(typeof x==='number')P.prem[k]={v:x,unit:'€'}}
+  return P;
+}
+// фонд рабочего времени месяца: будни без праздников × часов в дне (можно задать вручную, как «Fond prac. doby» на листе)
+function fundHours(ym,P){
+  if(+P.fund[ym])return +P.fund[ym];
+  const[y,m]=ym.split('-').map(Number),n=new Date(y,m,0).getDate(),hol=holidaysFor('SK',y);let d=0;
+  for(let i=1;i<=n;i++){const dt=new Date(y,m-1,i),w=dt.getDay();if(w>0&&w<6&&!hol[fmt(dt)])d++}
+  return d*P.dayH;
+}
+// часы смены по группам: обычные, ночные (22:00–06:00), суббота, воскресенье, праздник (с учётом вычета обеда)
+function bands(k,e,t){
+  const x=times(e,t),net=dayHours(e,t),date=parse(k);
+  const fl=[0,1].map(i=>{const d=new Date(date.getFullYear(),date.getMonth(),date.getDate()+i);
+    return{hol:!!holidaysFor('SK',d.getFullYear())[fmt(d)],sat:d.getDay()===6,sun:d.getDay()===0}});
+  const out={base:net,night:0,sat:0,sun:0,hol:0};
+  if(!x){const f=fl[0];if(f.hol)out.hol=net;else if(f.sat)out.sat=net;else if(f.sun)out.sun=net;return out}
+  const s=toMin(x[0]);let en=toMin(x[1]);if(en<=s)en+=1440;
+  const f=en>s?net/((en-s)/60):0;
+  const ov=(a,b)=>Math.max(0,Math.min(b,en)-Math.max(a,s))/60*f;
+  out.night=ov(0,360)+ov(1320,1800)+ov(2760,3240);
+  [0,1].forEach(i=>{const m=ov(i*1440,(i+1)*1440);if(fl[i].hol)out.hol+=m;else if(fl[i].sat)out.sat+=m;else if(fl[i].sun)out.sun+=m});
+  return out;
+}
+// какой по счёту день подряд идёт больничный (для оплаты фирмой первых 10 дней)
+function pnIndex(k){
+  let n=1;const d=parse(k);
+  for(;;){d.setDate(d.getDate()-1);const e=S.days[fmt(d)],t=e&&e.t&&type(e.t);if(t&&t.key==='s')n++;else return n}
+}
+function payCalc(ym,P){
+  payFix(P);
+  const C={shifts:0,hours:0,night:0,sat:0,sun:0,hol:0,ot:0,vacDays:0,pgH:0,pgDays:0,pnDays:0,pnAll:0,pnRaw:0};
+  const monthly=P.payType==='monthly',st=P.mode==='student';
+  C.fund=monthly?fundHours(ym,P):0;
+  C.hr=monthly?(C.fund?P.base/C.fund:0):P.rate;                 // часовая ставка (для оклада — оклад ÷ фонд часов)
+  const avgNah=P.avgNah||C.hr,avgNem=P.avgNem||C.hr;
+  for(const[k,e]of Object.entries(S.days)){
+    if(!k.startsWith(ym))continue;
+    const t=e.t&&type(e.t);
+    if(t&&!t.overlay){
+      if(isWork(t)){const b=bands(k,e,t);C.shifts++;C.hours+=b.base;C.night+=b.night;C.sat+=b.sat;C.sun+=b.sun;C.hol+=b.hol}
+      else if(t.key==='v')C.vacDays++;
+      else if(t.key==='pg'){C.pgDays++;C.pgH+=dayHours(e,t)||P.pgH}
+      else if(t.key==='s'){C.pnAll++;const n=pnIndex(k);if(n<=10){C.pnDays++;C.pnRaw+=avgNem*P.vacH*(n<=3?P.nem1:P.nem2)/100}}
+    }
+    for(const v of Object.values(e.ov||{}))C.ot+=+v||0;
+  }
+  // оклад уменьшается на часы отсутствия (отпуск, Paragraf, PN); их оплата идёт отдельными строками
+  C.absH=monthly?C.vacDays*P.vacH+C.pgH+C.pnAll*P.vacH:0;
+  C.basePay=monthly?r2(P.base*(C.fund?Math.max(0,1-C.absH/C.fund):1)):r2(C.hours*P.rate);
+  // надбавки фирма округляет вниз (по листу за июнь: 15,5 ч × 2,63 = 40,765 → 40,76)
+  const pa=(h,pr)=>trunc2(h*(pr.unit==='%'?C.hr*pr.v/100:pr.v));
+  C.prem={night:pa(C.night,P.prem.night),sat:pa(C.sat,P.prem.sat),sun:pa(C.sun,P.prem.sun),hol:pa(C.hol,P.prem.hol)};
+  C.otPay=r2(C.ot*C.hr*(1+P.otPct/100));
+  C.vacPay=st?0:r2(C.vacDays*P.vacH*avgNah);
+  C.pgPay=st?0:r2(C.pgH*avgNah);
+  C.pnPay=st?0:r2(C.pnRaw);
+  // бонусы: фиксированная сумма, % от оклада (оплаты за часы), € за час, € за смену; плюс разовая премия месяца. Входят в брутто.
+  C.bonuses=P.bonus.map(b=>{
+    const v=+b.v||0;
+    const a=b.u==='%'?C.basePay*v/100:b.u==='€/h'?C.hours*v:b.u==='€/s'?C.shifts*v:v;
+    return{n:b.n||'',u:b.u||'€',v,a:r2(a)};
+  });
+  C.extra=r2(+P.extra[ym]||0);
+  C.bonusTot=r2(C.bonuses.reduce((a,b)=>a+b.a,0)+C.extra);
+  C.gross=r2(C.basePay+C.prem.night+C.prem.sat+C.prem.sun+C.prem.hol+C.otPay+C.vacPay+C.pgPay+C.pnPay+C.bonusTot);
+  const base=Math.max(0,C.gross-P.deduct);
+  C.contribs=P.contrib.map(([n,p])=>[n,p,trunc2(base*p/100)]);
+  C.cTot=r2(C.contribs.reduce((a,c)=>a+c[2],0));
+  C.tax=r2(Math.max(0,Math.round(Math.max(0,C.gross-C.cTot-P.taxFree)*P.taxRate)/100-P.childBonus));
+  C.net0=r2(C.gross-C.cTot-C.tax);
+  C.net=r2(C.net0*P.calib);
+  return C;
+}
+// по числам с расчётного листа находит вычет из базы взносов, общий процент взносов и ставку налога
+function learnFromSlip(g,b,o,t,nc,P){
+  const out={};
+  if(!(g>0))return out;
+  const base=b>0?b:g;
+  out.deduct=Math.max(0,r2(g-base));
+  if(o>0){
+    const rate=o/base*100,cur=P.contrib.reduce((a,c)=>a+c[1],0);
+    out.contribRate=Math.round(rate*100)/100;out.keepContrib=Math.abs(rate-cur)<0.06;
+  }
+  const free=nc>0?nc:P.taxFree;if(nc>0)out.taxFree=nc;
+  if(t>0){
+    const taxable=g-(o>0?o:0)-free;
+    if(taxable>0){const r=t/taxable*100,std=[15,19,25].find(x=>Math.abs(r-x)<0.4);out.taxRate=std??Math.round(r*100)/100}
+  }
+  return out;
+}
+function payPill(){
+  const P=S.pay;
+  if(!P||P.mode==='none'||!(P.rate||P.base))return'';
+  const C=payCalc(monthKey(),P);
+  return`<button class="pill" data-pay><i style="background:var(--accent)"></i>${tr('payTitle')} <span>≈</span><b>${Math.round(C.net)} €</b></button>`;
+}
+
+let payStep=null,payDraft={},payOpen=false,payProposal=null;
+function openPay(step){
+  payStep=step||(S.pay&&S.pay.mode!=='none'&&(S.pay.rate||S.pay.base)?null:'mode');
+  renderPay();if(!$('payDlg').open)openDlg($('payDlg'));
+}
+function renderPay(){
+  const box=$('payBody');
+  const head=t=>`<div class="dhead"><h2>${t}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>`;
+  if(payStep==='mode'){
+    box.innerHTML=head(tr('payWizTitle'))+`
+      <button class="payopt" data-pmode="student"><b>🎓 ${tr('payModeStudent')}</b><small>${tr('payModeStudentHint')}</small></button>
+      <button class="payopt" data-pmode="regular"><b>💼 ${tr('payModeRegular')}</b><small>${tr('payModeRegularHint')}</small></button>
+      <button class="payopt skip" data-pmode="none"><b>${tr('payModeSkip')}</b></button>`;
+    return;
+  }
+  if(payStep==='rate'){
+    const monthly=payDraft.type==='monthly';
+    box.innerHTML=head(tr('payRateTitle'))+`
+      <div class="seg" id="ptype"><button data-ptype="hourly" class="${monthly?'':'on'}">${tr('payTypeHourly')}</button><button data-ptype="monthly" class="${monthly?'on':''}">${tr('payTypeMonthly')}</button></div>
+      <div class="muted" id="payRateHint" style="margin-top:10px">${tr(monthly?'payBaseHint':'payRateHint')}</div>
+      <label class="f"><span id="payRateLbl">${tr(monthly?'payBase':'payRate')}</span><input type="number" id="payRateIn" step="0.01" min="0" inputmode="decimal" placeholder="${monthly?'1200':'6,50'}"></label>
+      <div class="foot"><button data-pback>${tr('payBack')}</button><button class="primary" data-psave>${tr('payContinue')}</button></div>`;
+    setTimeout(()=>{const i=$('payRateIn');if(i)i.focus()},60);
+    return;
+  }
+  const P=payFix(S.pay),ym=monthKey(),C=payCalc(ym,P),st=P.mode==='student',H=tr('h'),monthly=P.payType==='monthly';
+  const pc=n=>String(n).replace('.',',');
+  const row=(l,sub,v,cls='')=>`<div class="pr ${cls}"><span>${l}${sub?` <small>${sub}</small>`:''}</span><b>${v}</b></div>`;
+  let r=monthly
+    ?row(tr('payBaseLine'),`${fx(P.base)} €${C.absH?` − ${nf(C.absH)} ${H} / ${nf(C.fund)} ${H}`:` · ${tr('payFund')} ${nf(C.fund)} ${H}`}`,fx(C.basePay)+' €')
+    :row(tr('payHoursPay'),`${nf(C.hours)} ${H} × ${fx(P.rate)}`,fx(C.basePay)+' €');
+  [['night','payNight'],['sat','paySat'],['sun','paySun'],['hol','payHol']].forEach(([k,l])=>{
+    const pr=P.prem[k];
+    if(C.prem[k])r+=row(tr(l),`${nf(C[k])} ${H} × ${pr.unit==='%'?pc(pr.v)+' % × '+fx(C.hr):fx(pr.v)}`,fx(C.prem[k])+' €');
+  });
+  if(C.otPay)r+=row('Nadčas',`${nf(C.ot)} ${H}`,fx(C.otPay)+' €');
+  if(C.vacPay)r+=row(tr('payVac'),`${C.vacDays} × ${P.vacH} ${H}`,fx(C.vacPay)+' €');
+  if(C.pgPay)r+=row(tr('payPg'),`${nf(C.pgH)} ${H}`,fx(C.pgPay)+' €');
+  if(C.pnPay)r+=row(tr('payPn'),`${C.pnDays} ${tr('daysShort')}`,fx(C.pnPay)+' €');
+  C.bonuses.forEach(b=>{
+    if(!b.a)return;
+    const sub=b.u==='%'?`${pc(b.v)} % × ${fx(C.basePay)}`:b.u==='€/h'?`${nf(C.hours)} ${H} × ${fx(b.v)}`:b.u==='€/s'?`${C.shifts} × ${fx(b.v)}`:'';
+    r+=row(esc(b.n||tr('payBonus')),sub,fx(b.a)+' €');
+  });
+  if(C.extra)r+=row(tr('payExtra'),'',fx(C.extra)+' €');
+  r+=row(tr('payGross'),'',fx(C.gross)+' €','tot');
+  C.contribs.forEach(([n,p,a])=>{r+=row('− '+n,pc(p)+' %',fx(a)+' €','neg')});
+  r+=row('− '+tr('payTax'),pc(P.taxRate)+' %',fx(C.tax)+' €','neg');
+  r+=row(tr('payNet'),P.calib!==1?tr('payCalib',{k:P.calib.toFixed(3)}):'',fx(C.net)+' €','tot');
+  const off=+P.official[ym]||0;
+  const split=st&&!monthly&&off?(()=>{const tot=C.basePay+C.otPay,a=r2(Math.min(off*P.rate,tot));return`<div class="muted" style="margin-top:6px">${tr('payOfficialSplit',{a:fx(a),b:fx(tot-a)})}</div>`})():'';
+  const num=(label,path,val,step='0.01',ph='')=>`<label class="f"><span>${label}</span><input type="number" step="${step}" inputmode="decimal" data-pf="${path}" value="${val}" placeholder="${ph}"></label>`;
+  const prem=(k,l)=>`<label class="f"><span>${tr(l)}</span><div class="row" style="flex-wrap:nowrap;gap:6px"><input type="number" step="0.01" inputmode="decimal" data-pf="prem.${k}.v" value="${P.prem[k].v}" style="min-width:0">
+    <select data-pf="prem.${k}.u" data-str><option value="€"${P.prem[k].unit==='€'?' selected':''}>€/${H}</option><option value="%"${P.prem[k].unit==='%'?' selected':''}>%</option></select></div></label>`;
+  let set=`<label class="f"><span>${tr('payTypeLbl')}</span><select data-pf="payType" data-str><option value="hourly"${monthly?'':' selected'}>${tr('payTypeHourly')}</option><option value="monthly"${monthly?' selected':''}>${tr('payTypeMonthly')}</option></select></label>`;
+  set+=`<div class="pgrid">${monthly?num(tr('payBase'),'base',P.base)+num(tr('payDayH'),'dayH',P.dayH,'0.5')+num(`${tr('payFund')}, ${H} · ${monthLabel(cur)}`,'fund.'+ym,P.fund[ym]||'','1',nf(C.fund)):num(tr('payRate'),'rate',P.rate)}</div>`;
+  set+=`<div class="muted" style="margin-top:12px">${tr('payPremH')} — ${tr('payPremHint')}</div><div class="pgrid">${prem('night','payNight')}${prem('sat','paySat')}${prem('sun','paySun')}${prem('hol','payHol')}</div>`;
+  set+=`<div class="pgrid">${num(tr('payOtPct'),'otPct',P.otPct,'1')}${num(tr('payTaxRate'),'taxRate',P.taxRate,'0.5')}`;
+  if(st&&!monthly)set+=num(tr('payDeduct'),'deduct',P.deduct)+num(`${tr('payOfficial')}, ${H}`,'official.'+ym,P.official[ym]||'','0.5');
+  else if(st)set+=num(tr('payDeduct'),'deduct',P.deduct);
+  else set+=num(tr('payVacH'),'vacH',P.vacH,'0.5')+num(tr('payPgH'),'pgH',P.pgH,'0.5')+num(tr('payTaxFree'),'taxFree',P.taxFree)+num(tr('payChild'),'childBonus',P.childBonus)+num(tr('payDeduct'),'deduct',P.deduct);
+  set+=`</div>`;
+  if(!st)set+=`<div class="muted" style="margin-top:12px">${tr('payAvgHint')}</div><div class="pgrid">${num(tr('payAvgNah'),'avgNah',P.avgNah,'0.0001',fx(C.hr))}${num(tr('payAvgNem'),'avgNem',P.avgNem,'0.0001',fx(C.hr))}${num(tr('payNem1'),'nem1',P.nem1,'1')}${num(tr('payNem2'),'nem2',P.nem2,'1')}</div>`;
+  const BU=[['€','payBU1'],['%','payBU2'],['€/h','payBU3'],['€/s','payBU4']];
+  set+=`<div class="muted" style="margin-top:12px">${tr('payBonuses')} — ${tr('payBonusHint')}</div>`+
+    P.bonus.map((b,i)=>`<div class="bonus"><input type="text" data-pf="bonus.${i}.n" data-str value="${esc(b.n||'')}" placeholder="${esc(tr('payBonusName'))}" maxlength="40">
+      <input type="number" step="0.01" inputmode="decimal" data-pf="bonus.${i}.v" value="${b.v}">
+      <select data-pf="bonus.${i}.u" data-str>${BU.map(([u,l])=>`<option value="${u}"${(b.u||'€')===u?' selected':''}>${tr(l)}</option>`).join('')}</select>
+      <button class="icon danger" data-pbdel="${i}" aria-label="${tr('remove')}">✕</button></div>`).join('')+
+    `<div class="row" style="margin-top:8px"><button data-pbadd>+ ${tr('payBonusAdd')}</button></div>
+     <div class="pgrid">${num(`${tr('payExtra')} · ${monthLabel(cur)}`,'extra.'+ym,P.extra[ym]||'')}</div>`;
+  set+=`<div class="muted" style="margin-top:12px">${tr('payContribRates')}</div><div class="pgrid">${P.contrib.map(([n,p],i)=>num(n+', %',`contrib.${i}.1`,p,'0.1')).join('')}</div>`;
+  const learn=`<div class="sec"><h3>${tr('payLearn')}</h3><div class="muted">${tr('payLearnHint')}</div>
+    <div class="pgrid">${[['payG','payG'],['payB','payB'],['payO','payO'],['payT','payT'],['payN','payN']].map(([id,l])=>`<label class="f"><span>${tr(l)}</span><input type="number" step="0.01" inputmode="decimal" id="${id}"></label>`).join('')}</div>
+    <div class="row" style="margin-top:10px"><button data-plearn>${tr('payLearnBtn')}</button></div>
+    <div class="muted" id="payLearnRes" style="margin-top:8px"></div></div>`;
+  box.innerHTML=head(tr('payTitle'))+`
+    <div class="paymon"><button class="icon" data-pm="-1" aria-label="${tr('prev')}">‹</button><span>${monthLabel(cur)}</span><button class="icon" data-pm="1" aria-label="${tr('next')}">›</button></div>
+    <div class="paybig"><small>${tr('payNet')}</small><b>≈ ${fx(C.net)} €</b></div>
+    <div>${r}</div>${split}
+    ${st?`<div class="muted" style="margin-top:8px">${tr('payStudentNote')}</div>`:''}
+    <div class="sec"><h3>${tr('payCheck')}</h3><div class="muted">${tr('payCheckHint')}</div>
+      <div class="row" style="margin-top:8px"><input type="number" id="payActual" step="0.01" inputmode="decimal" placeholder="${fx(C.net0)}" style="width:130px">
+        <button data-pcheck>${tr('payCheckApply')}</button>${P.calib!==1?`<button class="ghost" data-pcalreset>${tr('payCalibReset')}</button>`:''}</div>
+      <div class="muted" id="payCheckRes" style="margin-top:6px"></div></div>
+    <details class="paydet" ${payOpen?'open':''}><summary>${tr('paySettings')}</summary>${set}${learn}</details>
+    <div class="muted" style="margin-top:12px">${tr('payFootnote')}</div>
+    <div class="foot"><button data-pchange>${tr('payChange')}</button><button class="primary" data-close>${tr('done')}</button></div>`;
+}
+$('payBody').addEventListener('toggle',e=>{if(e.target.tagName==='DETAILS')payOpen=e.target.open},true);
+$('payBody').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.pmode){
+    if(d.pmode==='none'){snap();S.pay={mode:'none'};save();render();closeDlg($('payDlg'));return}
+    payDraft={mode:d.pmode,type:'hourly'};payStep='rate';renderPay();
+  }
+  else if(d.ptype){   // переключатель «почасовая / оклад» в мастере: меняем подписи, поле не сбрасываем
+    payDraft.type=d.ptype;
+    b.parentElement.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b));
+    const m=d.ptype==='monthly';
+    $('payRateLbl').textContent=tr(m?'payBase':'payRate');$('payRateHint').textContent=tr(m?'payBaseHint':'payRateHint');
+    $('payRateIn').placeholder=m?'1200':'6,50';
+  }
+  else if('pback' in d){payStep='mode';renderPay()}
+  else if('psave' in d){
+    const v=parseFloat(String($('payRateIn').value).replace(',','.'));
+    if(!(v>0)){$('payRateIn').focus();return}
+    snap();S.pay=payDefaults(payDraft.mode,v,payDraft.type);payStep=null;done(tr('paySaved'));renderPay();
+  }
+  else if(d.pm){cur.setMonth(cur.getMonth()+ +d.pm);render();renderPay()}
+  else if('pchange' in d){payStep='mode';renderPay()}
+  else if('pcheck' in d){
+    const a=parseFloat(String($('payActual').value).replace(',','.')),C=payCalc(monthKey(),S.pay);
+    if(!(a>0)||!(C.net0>0))return;
+    snap();S.pay.calib=Math.max(.5,Math.min(1.5,a/C.net0));done(tr('paySaved'));renderPay();
+  }
+  else if('pcalreset' in d){snap();S.pay.calib=1;done(tr('paySaved'));renderPay()}
+  else if('pbadd' in d){snap();S.pay.bonus.push({n:'',v:0,u:'€'});payOpen=true;done(tr('paySaved'));renderPay()}
+  else if(d.pbdel!==undefined){snap();S.pay.bonus.splice(+d.pbdel,1);payOpen=true;done(tr('paySaved'));renderPay()}
+  else if('plearn' in d){
+    const g=id=>parseFloat(String($(id).value).replace(',','.'))||0;
+    payProposal=learnFromSlip(g('payG'),g('payB'),g('payO'),g('payT'),g('payN'),S.pay);
+    const p=payProposal,res=$('payLearnRes');
+    if(p.deduct===undefined||(p.contribRate===undefined&&p.taxRate===undefined)){res.textContent=tr('payLearnNeed');payProposal=null;return}
+    res.innerHTML=`${esc(tr('payLearnRes',{d:fx(p.deduct),c:String(p.contribRate??'—').replace('.',','),t:String(p.taxRate??'—').replace('.',',')}))} <button class="primary" data-papply style="margin-top:8px">${tr('payApply')}</button>`;
+  }
+  else if('papply' in d&&payProposal){
+    snap();const p=payProposal,P=S.pay;
+    P.deduct=p.deduct;if(p.taxFree!==undefined)P.taxFree=p.taxFree;
+    if(p.contribRate!==undefined&&!p.keepContrib)P.contrib=[['Odvody',p.contribRate]];
+    if(p.taxRate!==undefined)P.taxRate=p.taxRate;
+    payProposal=null;payOpen=true;done(tr('paySaved'));renderPay();
+  }
+});
+// разница с реальным листом считается на лету, пока вводите число
+$('payBody').addEventListener('input',e=>{
+  if(e.target.id!=='payActual')return;
+  const a=parseFloat(String(e.target.value).replace(',','.')),C=payCalc(monthKey(),S.pay);
+  $('payCheckRes').textContent=a>0?tr('payCheckDiff',{d:fx(C.net-a)}):'';
+});
+// настройки: путь в data-pf, например prem.sat.v или contrib.0.1
+$('payBody').addEventListener('change',e=>{
+  const t=e.target,pf=t.dataset.pf;if(!pf||!S.pay)return;
+  const v=parseFloat(String(t.value).replace(',','.')),val=t.dataset.str!==undefined?t.value:(isNaN(v)?0:v);
+  snap();
+  const parts=pf.split('.');let o=S.pay;
+  for(let i=0;i<parts.length-1;i++)o=o[parts[i]]??(o[parts[i]]={});
+  const last=parts[parts.length-1];
+  if((parts[0]==='official'||parts[0]==='fund'||parts[0]==='extra')&&!val)delete o[last];else o[last]=val;
+  done(tr('paySaved'));renderPay();
+});
+// закрыли первое окно, ничего не выбрав — больше не спрашиваем (кнопка остаётся в меню)
+$('payDlg').addEventListener('close',()=>{if(!S.pay){S.pay={mode:'none'};save()}payStep=null});
+
 paintTheme(document.documentElement.dataset.mode);
 applyStatic();
 render();
 checkReminders();setInterval(checkReminders,60000);
+if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},700);   // первое окно: режим работы
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   const had=!!navigator.serviceWorker.controller;let reloaded=false;
