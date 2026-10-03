@@ -365,6 +365,52 @@ details[open]>:not(summary){animation:fadeUp .28s ease both}
 @keyframes spLogo{to{opacity:1;transform:none}}
 .wrap.pre{opacity:0;transform:translateY(14px) scale(.985)}
 .wrap{transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+/* новые разделы: статистика, поиск, друзья, прогноз */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;background:var(--bg2)}
+.chip i{width:9px;height:9px;border-radius:50%;flex:none}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.frow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:8px 12px;border-radius:20px;margin-top:6px}
+.frow .dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;padding:0 4px;flex:none}
+.frow .nm{flex:1;min-width:0;font-size:14px}
+.frow small{display:block;color:var(--muted);font-weight:400;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbars{display:flex;align-items:flex-end;gap:8px;height:170px;margin:12px 0 10px}
+.mb{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px}
+.mb i{display:block;width:100%;max-width:44px;border-radius:14px 14px 6px 6px;background:var(--accent-soft);animation:mbUp .6s cubic-bezier(.2,.8,.2,1) backwards;transform-origin:bottom}
+.mb.on i{background:var(--accent)}
+.mb b{font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mb span{font-size:11px;color:var(--muted);text-transform:capitalize}
+@keyframes mbUp{from{transform:scaleY(.05);opacity:.4}}
+.cmp{display:grid;grid-template-columns:1fr auto auto;gap:8px 18px;font-size:14px;font-variant-numeric:tabular-nums}
+.cmp>:nth-child(3n+2),.cmp>:nth-child(3n){text-align:right}
+.cmp b{color:var(--muted);font-size:12px;text-transform:capitalize}
+.stat span{color:var(--muted);font-size:13px}
+.fcast{display:flex;gap:8px;margin:0 0 8px}
+.fcast span{flex:1;background:var(--bg2);border-radius:20px;padding:8px 12px;font-size:12px;color:var(--muted)}
+.fcast b{display:block;font-size:16px;color:var(--text);font-variant-numeric:tabular-nums}
+.pill.warn b{color:#d97706}
+.emo{position:absolute;right:-6px;top:-8px;font-size:13px;line-height:1;font-style:normal;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.28))}
+.emo.l{right:auto;left:-6px}
+.emos{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;margin-top:10px;scrollbar-width:none}
+.emos::-webkit-scrollbar{display:none}
+.emos.wrap2{flex-wrap:wrap;overflow:visible}
+.emos button{flex:none;width:40px;height:40px;padding:0;border-radius:50%;font-size:20px;line-height:1;display:grid;place-items:center;background:var(--bg2)}
+.emos button.on{background:var(--accent-soft);border-color:var(--accent)}
+.emopick{margin-top:10px}
+.emopick .lcode{font-size:22px;background:var(--bg2)}
+.emx{position:relative;display:inline-block}
+.emos .emx .x{position:absolute;right:-4px;top:-4px;width:18px;height:18px;min-width:0;min-height:0;padding:0;border-radius:50%;font-size:10px;line-height:1;display:grid;place-items:center;background:var(--card)}
+#emoSheet .emos{margin-top:8px}
+.pill.live{background:var(--accent-soft);box-shadow:none}
+.pill.live b{color:var(--accent)}
+.frrow{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.frrow .fd{flex:1;text-transform:capitalize}
+.frrow .fp{display:flex;align-items:center;gap:6px}
+.frrow .fe{width:22px;text-align:center}
+.cd{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:999px;color:#fff;font-weight:700;font-size:12px;padding:0 6px}
+#frLink textarea{width:100%;margin-top:10px;font-size:12px;resize:none;min-height:0;word-break:break-all}
+.fr{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1.5px var(--card)}
+.fr.off{background:var(--card);box-shadow:inset 0 0 0 2px var(--c),0 0 0 1px var(--card);box-sizing:border-box}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -397,12 +443,92 @@ details[open]>:not(summary){animation:fadeUp .28s ease both}
 <dialog id="langDlg"><div class="dlg" id="langBody"></div></dialog>
 <dialog id="countryDlg"><div class="dlg" id="countryBody"></div></dialog>
 <dialog id="catSheet" class="sheet"><div class="dlg" id="catBody"></div></dialog>
+<dialog id="emoSheet" class="sheet"><div class="dlg" id="emoBody"></div></dialog>
 <div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo"></button></div>
 
 <script>
 /* ---------- переводы ---------- */
 const I18N={
-ru:{hintTitle:'Где найти на листе',
+ru:{emoChange:'Изменить или убрать',
+ emoNone:'Выбрать значок для этого дня',
+ emoAdd:'Добавить',
+ emoMy:'Мои эмодзи',
+ emoRemove:'Убрать эмодзи',
+ emoBad:'Вставьте именно эмодзи',
+ emoCustom:'Своё эмодзи',
+ emoPh:'Вставьте эмодзи, например 🎁',
+ emoTitle:'Эмодзи дня',
+ lmRem:'Осталось',
+ lmOvr:'Сверх лимита',
+ lmSet:'Задать лимит часов',
+ cdEnds:'До конца смены',
+ cdStarts:'До начала смены',
+ nbMin:'мин',
+ nbTomorrow:'Завтра',
+ nbNow:'Сейчас',
+ nbEnds:'до конца {t}',
+ nbStarts:'через {t}',
+ nbNext:'Следующая',
+ stTitle:'Статистика',
+ stMonths:'По месяцам',
+ stYear:'За год',
+ stHours:'Часы',
+ stMoney:'Зарплата',
+ stVs:'К прошлому месяцу',
+ stShifts:'Смен',
+ stOt:'Nadčas',
+ stVac:'Отпуск',
+ stPg:'Paragraf',
+ stSick:'Больничный',
+ stNet:'На руки',
+ stPlanNote:'В расчёт входят и запланированные смены.',
+ stNetYear:'На руки за год',
+ stGross:'Брутто',
+ stCon:'Взносы',
+ stTax:'Налог',
+ stByMonth:'По месяцам',
+ stNoPay:'Это ориентир, а не замена годовому расчёту (Ročné zúčtovanie).',
+ lmPill:'Лимит',
+ lmLeft:'Официальные часы: {u} из {o} ч, осталось {l} ч',
+ lmOver:'Сверх лимита {x} ч (лимит {o} ч): по вашему листу это оплачивается бонусом.',
+ pfEarned:'Уже заработано',
+ pfRest:'Ещё до конца месяца',
+ pfHint:'Прогноз по всем отмеченным и запланированным сменам до конца месяца.',
+ fdTitle:'Поиск',
+ fdPh:'Заметка или категория…',
+ fdCount:'Найдено: {n} дн. · {h} ч',
+ fdEmpty:'Ничего не найдено.',
+ fdHint:'Введите слово из заметки или выберите категории, и я покажу все подходящие дни. Нажмите на день, чтобы открыть его.',
+ frTitle:'График друзей',
+ frHint:'Отправьте другу ссылку на свой график или добавьте график друга: увидите, когда у вас совпадают выходные и смены. Сервер не нужен, данные лежат прямо в ссылке.',
+ frMine:'Мой график',
+ frMyName:'Моё имя в ссылке',
+ frMyNamePh:'Например, Женя',
+ frShare:'Поделиться моим графиком',
+ frShareTxt:'Мой график смен',
+ frCopied:'Ссылка скопирована',
+ frEmpty:'На ближайшие 3 месяца нет отмеченных смен',
+ frList:'Друзья',
+ frNone:'Пока никого. Вставьте ссылку друга ниже.',
+ frPastePh:'Вставьте ссылку друга',
+ frAdd:'Добавить',
+ frAdded:'Добавлен: {n}',
+ frAddQ:'Добавить график «{n}»?',
+ frBad:'Не удалось прочитать ссылку',
+ frShowCal:'Показывать на календаре (точка в углу дня)',
+ frCompare:'Сравнить',
+ frDel:'Удалить',
+ frDelQ:'Удалить график «{n}»?',
+ frVs:'Вы и {n}: ближайшие дни',
+ frSumFree:'Выходные вместе',
+ frSumWork:'Смены вместе',
+ frTogFree:'Свободны',
+ frTogWork:'Вместе на работе',
+ frTogAll:'Все',
+ frNoMatch:'Совпадений в ближайшие дни нет.',
+ frNoName:'Друг',
+ frSafari:'На iPhone ссылка из мессенджера открывается в Safari, а не в установленном приложении. Скопируйте её и вставьте сюда.',
+ hintTitle:'Где найти на листе',
  hTypeLbl:'Если в блоке «Základné zložky mzdy» есть «Základný plat» (оклад) или в договоре указана «mesačná mzda» — выбирайте «Оклад в месяц». Если платят за часы («hodinová mzda» или строки «dohoda – čiastka») — «Почасовая».',
  hRate:'Часовая ставка («hodinová mzda») указана в договоре или на листе. Можно и разделить сумму «dohoda – čiastka krátená» (или «Základná mzda») на «Počet odprac. hodín». Пример: 546,00 ÷ 84 ч = 6,50 €.',
  hBase:'Месячная hrubá mzda: «Základný plat» или «Tarifná mzda» в блоке «Základné zložky mzdy», либо сумма из договора.',
@@ -489,7 +615,86 @@ ru:{hintTitle:'Где найти на листе',
  ignoreLbl:'Не учитывать в анализе графика',ignoreHint:'Для отпуска, больничного и любых нерегулярных дней.',
  delete:'Удалить',cancel:'Отмена',save:'Сохранить',
  types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-uk:{hintTitle:'Де знайти на листку',
+uk:{emoChange:'Змінити або прибрати',
+ emoNone:'Обрати значок для цього дня',
+ emoAdd:'Додати',
+ emoMy:'Мої емодзі',
+ emoRemove:'Прибрати емодзі',
+ emoBad:'Вставте саме емодзі',
+ emoCustom:'Своє емодзі',
+ emoPh:'Вставте емодзі, наприклад 🎁',
+ emoTitle:'Емодзі дня',
+ lmRem:'Залишилось',
+ lmOvr:'Понад ліміт',
+ lmSet:'Задати ліміт годин',
+ cdEnds:'До кінця зміни',
+ cdStarts:'До початку зміни',
+ nbMin:'хв',
+ nbTomorrow:'Завтра',
+ nbNow:'Зараз',
+ nbEnds:'до кінця {t}',
+ nbStarts:'через {t}',
+ nbNext:'Наступна',
+ stTitle:'Статистика',
+ stMonths:'По місяцях',
+ stYear:'За рік',
+ stHours:'Години',
+ stMoney:'Зарплата',
+ stVs:'До минулого місяця',
+ stShifts:'Змін',
+ stOt:'Nadčas',
+ stVac:'Відпустка',
+ stPg:'Paragraf',
+ stSick:'Лікарняний',
+ stNet:'На руки',
+ stPlanNote:'У розрахунок входять і заплановані зміни.',
+ stNetYear:'На руки за рік',
+ stGross:'Брутто',
+ stCon:'Внески',
+ stTax:'Податок',
+ stByMonth:'По місяцях',
+ stNoPay:'Це орієнтир, а не заміна річному розрахунку (Ročné zúčtovanie).',
+ lmPill:'Ліміт',
+ lmLeft:'Офіційні години: {u} із {o} год, залишилось {l} год',
+ lmOver:'Понад ліміт {x} год (ліміт {o} год): за вашим листком це оплачується бонусом.',
+ pfEarned:'Вже зароблено',
+ pfRest:'Ще до кінця місяця',
+ pfHint:'Прогноз за всіма позначеними й запланованими змінами до кінця місяця.',
+ fdTitle:'Пошук',
+ fdPh:'Нотатка або категорія…',
+ fdCount:'Знайдено: {n} дн. · {h} год',
+ fdEmpty:'Нічого не знайдено.',
+ fdHint:'Введіть слово з нотатки або оберіть категорії, і я покажу всі підхожі дні. Натисніть на день, щоб відкрити його.',
+ frTitle:'Графік друзів',
+ frHint:'Надішліть другу посилання на свій графік або додайте графік друга: побачите, коли у вас збігаються вихідні та зміни. Сервер не потрібен, дані лежать просто в посиланні.',
+ frMine:'Мій графік',
+ frMyName:'Моє імʼя в посиланні',
+ frMyNamePh:'Наприклад, Женя',
+ frShare:'Поділитися моїм графіком',
+ frShareTxt:'Мій графік змін',
+ frCopied:'Посилання скопійовано',
+ frEmpty:'На найближчі 3 місяці немає позначених змін',
+ frList:'Друзі',
+ frNone:'Поки нікого. Вставте посилання друга нижче.',
+ frPastePh:'Вставте посилання друга',
+ frAdd:'Додати',
+ frAdded:'Додано: {n}',
+ frAddQ:'Додати графік «{n}»?',
+ frBad:'Не вдалося прочитати посилання',
+ frShowCal:'Показувати в календарі (крапка в куті дня)',
+ frCompare:'Порівняти',
+ frDel:'Видалити',
+ frDelQ:'Видалити графік «{n}»?',
+ frVs:'Ви та {n}: найближчі дні',
+ frSumFree:'Вихідні разом',
+ frSumWork:'Зміни разом',
+ frTogFree:'Вільні',
+ frTogWork:'Разом на роботі',
+ frTogAll:'Усі',
+ frNoMatch:'Збігів у найближчі дні немає.',
+ frNoName:'Друг',
+ frSafari:'На iPhone посилання з месенджера відкривається в Safari, а не в встановленому застосунку. Скопіюйте його й вставте сюди.',
+ hintTitle:'Де знайти на листку',
  hTypeLbl:'Якщо в блоці «Základné zložky mzdy» є «Základný plat» (оклад) або в договорі вказано «mesačná mzda» — обирайте «Оклад на місяць». Якщо платять за години («hodinová mzda» або рядки «dohoda – čiastka») — «Погодинна».',
  hRate:'Погодинна ставка («hodinová mzda») вказана в договорі або на листку. Можна й поділити суму «dohoda – čiastka krátená» (або «Základná mzda») на «Počet odprac. hodín». Приклад: 546,00 ÷ 84 год = 6,50 €.',
  hBase:'Місячна hrubá mzda: «Základný plat» або «Tarifná mzda» в блоці «Základné zložky mzdy», або сума з договору.',
@@ -576,7 +781,86 @@ uk:{hintTitle:'Де знайти на листку',
  ignoreLbl:'Не враховувати в аналізі графіка',ignoreHint:'Для відпустки, лікарняного та будь-яких нерегулярних днів.',
  delete:'Видалити',cancel:'Скасувати',save:'Зберегти',
  types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-sk:{hintTitle:'Kde to nájdete na páske',
+sk:{emoChange:'Zmeniť alebo odstrániť',
+ emoNone:'Vybrať ikonu pre tento deň',
+ emoAdd:'Pridať',
+ emoMy:'Moje emoji',
+ emoRemove:'Odstrániť emoji',
+ emoBad:'Vložte práve emoji',
+ emoCustom:'Vlastné emoji',
+ emoPh:'Vložte emoji, napríklad 🎁',
+ emoTitle:'Emoji dňa',
+ lmRem:'Zostáva',
+ lmOvr:'Nad limit',
+ lmSet:'Nastaviť limit hodín',
+ cdEnds:'Do konca zmeny',
+ cdStarts:'Do začiatku zmeny',
+ nbMin:'min',
+ nbTomorrow:'Zajtra',
+ nbNow:'Práve teraz',
+ nbEnds:'do konca {t}',
+ nbStarts:'o {t}',
+ nbNext:'Ďalšia',
+ stTitle:'Štatistika',
+ stMonths:'Po mesiacoch',
+ stYear:'Za rok',
+ stHours:'Hodiny',
+ stMoney:'Mzda',
+ stVs:'Oproti minulému mesiacu',
+ stShifts:'Smien',
+ stOt:'Nadčas',
+ stVac:'Dovolenka',
+ stPg:'Paragraf',
+ stSick:'PN',
+ stNet:'Čistá mzda',
+ stPlanNote:'Do výpočtu sa počítajú aj plánované zmeny.',
+ stNetYear:'Čistá mzda za rok',
+ stGross:'Hrubá mzda',
+ stCon:'Odvody',
+ stTax:'Daň',
+ stByMonth:'Po mesiacoch',
+ stNoPay:'Je to orientačná hodnota, nenahrádza ročné zúčtovanie.',
+ lmPill:'Limit',
+ lmLeft:'Oficiálne hodiny: {u} z {o} h, zostáva {l} h',
+ lmOver:'Nad limit {x} h (limit {o} h): podľa vášho výplatného lístka sa to vypláca ako odmena.',
+ pfEarned:'Už zarobené',
+ pfRest:'Ešte do konca mesiaca',
+ pfHint:'Odhad podľa všetkých označených a plánovaných zmien do konca mesiaca.',
+ fdTitle:'Hľadať',
+ fdPh:'Poznámka alebo kategória…',
+ fdCount:'Nájdené: {n} dní · {h} h',
+ fdEmpty:'Nič sa nenašlo.',
+ fdHint:'Zadajte slovo z poznámky alebo vyberte kategórie a zobrazím všetky vhodné dni. Ťuknutím na deň ho otvoríte.',
+ frTitle:'Rozvrh priateľov',
+ frHint:'Pošlite priateľovi odkaz na svoj rozvrh alebo pridajte rozvrh priateľa: uvidíte, kedy máte spoločné voľno a smeny. Server nie je potrebný, údaje sú priamo v odkaze.',
+ frMine:'Môj rozvrh',
+ frMyName:'Moje meno v odkaze',
+ frMyNamePh:'Napríklad Janka',
+ frShare:'Zdieľať môj rozvrh',
+ frShareTxt:'Môj rozvrh smien',
+ frCopied:'Odkaz skopírovaný',
+ frEmpty:'Na najbližšie 3 mesiace nie sú označené žiadne smeny',
+ frList:'Priatelia',
+ frNone:'Zatiaľ nikto. Nižšie vložte odkaz priateľa.',
+ frPastePh:'Vložte odkaz priateľa',
+ frAdd:'Pridať',
+ frAdded:'Pridané: {n}',
+ frAddQ:'Pridať rozvrh „{n}“?',
+ frBad:'Odkaz sa nepodarilo prečítať',
+ frShowCal:'Zobrazovať v kalendári (bodka v rohu dňa)',
+ frCompare:'Porovnať',
+ frDel:'Odstrániť',
+ frDelQ:'Odstrániť rozvrh „{n}“?',
+ frVs:'Vy a {n}: najbližšie dni',
+ frSumFree:'Voľno spolu',
+ frSumWork:'Smeny spolu',
+ frTogFree:'Voľní',
+ frTogWork:'Spolu v práci',
+ frTogAll:'Všetko',
+ frNoMatch:'V najbližších dňoch nie sú zhody.',
+ frNoName:'Priateľ',
+ frSafari:'Na iPhone sa odkaz z messengera otvorí v Safari, nie v nainštalovanej aplikácii. Skopírujte ho a vložte sem.',
+ hintTitle:'Kde to nájdete na páske',
  hTypeLbl:'Ak je v bloku „Základné zložky mzdy“ riadok „Základný plat“ alebo je v zmluve „mesačná mzda“, vyberte Mesačná mzda. Ak platia za hodiny („hodinová mzda“ alebo riadky „dohoda – čiastka“), vyberte Hodinová.',
  hRate:'Hodinová sadzba („hodinová mzda“) je v zmluve alebo na páske. Môžete aj vydeliť sumu „dohoda – čiastka krátená“ (alebo „Základná mzda“) počtom „Počet odprac. hodín“. Príklad: 546,00 ÷ 84 h = 6,50 €.',
  hBase:'Mesačná hrubá mzda: „Základný plat“ alebo „Tarifná mzda“ v bloku „Základné zložky mzdy“, prípadne suma zo zmluvy.',
@@ -663,7 +947,86 @@ sk:{hintTitle:'Kde to nájdete na páske',
  ignoreLbl:'Nezahŕňať do analýzy rozpisu',ignoreHint:'Pre dovolenku, PN a akékoľvek nepravidelné dni.',
  delete:'Odstrániť',cancel:'Zrušiť',save:'Uložiť',
  types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-en:{hintTitle:'Where to find it on the payslip',
+en:{emoChange:'Change or remove',
+ emoNone:'Pick an icon for this day',
+ emoAdd:'Add',
+ emoMy:'My emojis',
+ emoRemove:'Remove emoji',
+ emoBad:'Please paste an emoji',
+ emoCustom:'Your own emoji',
+ emoPh:'Paste an emoji, e.g. 🎁',
+ emoTitle:'Emoji for the day',
+ lmRem:'Left',
+ lmOvr:'Over limit',
+ lmSet:'Set hours limit',
+ cdEnds:'Until shift ends',
+ cdStarts:'Until shift starts',
+ nbMin:'min',
+ nbTomorrow:'Tomorrow',
+ nbNow:'Now',
+ nbEnds:'{t} left',
+ nbStarts:'in {t}',
+ nbNext:'Next',
+ stTitle:'Statistics',
+ stMonths:'By month',
+ stYear:'Year',
+ stHours:'Hours',
+ stMoney:'Pay',
+ stVs:'Oproti minulému měsíci',
+ stShifts:'Shifts',
+ stOt:'Overtime',
+ stVac:'Vacation',
+ stPg:'Paragraf',
+ stSick:'Sick leave',
+ stNet:'Take-home',
+ stPlanNote:'Planned shifts are included in the totals.',
+ stNetYear:'Take-home for the year',
+ stGross:'Gross',
+ stCon:'Contributions',
+ stTax:'Tax',
+ stByMonth:'By month',
+ stNoPay:'This is an estimate and does not replace the annual tax settlement.',
+ lmPill:'Limit',
+ lmLeft:'Official hours: {u} of {o} h, {l} h left',
+ lmOver:'Over the limit by {x} h (limit {o} h): on your payslip this is paid as a bonus.',
+ pfEarned:'Earned so far',
+ pfRest:'Still to come this month',
+ pfHint:'Forecast from all marked and planned shifts until the end of the month.',
+ fdTitle:'Search',
+ fdPh:'Note or category…',
+ fdCount:'Found: {n} days · {h} h',
+ fdEmpty:'Nothing found.',
+ fdHint:'Type a word from a note or pick categories and I will show all matching days. Tap a day to open it.',
+ frTitle:'Friends’ schedules',
+ frHint:'Send a friend a link to your schedule or add a friend’s schedule: you will see when your days off and shifts overlap. No server needed, the data is inside the link.',
+ frMine:'My schedule',
+ frMyName:'My name in the link',
+ frMyNamePh:'For example, Alex',
+ frShare:'Share my schedule',
+ frShareTxt:'My shift schedule',
+ frCopied:'Link copied',
+ frEmpty:'No shifts marked for the next 3 months',
+ frList:'Friends',
+ frNone:'Nobody yet. Paste a friend’s link below.',
+ frPastePh:'Paste a friend’s link',
+ frAdd:'Add',
+ frAdded:'Added: {n}',
+ frAddQ:'Add the schedule of “{n}”?',
+ frBad:'Could not read the link',
+ frShowCal:'Show on the calendar (a dot in the day’s corner)',
+ frCompare:'Compare',
+ frDel:'Delete',
+ frDelQ:'Delete the schedule of “{n}”?',
+ frVs:'You and {n}: the coming days',
+ frSumFree:'Days off together',
+ frSumWork:'Shifts together',
+ frTogFree:'Free',
+ frTogWork:'Working together',
+ frTogAll:'All',
+ frNoMatch:'No matches in the coming days.',
+ frNoName:'Friend',
+ frSafari:'On iPhone a link from a messenger opens in Safari, not in the installed app. Copy it and paste it here.',
+ hintTitle:'Where to find it on the payslip',
  hTypeLbl:'If the “Základné zložky mzdy” box shows “Základný plat” (a base salary) or your contract states a “mesačná mzda”, choose Monthly salary. If you are paid per hour (“hodinová mzda” or “dohoda – čiastka” lines), choose Hourly.',
  hRate:'The hourly rate (“hodinová mzda”) is in your contract or on the payslip. You can also divide the “dohoda – čiastka krátená” (or “Základná mzda”) amount by “Počet odprac. hodín”. Example: 546.00 ÷ 84 h = €6.50.',
  hBase:'Monthly gross pay: “Základný plat” or “Tarifná mzda” in the “Základné zložky mzdy” box, or the amount in your contract.',
@@ -752,7 +1115,86 @@ en:{hintTitle:'Where to find it on the payslip',
  ignoreLbl:'Ignore in schedule analysis',ignoreHint:'For vacation, sick leave and any irregular days.',
  delete:'Delete',cancel:'Cancel',save:'Save',
  types:{d:['Day','D'],n:['Night','N'],o:['Day off','Off'],v:['Vacation','Vac'],s:['Sick leave','Sick'],ot:['Overtime','OT'],pg:['Doctor (Paragraf)','Dr']}},
-cs:{hintTitle:'Kde to najdete na pásce',
+cs:{emoChange:'Změnit nebo odebrat',
+ emoNone:'Vybrat ikonu pro tento den',
+ emoAdd:'Přidat',
+ emoMy:'Moje emoji',
+ emoRemove:'Odebrat emoji',
+ emoBad:'Vložte právě emoji',
+ emoCustom:'Vlastní emoji',
+ emoPh:'Vložte emoji, například 🎁',
+ emoTitle:'Emoji dne',
+ lmRem:'Zbývá',
+ lmOvr:'Nad limit',
+ lmSet:'Nastavit limit hodin',
+ cdEnds:'Do konce směny',
+ cdStarts:'Do začátku směny',
+ nbMin:'min',
+ nbTomorrow:'Zítra',
+ nbNow:'Právě teď',
+ nbEnds:'do konce {t}',
+ nbStarts:'za {t}',
+ nbNext:'Další',
+ stTitle:'Statistika',
+ stMonths:'Po měsících',
+ stYear:'Za rok',
+ stHours:'Hodiny',
+ stMoney:'Mzda',
+ stVs:'Az előző hónaphoz képest',
+ stShifts:'Směn',
+ stOt:'Přesčas',
+ stVac:'Dovolená',
+ stPg:'Paragraf',
+ stSick:'Nemoc',
+ stNet:'Čistá mzda',
+ stPlanNote:'Do výpočtu se počítají i plánované směny.',
+ stNetYear:'Čistá mzda za rok',
+ stGross:'Hrubá mzda',
+ stCon:'Odvody',
+ stTax:'Daň',
+ stByMonth:'Po měsících',
+ stNoPay:'Je to orientační hodnota, nenahrazuje roční zúčtování.',
+ lmPill:'Limit',
+ lmLeft:'Oficiální hodiny: {u} z {o} h, zbývá {l} h',
+ lmOver:'Nad limit {x} h (limit {o} h): podle vašeho výplatního lístku se to vyplácí jako odměna.',
+ pfEarned:'Už vyděláno',
+ pfRest:'Ještě do konce měsíce',
+ pfHint:'Odhad podle všech označených a plánovaných směn do konce měsíce.',
+ fdTitle:'Hledání',
+ fdPh:'Poznámka nebo kategorie…',
+ fdCount:'Nalezeno: {n} dní · {h} h',
+ fdEmpty:'Nic nenalezeno.',
+ fdHint:'Zadejte slovo z poznámky nebo vyberte kategorie a ukážu všechny vhodné dny. Klepnutím na den ho otevřete.',
+ frTitle:'Rozvrh přátel',
+ frHint:'Pošlete příteli odkaz na svůj rozvrh nebo přidejte rozvrh přítele: uvidíte, kdy máte společné volno a směny. Server není potřeba, data jsou přímo v odkazu.',
+ frMine:'Můj rozvrh',
+ frMyName:'Mé jméno v odkazu',
+ frMyNamePh:'Například Honza',
+ frShare:'Sdílet můj rozvrh',
+ frShareTxt:'Můj rozvrh směn',
+ frCopied:'Odkaz zkopírován',
+ frEmpty:'Na nejbližší 3 měsíce nejsou označené žádné směny',
+ frList:'Přátelé',
+ frNone:'Zatím nikdo. Níže vložte odkaz přítele.',
+ frPastePh:'Vložte odkaz přítele',
+ frAdd:'Přidat',
+ frAdded:'Přidáno: {n}',
+ frAddQ:'Přidat rozvrh „{n}“?',
+ frBad:'Odkaz se nepodařilo přečíst',
+ frShowCal:'Zobrazovat v kalendáři (tečka v rohu dne)',
+ frCompare:'Porovnat',
+ frDel:'Smazat',
+ frDelQ:'Smazat rozvrh „{n}“?',
+ frVs:'Vy a {n}: nejbližší dny',
+ frSumFree:'Volno společně',
+ frSumWork:'Směny společně',
+ frTogFree:'Volní',
+ frTogWork:'Spolu v práci',
+ frTogAll:'Vše',
+ frNoMatch:'V nejbližších dnech nejsou shody.',
+ frNoName:'Přítel',
+ frSafari:'Na iPhonu se odkaz z messengeru otevře v Safari, ne v nainstalované aplikaci. Zkopírujte ho a vložte sem.',
+ hintTitle:'Kde to najdete na pásce',
  hTypeLbl:'Pokud je v bloku „Základné zložky mzdy“ řádek „Základný plat“ nebo je ve smlouvě „mesačná mzda“, zvolte Měsíční mzda. Pokud platí za hodiny („hodinová mzda“ nebo řádky „dohoda – čiastka“), zvolte Hodinová.',
  hRate:'Hodinová sazba („hodinová mzda“) je ve smlouvě nebo na pásce. Můžete také vydělit částku „dohoda – čiastka krátená“ (nebo „Základná mzda“) počtem „Počet odprac. hodín“. Příklad: 546,00 ÷ 84 h = 6,50 €.',
  hBase:'Měsíční hrubá mzda: „Základný plat“ nebo „Tarifná mzda“ v bloku „Základné zložky mzdy“, případně částka ze smlouvy.',
@@ -841,7 +1283,86 @@ cs:{hintTitle:'Kde to najdete na pásce',
  ignoreLbl:'Nezahrnovat do analýzy rozpisu',ignoreHint:'Pro dovolenou, nemocenskou a jakékoli nepravidelné dny.',
  delete:'Smazat',cancel:'Zrušit',save:'Uložit',
  types:{d:['Den','D'],n:['Noc','N'],o:['Volno','V'],v:['Dovolená','Dov'],s:['Nemocenská','PN'],ot:['Přesčas','Př'],pg:['Lékař (paragraf)','Dr']}},
-pl:{hintTitle:'Gdzie to znaleźć na pasku',
+pl:{emoChange:'Zmień lub usuń',
+ emoNone:'Wybierz ikonę dla tego dnia',
+ emoAdd:'Dodaj',
+ emoMy:'Moje emoji',
+ emoRemove:'Usuń emoji',
+ emoBad:'Wklej właśnie emoji',
+ emoCustom:'Własne emoji',
+ emoPh:'Wklej emoji, na przykład 🎁',
+ emoTitle:'Emoji dnia',
+ lmRem:'Zostało',
+ lmOvr:'Ponad limit',
+ lmSet:'Ustaw limit godzin',
+ cdEnds:'Do końca zmiany',
+ cdStarts:'Do początku zmiany',
+ nbMin:'min',
+ nbTomorrow:'Jutro',
+ nbNow:'Teraz',
+ nbEnds:'do końca {t}',
+ nbStarts:'za {t}',
+ nbNext:'Następna',
+ stTitle:'Statystyki',
+ stMonths:'Miesiące',
+ stYear:'Rok',
+ stHours:'Godziny',
+ stMoney:'Wypłata',
+ stVs:'W porównaniu z poprzednim miesiącem',
+ stShifts:'Zmian',
+ stOt:'Nadgodziny',
+ stVac:'Urlop',
+ stPg:'Paragraf',
+ stSick:'Choroba',
+ stNet:'Netto',
+ stPlanNote:'W obliczeniach uwzględniono też zaplanowane zmiany.',
+ stNetYear:'Netto za rok',
+ stGross:'Brutto',
+ stCon:'Składki',
+ stTax:'Podatek',
+ stByMonth:'Miesiące',
+ stNoPay:'To wartość orientacyjna, nie zastępuje rozliczenia rocznego.',
+ lmPill:'Limit',
+ lmLeft:'Oficjalne godziny: {u} z {o} h, zostało {l} h',
+ lmOver:'Ponad limit {x} h (limit {o} h): według Twojego paska jest to płacone jako premia.',
+ pfEarned:'Już zarobione',
+ pfRest:'Jeszcze do końca miesiąca',
+ pfHint:'Prognoza na podstawie wszystkich oznaczonych i zaplanowanych zmian do końca miesiąca.',
+ fdTitle:'Szukaj',
+ fdPh:'Notatka lub kategoria…',
+ fdCount:'Znaleziono: {n} dni · {h} h',
+ fdEmpty:'Nic nie znaleziono.',
+ fdHint:'Wpisz słowo z notatki albo wybierz kategorie, a pokażę wszystkie pasujące dni. Dotknij dnia, aby go otworzyć.',
+ frTitle:'Grafik znajomych',
+ frHint:'Wyślij znajomemu link do swojego grafiku albo dodaj grafik znajomego: zobaczysz, kiedy macie wspólne wolne i zmiany. Serwer nie jest potrzebny, dane są w samym linku.',
+ frMine:'Mój grafik',
+ frMyName:'Moje imię w linku',
+ frMyNamePh:'Na przykład Kasia',
+ frShare:'Udostępnij mój grafik',
+ frShareTxt:'Mój grafik zmian',
+ frCopied:'Link skopiowany',
+ frEmpty:'Na najbliższe 3 miesiące nie ma oznaczonych zmian',
+ frList:'Znajomi',
+ frNone:'Na razie nikogo. Wklej poniżej link znajomego.',
+ frPastePh:'Wklej link znajomego',
+ frAdd:'Dodaj',
+ frAdded:'Dodano: {n}',
+ frAddQ:'Dodać grafik „{n}”?',
+ frBad:'Nie udało się odczytać linku',
+ frShowCal:'Pokazuj w kalendarzu (kropka w rogu dnia)',
+ frCompare:'Porównaj',
+ frDel:'Usuń',
+ frDelQ:'Usunąć grafik „{n}”?',
+ frVs:'Ty i {n}: najbliższe dni',
+ frSumFree:'Wolne razem',
+ frSumWork:'Zmiany razem',
+ frTogFree:'Wolni',
+ frTogWork:'Razem w pracy',
+ frTogAll:'Wszystko',
+ frNoMatch:'W najbliższych dniach nie ma zgodności.',
+ frNoName:'Znajomy',
+ frSafari:'Na iPhonie link z komunikatora otwiera się w Safari, a nie w zainstalowanej aplikacji. Skopiuj go i wklej tutaj.',
+ hintTitle:'Gdzie to znaleźć na pasku',
  hTypeLbl:'Jeśli w bloku „Základné zložky mzdy” jest „Základný plat” albo w umowie podano „mesačná mzda”, wybierz Miesięczne. Jeśli płacą za godziny („hodinová mzda” lub wiersze „dohoda – čiastka”), wybierz Godzinowe.',
  hRate:'Stawka godzinowa („hodinová mzda”) jest w umowie lub na pasku. Możesz też podzielić kwotę „dohoda – čiastka krátená” (lub „Základná mzda”) przez „Počet odprac. hodín”. Przykład: 546,00 ÷ 84 godz. = 6,50 €.',
  hBase:'Miesięczna hrubá mzda: „Základný plat” lub „Tarifná mzda” w bloku „Základné zložky mzdy” albo kwota z umowy.',
@@ -930,7 +1451,86 @@ pl:{hintTitle:'Gdzie to znaleźć na pasku',
  ignoreLbl:'Nie uwzględniaj w analizie grafiku',ignoreHint:'Dla urlopu, zwolnienia i wszelkich nieregularnych dni.',
  delete:'Usuń',cancel:'Anuluj',save:'Zapisz',
  types:{d:['Dzień','D'],n:['Noc','N'],o:['Wolne','W'],v:['Urlop','Url'],s:['Zwolnienie','L4'],ot:['Nadgodziny','Ng'],pg:['Lekarz (Paragraf)','Dr']}},
-de:{hintTitle:'Wo Sie es auf der Abrechnung finden',
+de:{emoChange:'Ändern oder entfernen',
+ emoNone:'Symbol für diesen Tag wählen',
+ emoAdd:'Hinzufügen',
+ emoMy:'Meine Emojis',
+ emoRemove:'Emoji entfernen',
+ emoBad:'Bitte ein Emoji einfügen',
+ emoCustom:'Eigenes Emoji',
+ emoPh:'Emoji einfügen, z. B. 🎁',
+ emoTitle:'Emoji des Tages',
+ lmRem:'Übrig',
+ lmOvr:'Über Limit',
+ lmSet:'Stundenlimit festlegen',
+ cdEnds:'Bis Schichtende',
+ cdStarts:'Bis Schichtbeginn',
+ nbMin:'Min.',
+ nbTomorrow:'Morgen',
+ nbNow:'Jetzt',
+ nbEnds:'noch {t}',
+ nbStarts:'in {t}',
+ nbNext:'Nächste',
+ stTitle:'Statistik',
+ stMonths:'Monate',
+ stYear:'Jahr',
+ stHours:'Stunden',
+ stMoney:'Lohn',
+ stVs:'Zum Vormonat',
+ stShifts:'Schichten',
+ stOt:'Überstunden',
+ stVac:'Urlaub',
+ stPg:'Paragraf',
+ stSick:'Krank',
+ stNet:'Netto',
+ stPlanNote:'In die Berechnung gehen auch geplante Schichten ein.',
+ stNetYear:'Netto im Jahr',
+ stGross:'Brutto',
+ stCon:'Beiträge',
+ stTax:'Steuer',
+ stByMonth:'Nach Monaten',
+ stNoPay:'Das ist ein Richtwert und ersetzt keine Jahresabrechnung.',
+ lmPill:'Limit',
+ lmLeft:'Offizielle Stunden: {u} von {o} Std., übrig {l} Std.',
+ lmOver:'Über dem Limit {x} Std. (Limit {o} Std.): laut Ihrer Abrechnung wird das als Prämie gezahlt.',
+ pfEarned:'Bereits verdient',
+ pfRest:'Noch bis Monatsende',
+ pfHint:'Prognose aus allen markierten und geplanten Schichten bis zum Monatsende.',
+ fdTitle:'Suche',
+ fdPh:'Notiz oder Kategorie…',
+ fdCount:'Gefunden: {n} Tage · {h} Std.',
+ fdEmpty:'Nichts gefunden.',
+ fdHint:'Geben Sie ein Wort aus einer Notiz ein oder wählen Sie Kategorien, dann zeige ich alle passenden Tage. Tippen Sie auf einen Tag, um ihn zu öffnen.',
+ frTitle:'Dienstplan der Freunde',
+ frHint:'Schicken Sie Freunden einen Link zu Ihrem Dienstplan oder fügen Sie den Plan eines Freundes hinzu: So sehen Sie, wann Sie gemeinsam frei haben oder arbeiten. Kein Server nötig, die Daten stecken im Link.',
+ frMine:'Mein Dienstplan',
+ frMyName:'Mein Name im Link',
+ frMyNamePh:'Zum Beispiel Jonas',
+ frShare:'Meinen Dienstplan teilen',
+ frShareTxt:'Mein Schichtplan',
+ frCopied:'Link kopiert',
+ frEmpty:'Für die nächsten 3 Monate sind keine Schichten markiert',
+ frList:'Freunde',
+ frNone:'Noch niemand. Fügen Sie unten den Link eines Freundes ein.',
+ frPastePh:'Link des Freundes einfügen',
+ frAdd:'Hinzufügen',
+ frAdded:'Hinzugefügt: {n}',
+ frAddQ:'Plan „{n}“ hinzufügen?',
+ frBad:'Link konnte nicht gelesen werden',
+ frShowCal:'Im Kalender anzeigen (Punkt in der Tagesecke)',
+ frCompare:'Vergleichen',
+ frDel:'Löschen',
+ frDelQ:'Plan „{n}“ löschen?',
+ frVs:'Sie und {n}: die nächsten Tage',
+ frSumFree:'Gemeinsam frei',
+ frSumWork:'Gemeinsam Schicht',
+ frTogFree:'Frei',
+ frTogWork:'Zusammen arbeiten',
+ frTogAll:'Alle',
+ frNoMatch:'In den nächsten Tagen gibt es keine Übereinstimmung.',
+ frNoName:'Freund',
+ frSafari:'Auf dem iPhone öffnet sich ein Link aus dem Messenger in Safari, nicht in der installierten App. Kopieren Sie ihn und fügen Sie ihn hier ein.',
+ hintTitle:'Wo Sie es auf der Abrechnung finden',
  hTypeLbl:'Steht im Block „Základné zložky mzdy“ ein „Základný plat“ (Grundgehalt) oder im Vertrag eine „mesačná mzda“, wählen Sie Monatsgehalt. Wird nach Stunden bezahlt („hodinová mzda“ oder Zeilen „dohoda – čiastka“), wählen Sie Stundenlohn.',
  hRate:'Der Stundensatz („hodinová mzda“) steht im Vertrag oder auf der Abrechnung. Sie können auch den Betrag „dohoda – čiastka krátená“ (oder „Základná mzda“) durch „Počet odprac. hodín“ teilen. Beispiel: 546,00 ÷ 84 Std. = 6,50 €.',
  hBase:'Monatliche hrubá mzda: „Základný plat“ oder „Tarifná mzda“ im Block „Základné zložky mzdy“ oder der Betrag aus dem Vertrag.',
@@ -1019,7 +1619,86 @@ de:{hintTitle:'Wo Sie es auf der Abrechnung finden',
  ignoreLbl:'In der Dienstplananalyse ignorieren',ignoreHint:'Für Urlaub, Krankheit und alle unregelmäßigen Tage.',
  delete:'Löschen',cancel:'Abbrechen',save:'Speichern',
  types:{d:['Tag','T'],n:['Nacht','N'],o:['Frei','Fr'],v:['Urlaub','Url'],s:['Krankenstand','Kr'],ot:['Überstunden','ÜS'],pg:['Arzttermin (Paragraf)','Dr']}},
-hu:{hintTitle:'Hol találja a bérpapíron',
+hu:{emoChange:'Módosítás vagy törlés',
+ emoNone:'Ikon választása ehhez a naphoz',
+ emoAdd:'Hozzáadás',
+ emoMy:'Saját emojik',
+ emoRemove:'Emoji törlése',
+ emoBad:'Emojit illessz be',
+ emoCustom:'Saját emoji',
+ emoPh:'Illessz be egy emojit, pl. 🎁',
+ emoTitle:'A nap emojija',
+ lmRem:'Hátra van',
+ lmOvr:'Limit felett',
+ lmSet:'Óralimit megadása',
+ cdEnds:'A műszak végéig',
+ cdStarts:'A műszak kezdetéig',
+ nbMin:'perc',
+ nbTomorrow:'Holnap',
+ nbNow:'Most',
+ nbEnds:'még {t} a végéig',
+ nbStarts:'{t} múlva',
+ nbNext:'Következő',
+ stTitle:'Statisztika',
+ stMonths:'Havonta',
+ stYear:'Éves',
+ stHours:'Órák',
+ stMoney:'Fizetés',
+ stVs:'vs previous month',
+ stShifts:'Műszak',
+ stOt:'Túlóra',
+ stVac:'Szabadság',
+ stPg:'Paragraf',
+ stSick:'Betegszabadság',
+ stNet:'Nettó',
+ stPlanNote:'A számításba a tervezett műszakok is beleszámítanak.',
+ stNetYear:'Nettó egy évre',
+ stGross:'Bruttó',
+ stCon:'Járulékok',
+ stTax:'Adó',
+ stByMonth:'Havonta',
+ stNoPay:'Tájékoztató érték, nem helyettesíti az éves elszámolást.',
+ lmPill:'Limit',
+ lmLeft:'Hivatalos órák: {u} / {o} óra, hátra van {l} óra',
+ lmOver:'A limiten felül {x} óra (limit {o} óra): a bérpapírod szerint ezt jutalomként fizetik.',
+ pfEarned:'Eddig megkeresve',
+ pfRest:'Hónap végéig még',
+ pfHint:'Előrejelzés az összes megjelölt és tervezett műszak alapján a hónap végéig.',
+ fdTitle:'Keresés',
+ fdPh:'Jegyzet vagy kategória…',
+ fdCount:'Találat: {n} nap · {h} óra',
+ fdEmpty:'Nincs találat.',
+ fdHint:'Írj be egy szót a jegyzetből, vagy válassz kategóriákat, és megmutatom az összes megfelelő napot. Koppints egy napra a megnyitáshoz.',
+ frTitle:'Barátok beosztása',
+ frHint:'Küldj a barátodnak egy linket a beosztásodról, vagy add hozzá a barátod beosztását: látni fogod, mikor van közös szabadnapotok és műszakotok. Szerver nem kell, az adatok a linkben vannak.',
+ frMine:'Az én beosztásom',
+ frMyName:'Nevem a linkben',
+ frMyNamePh:'Például Peti',
+ frShare:'Beosztásom megosztása',
+ frShareTxt:'Az én műszakbeosztásom',
+ frCopied:'Link másolva',
+ frEmpty:'A következő 3 hónapra nincs megjelölt műszak',
+ frList:'Barátok',
+ frNone:'Még senki. Illeszd be lent a barátod linkjét.',
+ frPastePh:'Illeszd be a barátod linkjét',
+ frAdd:'Hozzáadás',
+ frAdded:'Hozzáadva: {n}',
+ frAddQ:'Hozzáadod „{n}” beosztását?',
+ frBad:'A link nem olvasható',
+ frShowCal:'Megjelenítés a naptárban (pont a nap sarkában)',
+ frCompare:'Összehasonlítás',
+ frDel:'Törlés',
+ frDelQ:'Törlöd „{n}” beosztását?',
+ frVs:'Te és {n}: a következő napok',
+ frSumFree:'Közös szabadnap',
+ frSumWork:'Közös műszak',
+ frTogFree:'Szabad',
+ frTogWork:'Együtt dolgoztok',
+ frTogAll:'Mind',
+ frNoMatch:'A következő napokban nincs egyezés.',
+ frNoName:'Barát',
+ frSafari:'iPhone-on az üzenetküldőből érkező link a Safariban nyílik meg, nem a telepített appban. Másold ki és illeszd be ide.',
+ hintTitle:'Hol találja a bérpapíron',
  hTypeLbl:'Ha a „Základné zložky mzdy” blokkban van „Základný plat” (alapfizetés), vagy a szerződésben „mesačná mzda” szerepel, válassza a Havi fizetés lehetőséget. Ha órabért kap („hodinová mzda” vagy „dohoda – čiastka” sorok), válassza az Órabéres lehetőséget.',
  hRate:'Az órabér („hodinová mzda”) a szerződésben vagy a bérpapíron szerepel. Kiszámolhatja úgy is, hogy a „dohoda – čiastka krátená” (vagy „Základná mzda”) összeget elosztja a „Počet odprac. hodín” értékével. Példa: 546,00 ÷ 84 óra = 6,50 €.',
  hBase:'Havi hrubá mzda: „Základný plat” vagy „Tarifná mzda” a „Základné zložky mzdy” blokkban, vagy a szerződésben szereplő összeg.',
@@ -1121,7 +1800,7 @@ const L=()=>I18N[LANG];
 const tr=(k,v)=>{let s=L()[k]??I18N.en[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
 
 /* ---------- данные ---------- */
-const APP_VERSION='3.6.1';
+const APP_VERSION='3.8.1';
 const KEY='shiftcal.v1',TK='shiftcal.theme';
 const DEF={types:[
  {id:'d',key:'d',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
@@ -1167,7 +1846,7 @@ const type=id=>S.types.find(t=>t.id===id);
 const nm=t=>t.name??L().types[t.key]?.[0]??'';
 const sh=t=>t.short??L().types[t.key]?.[1]??'';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const cleanup=k=>{const x=S.days[k];if(x&&!x.t&&!x.note&&!(x.ov&&Object.keys(x.ov).length))delete S.days[k]};
+const cleanup=k=>{const x=S.days[k];if(x&&!x.t&&!x.note&&!x.emo&&!(x.ov&&Object.keys(x.ov).length))delete S.days[k]};
 const PIC={d:'☀️',n:'🌙'};   // смена, во время которой был nadčas
 const monthLabel=d=>d.toLocaleDateString(LOC[LANG],{month:'long',year:'numeric'}).replace(/\s*р\.$/,'');
 let cur=new Date();cur.setDate(1);
@@ -1392,7 +2071,7 @@ function inkOn(hex){
 function gridHtml(m){
   const y=m.getFullYear(),mo=m.getMonth(),lead=(new Date(y,mo,1).getDay()+6)%7;
   const cells=Math.ceil((lead+new Date(y,mo+1,0).getDate())/7)*7;
-  const today=fmt(new Date());let h='';
+  const today=fmt(new Date());let h='';const FM=frShow?friendDays(frShow):null;
   for(let i=0;i<cells;i++){
     const d=new Date(y,mo,1-lead+i);
     if(i%7===0)h+=`<span class="wn">${isoWeek(d)}</span>`;
@@ -1403,7 +2082,7 @@ function gridHtml(m){
     const ov=Object.entries(e.ov||{}).filter(([id])=>type(id));
     const ob=ov.length?`<u class="ob" style="background:${type(ov[0][0]).color}">+${nf(ov.reduce((a,[,v])=>a+(+v||0),0))}</u>`:'';
     const hn=holidayOf(k);
-    h+=`<div class="dc${other?' other':''}${k===today?' today':''}" data-k="${k}"${hn?` title="${esc(hn)}"`:''}><span class="${cls}"${st}>${d.getDate()}${ob}${e.note?'<i class="nt"></i>':''}${hn?'<i class="hl"></i>':''}</span></div>`;
+    h+=`<div class="dc${other?' other':''}${k===today?' today':''}" data-k="${k}"${hn?` title="${esc(hn)}"`:''}><span class="${cls}"${st}>${d.getDate()}${ob}${e.emo?`<em class="emo${ob?' l':''}">${esc(e.emo)}</em>`:''}${e.note?'<i class="nt"></i>':''}${hn?'<i class="hl"></i>':''}${FM&&FM[k]?`<i class="fr${FM[k].w?'':' off'}" style="--c:${FM[k].c}"></i>`:''}</span></div>`;
   }
   return h;
 }
@@ -1416,17 +2095,6 @@ function monthTotals(m){
     for(const v of Object.values(e.ov||{}))h+=+v||0;
   }
   return{h,s,o};
-}
-// нижняя плашка: что сегодня
-function renderBar(){
-  const k=fmt(new Date()),e=S.days[k]||{},t=e.t&&type(e.t);
-  let l1=tr('noShiftToday'),l2='',dot='';
-  if(t&&!t.overlay){
-    const tm=times(e,t),hh=dayHours(e,t),ot=Object.values(e.ov||{}).reduce((a,v)=>a+(+v||0),0);
-    l1=`${tr('today')} · ${esc(nm(t))}`;dot=t.color;
-    l2=[tm?`${tm[0]}–${tm[1]}`:'',hh?`${nf(hh)} ${tr('h')}`:'',ot?`+${nf(ot)} ${tr('h')}`:''].filter(Boolean).join(' · ');
-  }
-  $('bar').innerHTML=`<span class="bd"${dot?` style="background:${dot}"`:''}></span><div>${l1}<small>${l2}</small></div><button>${t?tr('edit'):tr('add')}</button>`;
 }
 // Три панели рядом: предыдущий, текущий и следующий месяц. Во время свайпа соседний месяц уже на экране,
 // анимируется только transform (GPU), перерисовка происходит один раз — когда анимация закончилась.
@@ -1443,13 +2111,13 @@ function render(){
   for(const[k,e]of Object.entries(S.days))if(k.startsWith(ym)){if(e.t)used.add(e.t);for(const id of Object.keys(e.ov||{}))used.add(id)}
   const hasHol=Object.keys(holidayMap(cur.getFullYear())).some(k=>k.startsWith(ym));
   $('lg').innerHTML=S.types.filter(t=>used.has(t.id)).map(t=>`<span><i${isOff(t)?` class="off" style="--c:${t.color}"`:` style="background:${t.color}"`}></i>${esc(nm(t))}</span>`).join('')
-    +(hasHol?`<span><i style="background:#e5484d"></i>${tr('holiday')}</span>`:'');
+    +(hasHol?`<span><i style="background:#e5484d"></i>${tr('holiday')}</span>`:'')+(()=>{const f=frShow&&friends.find(x=>x.id===frShow);return f?`<span><i class="off" style="--c:var(--accent)"></i>${esc(f.n)}</span>`:''})();
   renderBar();renderPills();
   track.style.transition='none';track.style.transform='';
   track.innerHTML=[-1,0,1].map(o=>`<div class="pn">${gridHtml(monthAt(o))}</div>`).join('');
 }
 track.onclick=e=>{const c=e.target.closest('.dc');if(c)openCat(c.dataset.k)};
-$('bar').onclick=e=>{if(e.target.closest('button'))openCat(fmt(new Date()))};
+$('bar').onclick=e=>{if(e.target.closest('button'))openCat(barKey)};
 
 let busy=false;
 const EASE='cubic-bezier(.22,.85,.3,1)';
@@ -1527,20 +2195,64 @@ function timeInfo(a,b,t){
 /* ---------- шторка выбора категории ---------- */
 // Нажатие на день открывает шторку: выбрал категорию — готово. «Подробнее» открывает время, nadčas и заметку.
 function openCat(k){dayKey=k;noteSnap=false;renderCatNow();openDlg($('catSheet'))}
+// эмодзи дня: маленький значок в углу дня (как у nadčas)
+const EMOJIS=['🎂','🎉','🏖️','✈️','🏥','🦷','🚗','🎓','⭐','❤️','🛒','🏋️','🎮','📌','💰','🏠'];
+const firstEmoji=v=>{v=String(v||'').trim();if(!v)return'';try{return[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(v)][0].segment}catch{return Array.from(v)[0]||''}};
+// компактная кнопка вместо ряда эмодзи: сами эмодзи спрятаны в отдельной шторке
+const emoBtn=e=>`<button class="lrow emopick" data-emopen><span class="lcode">${e.emo?esc(e.emo):'🙂'}</span><span class="lname"><b>${tr('emoTitle')}</b><small>${e.emo?tr('emoChange'):tr('emoNone')}</small></span><span class="muted">›</span></button>`;
+const EK='shiftcal.emos';
+let myEmos=[];try{myEmos=JSON.parse(localStorage.getItem(EK)||'[]').filter(x=>typeof x==='string'&&x).slice(0,40)}catch{}
+const saveEmos=()=>{try{localStorage.setItem(EK,JSON.stringify(myEmos))}catch{}};
+const isEmoji=v=>/\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(v);
+function setEmoji(v){
+  snap();const x=S.days[dayKey]||{};
+  if(v&&x.emo!==v)x.emo=v;else delete x.emo;
+  S.days[dayKey]=x;cleanup(dayKey);save();render();
+}
+function renderEmoNow(){
+  const e=S.days[dayKey]||{};
+  const grid=list=>list.map(m=>`<button data-emo="${esc(m)}" class="${e.emo===m?'on':''}" aria-label="${esc(m)}">${esc(m)}</button>`).join('');
+  $('emoBody').innerHTML=`<div class="grab"></div>
+    <div class="dhead"><h2>${tr('emoTitle')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+    <div class="emos wrap2">${grid(EMOJIS)}</div>
+    ${myEmos.length?`<div class="sec"><h3>${tr('emoMy')}</h3><div class="emos wrap2">${myEmos.map(m=>`<span class="emx"><button data-emo="${esc(m)}" class="${e.emo===m?'on':''}" aria-label="${esc(m)}">${esc(m)}</button><button class="x" data-emodel="${esc(m)}" aria-label="${tr('remove')}">✕</button></span>`).join('')}</div></div>`:''}
+    <div class="sec"><h3>${tr('emoCustom')}</h3>
+      <div class="row" style="flex-wrap:nowrap"><input type="text" id="emoIn" maxlength="12" placeholder="${esc(tr('emoPh'))}" style="flex:1;min-width:0" autocomplete="off"><button class="primary" data-emoadd>${tr('emoAdd')}</button></div></div>
+    ${e.emo?`<div class="foot"><button class="danger" data-emoclear>${tr('emoRemove')}</button></div>`:''}`;
+}
+function openEmo(){renderEmoNow();openDlg($('emoSheet'))}
+function afterEmo(){closeDlg($('emoSheet'));renderCatNow();if($('dayDlg').open)renderDay()}
+function addCustomEmoji(){
+  const v=firstEmoji($('emoIn').value);
+  if(!v||!isEmoji(v)){toast(tr('emoBad'),false);return}
+  if(!EMOJIS.includes(v)&&!myEmos.includes(v)){myEmos.unshift(v);myEmos=myEmos.slice(0,40);saveEmos()}
+  const x=S.days[dayKey]||{};if(x.emo!==v)setEmoji(v);
+  afterEmo();
+}
+$('emoBody').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.emodel){myEmos=myEmos.filter(m=>m!==d.emodel);saveEmos();renderEmoNow()}
+  else if(d.emo){setEmoji(d.emo);afterEmo()}
+  else if('emoclear' in d){const x=S.days[dayKey]||{};if(x.emo)setEmoji(x.emo);afterEmo()}
+  else if('emoadd' in d)addCustomEmoji();
+});
+$('emoBody').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='emoIn'){e.preventDefault();addCustomEmoji()}});
 function renderCatNow(){
   const e=S.days[dayKey]||{},main=S.types.filter(t=>!t.overlay);
   const title=parse(dayKey).toLocaleDateString(LOC[LANG],{weekday:'long',day:'numeric',month:'long'});
-  const extra=!!e.note||!!(e.ov&&Object.keys(e.ov).length);
+  const extra=!!e.note||!!(e.ov&&Object.keys(e.ov).length);   // эмодзи видно в самой строке
   $('catBody').innerHTML=`<div class="grab"></div>
     <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
     ${holidayOf(dayKey)?`<div class="hnote">${tr('holiday')}: ${esc(holidayOf(dayKey))}</div>`:''}
     <div class="cats">${main.map(t=>`<button class="cat${e.t===t.id&&!e.auto?' on':''}" data-set="${t.id}" style="--c:${t.color}">
       <b>${esc(sh(t))}</b><span>${esc(nm(t))}<small>${t.start&&t.end?t.start+'–'+t.end+' · ':''}${typeNet(t)?typeNet(t)+' '+tr('h'):tr('noHours')}</small></span></button>`).join('')}</div>
+    ${emoBtn(e)}
     <div class="foot sheetfoot"><button data-more>⋯ ${tr('moreBtn')}${extra?' ●':''}</button>${e.t?`<button class="danger" data-clear>${tr('clearShift')}</button>`:''}</div>`;
 }
 $('catBody').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;const x=S.days[dayKey]||{};
-  if(b.dataset.set){
+  if('emopen' in b.dataset)openEmo();
+  else if(b.dataset.set){
     snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;
     done(tr('shiftChanged'));closeDlg($('catSheet'));if($('dayDlg').open)renderDay();
   }else if('clear' in b.dataset){
@@ -1577,13 +2289,15 @@ function renderDayNow(){
        <label class="muted" style="display:flex;align-items:center;gap:6px;white-space:nowrap"><input type="checkbox" id="rem_${t.id}" ${e.ovr&&e.ovr[t.id]?'checked':''}> 🔔 ${tr('remOt')}</label>
        <button class="primary" data-ov="${t.id}">${has?tr('update'):tr('add')}</button>
        ${has?`<button class="icon danger" data-ovdel="${t.id}" aria-label="${tr('remove')}">✕</button>`:''}</div>`}).join('')}</div>`:''}
+   <div class="sec">${emoBtn(e)}</div>
    <div class="sec"><h3>${tr('noteTitle')}</h3><textarea id="dayNote" rows="3" placeholder="${esc(tr('notePh'))}">${esc(e.note||'')}</textarea></div>
    <div class="foot">${e.t?`<button class="danger" data-clear>${tr('clearShift')}</button>`:''}<button class="primary" data-close>${tr('done')}</button></div>`;
 }
 $('dayBody').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;
   const x=S.days[dayKey]||{};
-  if('opencat' in b.dataset){renderCatNow();openDlg($('catSheet'))}
+  if('emopen' in b.dataset)openEmo();
+  else if('opencat' in b.dataset){renderCatNow();openDlg($('catSheet'))}
   else if('clear' in b.dataset){snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);done(tr('shiftCleared'));renderDay()}
   else if('tmreset' in b.dataset){snap();delete x.s;delete x.e;done(tr('timeReset'));renderDay()}
   else if(b.dataset.per){b.parentElement.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b))}
@@ -1655,8 +2369,16 @@ function renderPills(){
     const body=q?`<span>${tr('left')}</span><b>${left}</b><span>/ ${q}</span>`:`<span>${tr('marked')}</span><b>${days}</b>`;
     return`<button class="pill${q&&left<0?' over':''}" title="${esc(nm(t))}"><i style="background:${t.color}"></i>${esc(nm(t))} ${body}</button>`;
   }).join('')+payPill();
+  // счётчик до начала / до конца смены — первой плашкой
+  const nx=nextShift();
+  if(nx){
+    const live=nx.a<=new Date();
+    $('pills').insertAdjacentHTML('afterbegin',`<button class="pill live" data-live><i style="background:${nx.t.color}"></i>${live?tr('cdEnds'):tr('cdStarts')} <b>${durTxt(live?nx.b-new Date():nx.a-new Date())}</b></button>`);
+  }
 }
 $('pills').onclick=e=>{
+  if(e.target.closest('[data-live]')){openCat(barKey);return}
+  if(e.target.closest('[data-limset]'))payOpenSet.add('tax');
   if(e.target.closest('[data-pay]')){openPay();return}
   if(!e.target.closest('.pill'))return;
   menuPage='bal';renderMenuNow();openDlg($('menuDlg'));   // сразу экран с остатками и лимитами
@@ -1676,11 +2398,259 @@ function balancesHtml(){
 }
 const renderMenu=()=>$('menuDlg').open?smooth(renderMenuNow,$('menuBody')):renderMenuNow();
 // Меню — это список разделов; каждый раздел открывается отдельным экраном со стрелкой «назад».
+/* ---------- «что дальше»: ближайшая смена и обратный отсчёт ---------- */
+function shiftSpan(k,e,t){
+  const x=times(e,t);if(!x)return null;
+  const d=parse(k),[sh,sm]=x[0].split(':').map(Number),[eh,em]=x[1].split(':').map(Number);
+  const a=new Date(d.getFullYear(),d.getMonth(),d.getDate(),sh,sm),b=new Date(d.getFullYear(),d.getMonth(),d.getDate(),eh,em);
+  if(b<=a)b.setDate(b.getDate()+1);
+  return[a,b];
+}
+// ближайшая рабочая смена со временем, которая ещё не закончилась (ищем со вчера: ночная смена переходит через полночь)
+function nextShift(now=new Date()){
+  const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-1);
+  for(let i=0;i<60;i++,d.setDate(d.getDate()+1)){
+    const k=fmt(d),e=S.days[k],t=e&&e.t&&type(e.t);
+    if(!isWork(t))continue;
+    const sp=shiftSpan(k,e,t);
+    if(sp&&sp[1]>now)return{k,e,t,a:sp[0],b:sp[1]};
+  }
+  return null;
+}
+function durTxt(ms){
+  const m=Math.max(1,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;
+  if(d)return`${d} ${tr('daysShort')}${h?` ${h} ${tr('h')}`:''}`;
+  return h?`${h} ${tr('h')}${mm?` ${mm} ${tr('nbMin')}`:''}`:`${mm} ${tr('nbMin')}`;
+}
+let barKey=fmt(new Date());
+// нижняя плашка: идёт ли смена, сколько до начала/конца, какая следующая
+function renderBar(){
+  const now=new Date(),k=fmt(now),e=S.days[k]||{},t=e.t&&type(e.t),nx=nextShift(now);
+  const rng=(a,b)=>`${pad(a.getHours())}:${pad(a.getMinutes())}–${pad(b.getHours())}:${pad(b.getMinutes())}`;
+  const when=a=>fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1))===fmt(a)?tr('nbTomorrow'):a.toLocaleDateString(LOC[LANG],{weekday:'short',day:'numeric',month:'short'});
+  let l1=tr('noShiftToday'),l2='',dot='',btn=tr('add');barKey=k;
+  if(nx&&(nx.a<=now||fmt(nx.a)===k)){
+    const live=nx.a<=now;
+    dot=nx.t.color;btn=tr('edit');barKey=nx.k;
+    l1=`${live?tr('nbNow'):tr('today')} · ${esc(nm(nx.t))}`;
+    l2=`${rng(nx.a,nx.b)} · ${live?tr('nbEnds',{t:durTxt(nx.b-now)}):tr('nbStarts',{t:durTxt(nx.a-now)})}`;
+  }else if(t&&!t.overlay){
+    const tm=times(e,t),hh=dayHours(e,t),ot=Object.values(e.ov||{}).reduce((a,v)=>a+(+v||0),0);
+    l1=`${tr('today')} · ${esc(nm(t))}`;dot=t.color;btn=tr('edit');
+    l2=[tm?`${tm[0]}–${tm[1]}`:'',hh?`${nf(hh)} ${tr('h')}`:'',ot?`+${nf(ot)} ${tr('h')}`:''].filter(Boolean).join(' · ');
+    if(!l2&&nx)l2=`${tr('nbNext')}: ${when(nx.a)}, ${rng(nx.a,nx.b)} · ${tr('nbStarts',{t:durTxt(nx.a-now)})}`;
+  }else if(nx){
+    dot=nx.t.color;
+    l1=`${tr('nbNext')} · ${esc(nm(nx.t))}`;
+    l2=`${when(nx.a)}, ${rng(nx.a,nx.b)} · ${tr('nbStarts',{t:durTxt(nx.a-now)})}`;
+  }
+  $('bar').innerHTML=`<span class="bd"${dot?` style="background:${dot}"`:''}></span><div>${l1}<small>${l2}</small></div><button>${btn}</button>`;
+}
+setInterval(()=>{renderBar();if(!document.querySelector('dialog[open]'))renderPills()},30000);
+
+/* ---------- статистика: сравнение месяцев и год ---------- */
+const payOn=()=>!!(S.pay&&S.pay.mode!=='none'&&(S.pay.rate||S.pay.base));
+let statTab='months',statY=null,statMode='h';
+const monthName=d=>d.toLocaleDateString(LOC[LANG],{month:'short'}).replace('.','');
+function monthStat(ym){
+  let h=0,s=0,ot=0,v=0,pg=0,sk=0;
+  for(const[k,e]of Object.entries(S.days)){
+    if(!k.startsWith(ym))continue;
+    const t=e.t&&type(e.t);
+    if(t&&!t.overlay){const x=dayHours(e,t);h+=x;if(x>0)s++;if(t.key==='v')v++;else if(t.key==='pg')pg++;else if(t.key==='s')sk++}
+    for(const x of Object.values(e.ov||{})){h+=+x||0;ot+=+x||0}
+  }
+  return{h:r2(h),s,ot:r2(ot),v,pg,sk,C:payOn()?payCalc(ym,S.pay):null};
+}
+function statsHtml(){
+  const pay=payOn();if(!pay)statMode='h';
+  const tabs=`<div class="seg" style="margin-bottom:12px"><button data-stab="months" class="${statTab==='months'?'on':''}">${tr('stMonths')}</button><button data-stab="year" class="${statTab==='year'?'on':''}">${tr('stYear')}</button></div>`;
+  return tabs+(statTab==='year'?yearHtml(pay):monthsHtml(pay));
+}
+function monthsHtml(pay){
+  const ms=[];
+  for(let i=5;i>=0;i--){const d=new Date(cur.getFullYear(),cur.getMonth()-i,1);ms.push({d,s:monthStat(`${d.getFullYear()}-${pad(d.getMonth()+1)}`)})}
+  const money=statMode==='m';
+  const val=m=>money?(m.s.C?m.s.C.net:0):m.s.h;
+  const fv=v=>money?Math.round(v)+' €':nf(v);
+  const mx=Math.max(1,...ms.map(val));
+  const bars=ms.map((m,i)=>`<div class="mb${i===5?' on':''}"><b>${fv(val(m))}</b><i style="height:max(3px,calc((100% - 38px)*${(val(m)/mx).toFixed(3)}))"></i><span>${esc(monthName(m.d))}</span></div>`).join('');
+  const a=ms[5],p=ms[4],dv=r2(val(a)-val(p)),pct=val(p)?Math.round(dv/val(p)*100):null,sg=dv>0?'+':dv<0?'−':'';
+  const delta=`<div class="muted" style="text-align:center">${tr('stVs')}: <b style="color:${dv<0?'#e5484d':dv>0?'#16a34a':'var(--text)'}">${sg}${fv(Math.abs(dv))}${money?'':' '+tr('h')}${pct!==null?` (${sg}${Math.abs(pct)} %)`:''}</b></div>`;
+  const rows=[[tr('stHours'),x=>nf(x.h)],[tr('stShifts'),x=>x.s],[tr('stOt'),x=>nf(x.ot)],[tr('stVac'),x=>x.v],[tr('stPg'),x=>x.pg],[tr('stSick'),x=>x.sk]];
+  if(pay)rows.push([tr('stNet'),x=>x.C?fx(x.C.net)+' €':'—']);
+  const tbl=`<div class="cmp"><span></span><b>${esc(monthName(p.d))}</b><b>${esc(monthName(a.d))}</b>`+rows.map(([l,f])=>`<span>${l}</span><span>${f(p.s)}</span><span>${f(a.s)}</span>`).join('')+`</div>`;
+  const seg=pay?`<div class="seg" style="margin-bottom:4px"><button data-smode="h" class="${money?'':'on'}">${tr('stHours')}</button><button data-smode="m" class="${money?'on':''}">${tr('stMoney')}</button></div>`:'';
+  return`${seg}<div class="mbars">${bars}</div>${delta}<div class="sec">${tbl}</div><div class="muted" style="margin-top:10px">${tr('stPlanNote')}</div>`;
+}
+function yearHtml(pay){
+  const y=statY==null?cur.getFullYear():statY;statY=y;
+  const T={h:0,s:0,ot:0,v:0,pg:0,sk:0,gross:0,con:0,tax:0,net:0},list=[];
+  for(let m=1;m<=12;m++){
+    const s=monthStat(`${y}-${pad(m)}`);
+    T.h+=s.h;T.s+=s.s;T.ot+=s.ot;T.v+=s.v;T.pg+=s.pg;T.sk+=s.sk;
+    if(s.C){T.gross+=s.C.gross;T.con+=s.C.cTot;T.tax+=s.C.tax;T.net+=s.C.net}
+    list.push([m,s]);
+  }
+  const row=(l,v,cls='')=>`<div class="pr ${cls}"><span>${l}</span><b>${v}</b></div>`;
+  const nav=`<div class="paymon"><button class="icon" data-sy="-1" aria-label="${tr('prev')}">‹</button><span>${y}</span><button class="icon" data-sy="1" aria-label="${tr('next')}">›</button></div>`;
+  let h=nav;
+  if(pay)h+=`<div class="paybig"><small>${tr('stNetYear')}</small><b>≈ ${fx(T.net)} €</b></div>`;
+  h+=row(tr('stHours'),nf(T.h)+' '+tr('h'))+row(tr('stShifts'),T.s)+row(tr('stOt'),nf(T.ot)+' '+tr('h'))+row(tr('stVac'),T.v+' '+tr('daysShort'))+row(tr('stPg'),T.pg+' '+tr('daysShort'))+row(tr('stSick'),T.sk+' '+tr('daysShort'));
+  if(pay)h+=row(tr('stGross'),fx(T.gross)+' €','tot')+row('− '+tr('stCon'),fx(T.con)+' €','neg')+row('− '+tr('stTax'),fx(T.tax)+' €','neg')+row(tr('stNet'),fx(T.net)+' €','tot');
+  h+=`<div class="sec"><h3>${tr('stByMonth')}</h3>`+list.filter(([,s])=>s.h||s.v||s.pg||s.sk).map(([m,s])=>row(esc(monthName(new Date(y,m-1,1))),`${nf(s.h)} ${tr('h')}${s.C?` · ${fx(s.C.net)} €`:''}`)).join('')+`</div>`;
+  return h+`<div class="muted" style="margin-top:10px">${tr('stPlanNote')}${pay?' '+tr('stNoPay'):''}</div>`;
+}
+
+/* ---------- лимит официальных часов (бригадник) ---------- */
+function limitInfo(ym,P){
+  payFix(P);
+  const off=+P.official[ym]||0;
+  if(P.mode!=='student'||P.payType==='monthly'||!off)return null;
+  const C=payCalc(ym,P),used=r2(C.hours+C.ot);
+  return{off,used,left:r2(off-used),pct:used/off};
+}
+
+/* ---------- поиск по заметкам и категориям ---------- */
+let findQ='';const findT=new Set();
+function findResults(){
+  const q=findQ.trim().toLowerCase(),keys=[];let hrs=0;
+  for(const[k,e]of Object.entries(S.days)){
+    const ids=new Set([e.t,...Object.keys(e.ov||{})].filter(id=>id&&type(id)));
+    if(findT.size&&![...findT].some(id=>ids.has(id)))continue;
+    const note=e.note||'';
+    if(q){const names=[...ids].map(id=>nm(type(id))).join(' ');if(!(note+' '+names).toLowerCase().includes(q))continue}
+    else if(!findT.size&&!note)continue;
+    keys.push(k);
+    const t=e.t&&type(e.t);if(t&&!t.overlay)hrs+=dayHours(e,t);
+    for(const v of Object.values(e.ov||{}))hrs+=+v||0;
+  }
+  keys.sort().reverse();
+  if(!keys.length)return`<div class="muted" style="margin-top:12px">${tr(q||findT.size?'fdEmpty':'fdHint')}</div>`;
+  const rows=keys.slice(0,150).map(k=>{
+    const e=S.days[k],t=e.t&&type(e.t)&&!type(e.t).overlay?type(e.t):null;
+    const when=parse(k).toLocaleDateString(LOC[LANG],{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    const hh=t?dayHours(e,t):0;
+    return`<button class="frow" data-fk="${k}"><span class="dot" style="background:${t?t.color:'var(--muted)'}">${t?esc(sh(t)):'•'}</span>
+      <span class="nm"><b>${esc(when)}</b>${e.note?`<small>${esc(e.note)}</small>`:t?`<small>${esc(nm(t))}</small>`:''}</span><span class="muted">${hh?nf(hh)+' '+tr('h'):''}</span></button>`;
+  }).join('');
+  return`<div class="muted" style="margin:12px 2px 0">${tr('fdCount',{n:keys.length,h:nf(r2(hrs))})}</div>${rows}`;
+}
+function findHtml(){
+  const chips=S.types.map(t=>`<button class="chip${findT.has(t.id)?' on':''}" data-ft="${t.id}"><i style="background:${t.color}"></i>${esc(nm(t))}</button>`).join('');
+  return`<input type="search" id="findQ" value="${esc(findQ)}" placeholder="${esc(tr('fdPh'))}" autocomplete="off" style="width:100%"><div class="chips">${chips}</div><div id="findRes">${findResults()}</div>`;
+}
+
+/* ---------- график друзей: ссылка, сравнение, наложение на календарь ---------- */
+const FRK='shiftcal.friends',FRS='shiftcal.frshow',FRN='shiftcal.me';
+let friends=[],frShow='',frMe='',frOpen=null,frFilter='free';
+try{friends=JSON.parse(localStorage.getItem(FRK)||'[]');frShow=localStorage.getItem(FRS)||'';frMe=localStorage.getItem(FRN)||'';if(!Array.isArray(friends))friends=[]}catch{friends=[]}
+if(frShow&&!friends.some(f=>f.id===frShow))frShow='';
+const saveFr=()=>{try{localStorage.setItem(FRK,JSON.stringify(friends));localStorage.setItem(FRS,frShow)}catch{}};
+const b64u=u=>{let s='';u.forEach(c=>s+=String.fromCharCode(c));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+const unb64u=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+async function packShare(obj){
+  const raw=new TextEncoder().encode(JSON.stringify(obj));
+  if(typeof CompressionStream!=='undefined'){
+    try{return'z'+b64u(new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()))}catch{}
+  }
+  return'j'+b64u(raw);
+}
+// данные из ссылки приходят снаружи: проверяем всё и оставляем только безопасные значения
+async function unpackShare(code){
+  code=String(code).trim();
+  const m=code.match(/[#&?]f=([A-Za-z0-9_-]+)/);if(m)code=m[1];
+  if(!/^[zj][A-Za-z0-9_-]+$/.test(code))throw new Error('bad');
+  let raw=unb64u(code.slice(1));
+  if(code[0]==='z')raw=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  const o=JSON.parse(new TextDecoder().decode(raw));
+  if(!o||o.v!==1||!Array.isArray(o.t)||!Array.isArray(o.d)||!/^\d{4}-\d{2}-\d{2}$/.test(o.b))throw new Error('bad');
+  const hm=x=>/^([01]\d|2[0-3]):[0-5]\d$/.test(x)?x:'';
+  const t=o.t.slice(0,30).map(x=>Array.isArray(x)?{n:String(x[0]||'').slice(0,24),s:String(x[1]||'').slice(0,3),c:/^#[0-9a-f]{6}$/i.test(x[2])?x[2]:'#888888',a:hm(x[3]),b:hm(x[4]),w:x[5]?1:0}:null);
+  const d=o.d.slice(0,400).filter(x=>Array.isArray(x)&&Number.isInteger(x[0])&&x[0]>=0&&x[0]<400&&t[x[1]]).map(x=>[x[0],x[1]]);
+  return{n:String(o.n||'').slice(0,24),b:o.b,t:t.map(x=>x||{n:'',s:'',c:'#888888',a:'',b:'',w:0}),d};
+}
+function buildShare(){
+  const from=new Date();from.setDate(1);from.setHours(0,0,0,0);
+  const to=new Date(from.getFullYear(),from.getMonth()+3,0),types=[],idx=new Map(),days=[];
+  for(const d=new Date(from);d<=to;d.setDate(d.getDate()+1)){
+    const e=S.days[fmt(d)],t=e&&e.t&&type(e.t);if(!t||t.overlay)continue;
+    let i=idx.get(t.id);
+    if(i===undefined){i=types.length;idx.set(t.id,i);types.push([nm(t).slice(0,24),sh(t).slice(0,3),t.color,t.start||'',t.end||'',isWork(t)?1:0])}
+    days.push([Math.round((d-from)/864e5),i]);
+  }
+  return{v:1,n:frMe,b:fmt(from),t:types,d:days};
+}
+function addFriend(o){
+  const name=o.n||tr('frNoName');
+  const old=friends.find(f=>f.n.toLowerCase()===name.toLowerCase());
+  const f={id:old?old.id:Date.now().toString(36),n:name,b:o.b,t:o.t,d:o.d};
+  if(old)friends[friends.indexOf(old)]=f;else friends.push(f);
+  if(!frShow)frShow=f.id;
+  saveFr();return f;
+}
+function friendDays(id){
+  const f=friends.find(x=>x.id===id);if(!f)return null;
+  const b=parse(f.b),M={};
+  for(const[o,i]of f.d){const t=f.t[i];if(t)M[fmt(new Date(b.getFullYear(),b.getMonth(),b.getDate()+o))]=t}
+  return M;
+}
+async function shareMine(){
+  const o=buildShare();
+  if(!o.d.length){toast(tr('frEmpty'),false);return}
+  const url=location.href.split('#')[0].split('?')[0]+'#f='+await packShare(o);
+  const box=$('frLink');if(box)box.innerHTML=`<textarea readonly rows="3" id="frLinkTa">${esc(url)}</textarea>`;
+  if(navigator.share&&matchMedia('(pointer:coarse)').matches){
+    try{await navigator.share({title:tr('frTitle'),text:tr('frShareTxt',{n:frMe||''}),url});return}
+    catch(err){if(err.name==='AbortError')return}
+  }
+  try{await navigator.clipboard.writeText(url);toast(tr('frCopied'),false)}catch{}
+  const ta=$('frLinkTa');if(ta){ta.focus();ta.select()}
+}
+const frDate=k=>parse(k).toLocaleDateString(LOC[LANG],{weekday:'short',day:'numeric',month:'short'});
+function frCompareHtml(f){
+  const base=parse(f.b),today=fmt(new Date()),list=[];let free=0,work=0;
+  for(const[o,i]of f.d){
+    const k=fmt(new Date(base.getFullYear(),base.getMonth(),base.getDate()+o)),ft=f.t[i];
+    if(k<today||!ft)continue;
+    const e=S.days[k],mt=e&&e.t&&type(e.t),mine=mt&&!mt.overlay?mt:null;
+    const kind=mine&&!ft.w&&!isWork(mine)?'free':mine&&ft.w&&isWork(mine)?'work':'mix';
+    if(kind==='free')free++;else if(kind==='work')work++;
+    list.push({k,ft,mine,kind});
+  }
+  const shown=frFilter==='all'?list:list.filter(x=>x.kind===frFilter);
+  const chip=(t,c)=>`<span class="cd" style="background:${c}">${esc(t)}</span>`;
+  const rows=shown.map(x=>`<div class="frrow"><span class="fd">${esc(frDate(x.k))}</span><span class="fp">${x.mine?chip(sh(x.mine),x.mine.color):'<span class="muted">—</span>'}${chip(x.ft.s||'•',x.ft.c)}</span><span class="fe">${x.kind==='free'?'🎉':x.kind==='work'?'🤝':''}</span></div>`).join('');
+  const fl=(k,l)=>`<button data-frf="${k}" class="${frFilter===k?'on':''}">${l}</button>`;
+  return`<div class="muted" style="margin-bottom:10px">${tr('frVs',{n:esc(f.n)})}</div>
+    <div class="stats"><div class="stat"><b>${free}</b><span>${tr('frSumFree')}</span></div><div class="stat"><b>${work}</b><span>${tr('frSumWork')}</span></div></div>
+    <div class="seg" style="margin:12px 0 4px">${fl('free',tr('frTogFree'))}${fl('work',tr('frTogWork'))}${fl('all',tr('frTogAll'))}</div>
+    ${rows||`<div class="muted" style="margin-top:12px">${tr('frNoMatch')}</div>`}`;
+}
+function friendsHtml(){
+  if(frOpen){const f=friends.find(x=>x.id===frOpen);if(f)return frCompareHtml(f);frOpen=null}
+  const list=friends.map(f=>`<div class="bal"><div class="bh"><span class="dot" style="background:var(--accent)">${esc([...f.n][0]||'?').toUpperCase()}</span><span class="nm">${esc(f.n)}</span>
+      <label class="sw"><input type="checkbox" data-frshow="${f.id}" ${frShow===f.id?'checked':''}><span></span></label></div>
+      <div class="muted">${tr('frShowCal')}</div>
+      <div class="row" style="margin-top:8px"><button data-fropen="${f.id}">${tr('frCompare')}</button><button class="danger ghost" data-frdel="${f.id}">${tr('frDel')}</button></div></div>`).join('');
+  return`<div class="muted">${tr('frHint')}</div>
+    <div class="sec"><h3>${tr('frMine')}</h3>
+      <label class="f"><span>${tr('frMyName')}</span><input type="text" id="frName" maxlength="24" value="${esc(frMe)}" placeholder="${esc(tr('frMyNamePh'))}"></label>
+      <button class="primary" data-frshare style="width:100%;margin-top:10px">🔗 ${tr('frShare')}</button>
+      <div id="frLink"></div></div>
+    <div class="sec"><h3>${tr('frList')}</h3>${list||`<div class="muted">${tr('frNone')}</div>`}
+      <div class="row" style="margin-top:8px;flex-wrap:nowrap"><input type="text" id="frPaste" placeholder="${esc(tr('frPastePh'))}" autocomplete="off" style="flex:1;min-width:0"><button data-frpaste>${tr('frAdd')}</button></div>
+      <div class="muted" style="margin-top:8px">${tr('frSafari')}</div></div>`;
+}
+
 let menuPage=null,lastMenuPage=null;
 const MENU_NAV=[
   ['cats','📋',()=>tr('categories'),()=>String(S.types.length)],
   ['auto','✨',()=>tr('auto'),()=>''],
   ['bal','🌴',()=>tr('navBal'),()=>''],
+  ['stats','📊',()=>tr('stTitle'),()=>''],
+  ['find','🔍',()=>tr('fdTitle'),()=>''],
+  ['friends','👥',()=>tr('frTitle'),()=>friends.length?String(friends.length):''],
   ['hol','🎉',()=>tr('holTitle'),()=>HOL?(holCountry()?regionName(holCountry()):tr('navOn')):tr('navOff')],
   ['pay','💶',()=>tr('payTitle'),()=>''],
   ['rem','🔔',()=>tr('remTitle'),()=>getRem().on?tr('navOn'):tr('navOff')],
@@ -1698,6 +2668,9 @@ function menuSection(p){
       <button class="primary" data-gen>${tr('build')}</button></div>
     <div class="row" style="margin-top:8px"><button data-confirm>${tr('confirmAuto')}</button><button class="ghost" data-clearauto>${tr('clearAuto')}</button></div>
     <div class="muted" style="margin-top:8px">${tr('autoHint')}</div>`;
+  if(p==='stats')return statsHtml();
+  if(p==='find')return findHtml();
+  if(p==='friends')return friendsHtml();
   if(p==='bal')return`<div class="muted" style="margin-bottom:8px">${tr('balTitle',{y:cur.getFullYear()})}</div>${balancesHtml()}`;
   if(p==='hol')return`<div class="hrow"><div>${tr('holShow')}</div>
       <label class="sw"><input type="checkbox" id="holToggle" ${HOL?'checked':''}><span></span></label></div>
@@ -1729,7 +2702,7 @@ function menuSection(p){
   return'';
 }
 function renderMenuNow(){
-  const page=menuPage&&['cats','auto','bal','hol','rem','look','data'].includes(menuPage)?menuPage:null;
+  const page=menuPage&&['cats','auto','bal','stats','find','friends','hol','rem','look','data'].includes(menuPage)?menuPage:null;
   if(!page){
     const nav=(attr,ic,label,hint)=>`<button class="navrow" ${attr}><span class="mic">${ic}</span><span class="nm">${label}</span><span class="muted">${hint}</span><span class="muted">›</span></button>`;
     $('menuBody').innerHTML=`
@@ -1745,9 +2718,14 @@ function renderMenuNow(){
   }
   if(lastMenuPage!==page){$('menuBody').scrollTop=0;lastMenuPage=page}
 }
+$('menuBody').addEventListener('input',e=>{
+  if(e.target.id==='findQ'){findQ=e.target.value;$('findRes').innerHTML=findResults()}
+});
 $('menuBody').addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='remOn'){setRem({on:t.checked});try{localStorage.removeItem(RL)}catch{}}
+  else if(t.dataset.frshow){frShow=t.checked?t.dataset.frshow:'';saveFr();smooth(()=>{render();renderMenuNow()},$('cal'))}
+  else if(t.id==='frName'){frMe=t.value.trim();try{localStorage.setItem(FRN,frMe)}catch{}}
   else if(t.id==='remTime'){if(t.value){setRem({time:t.value});try{localStorage.removeItem(RL)}catch{}}}
   else if(t.id==='holToggle'){
     HOL=t.checked;try{localStorage.setItem(HK,HOL?'1':'0')}catch{}
@@ -1770,7 +2748,25 @@ $('menuBody').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.m)setTheme(d.m,e);
   else if(d.mp){menuPage=d.mp;renderMenu()}
-  else if('mback' in d){menuPage=null;renderMenu()}
+  else if('mback' in d){if(menuPage==='friends'&&frOpen)frOpen=null;else menuPage=null;renderMenu()}
+  else if(d.stab){statTab=d.stab;renderMenu()}
+  else if(d.smode){statMode=d.smode;renderMenu()}
+  else if(d.sy){statY=(statY==null?cur.getFullYear():statY)+(+d.sy);renderMenu()}
+  else if(d.ft){findT.has(d.ft)?findT.delete(d.ft):findT.add(d.ft);renderMenuNow()}
+  else if(d.fk){
+    closeDlg($('menuDlg'));const p=parse(d.fk);cur=new Date(p.getFullYear(),p.getMonth(),1);render();
+    setTimeout(()=>openCat(d.fk),320);
+  }
+  else if('frshare' in d)shareMine();
+  else if('frpaste' in d){
+    unpackShare($('frPaste').value).then(o=>{const f=addFriend(o);render();renderMenuNow();toast(tr('frAdded',{n:f.n}),false)}).catch(()=>toast(tr('frBad'),false));
+  }
+  else if(d.fropen){frOpen=d.fropen;renderMenu()}
+  else if(d.frf){frFilter=d.frf;renderMenuNow()}
+  else if(d.frdel){
+    const f=friends.find(x=>x.id===d.frdel);
+    if(f&&confirm(tr('frDelQ',{n:f.n}))){friends=friends.filter(x=>x!==f);if(frShow===f.id)frShow='';saveFr();render();renderMenu()}
+  }
   else if('langdlg' in d)openLangDlg();
   else if('countrydlg' in d)openCountryDlg();
   else if('undo' in d)undo();
@@ -2069,7 +3065,7 @@ function pnIndex(k){
   let n=1;const d=parse(k);
   for(;;){d.setDate(d.getDate()-1);const e=S.days[fmt(d)],t=e&&e.t&&type(e.t);if(t&&t.key==='s')n++;else return n}
 }
-function payCalc(ym,P){
+function payCalc(ym,P,upTo){
   payFix(P);
   const C={shifts:0,hours:0,night:0,sat:0,sun:0,hol:0,ot:0,vacDays:0,pgH:0,pgDays:0,pnDays:0,pnAll:0,pnRaw:0};
   const monthly=P.payType==='monthly',st=P.mode==='student';
@@ -2077,7 +3073,7 @@ function payCalc(ym,P){
   C.hr=monthly?(C.fund?P.base/C.fund:0):P.rate;                 // часовая ставка (для оклада — оклад ÷ фонд часов)
   const avgNah=P.avgNah||C.hr,avgNem=P.avgNem||C.hr;
   for(const[k,e]of Object.entries(S.days)){
-    if(!k.startsWith(ym))continue;
+    if(!k.startsWith(ym)||(upTo&&k>upTo))continue;
     const t=e.t&&type(e.t);
     if(t&&!t.overlay){
       if(isWork(t)){const b=bands(k,e,t);C.shifts++;C.hours+=b.base;C.night+=b.night;C.sat+=b.sat;C.sun+=b.sun;C.hol+=b.hol}
@@ -2135,7 +3131,12 @@ function payPill(){
   const P=S.pay;
   if(!P||P.mode==='none'||!(P.rate||P.base))return'';
   const C=payCalc(monthKey(),P);
-  return`<button class="pill" data-pay><i style="background:var(--accent)"></i>${tr('payTitle')} <span>≈</span><b>${Math.round(C.net)} €</b></button>`;
+  let out=`<button class="pill" data-pay><i style="background:var(--accent)"></i>${tr('payTitle')} <span>≈</span><b>${Math.round(C.net)} €</b></button>`;
+  const L=limitInfo(monthKey(),P);
+  if(L){const col=L.left<0?'#e5484d':L.pct>=.9?'#f59e0b':'var(--accent)';
+    out=`<button class="pill${L.left<0?' over':L.pct>=.9?' warn':''}" data-pay><i style="background:${col}"></i>${L.left<0?`${tr('lmOvr')} <b>+${nf(-L.left)} ${tr('h')}</b>`:`${tr('lmRem')} <b>${nf(L.left)} ${tr('h')}</b> <span>/ ${nf(L.off)}</span>`}</button>`+out}
+  else if(P.mode==='student'&&P.payType!=='monthly')out=`<button class="pill" data-pay data-limset><i style="background:#f59e0b"></i>${tr('lmSet')}</button>`+out;
+  return out;
 }
 
 // какая подсказка относится к какому полю (по пути в настройках)
@@ -2216,6 +3217,13 @@ function renderPayNow(){
   r+=row('− '+tr('payTax'),pc(P.taxRate)+' %',fx(C.tax)+' €','neg');
   r+=row(tr('payNet'),P.calib!==1?tr('payCalib',{k:P.calib.toFixed(3)}):'',fx(C.net)+' €','tot');
   const off=+P.official[ym]||0;
+  let fc='';
+  if(ym===fmt(new Date()).slice(0,7)&&!monthly){
+    const Cn=payCalc(ym,P,fmt(new Date())),rest=r2(C.net-Cn.net);
+    if(rest>0.005)fc=`<div class="fcast"><span>${tr('pfEarned')}<b>≈ ${fx(Cn.net)} €</b></span><span>${tr('pfRest')}<b>+ ${fx(rest)} €</b></span></div><div class="muted" style="margin:-2px 2px 10px">${tr('pfHint')}</div>`;
+  }
+  const lim=limitInfo(ym,P);
+  const limHtml=lim?`<div class="bal"><div class="bbar"><i style="width:${Math.min(100,lim.pct*100)}%;background:${lim.left<0?'#e5484d':lim.pct>=.9?'#f59e0b':'var(--accent)'}"></i></div><div class="muted">${lim.left<0?tr('lmOver',{o:nf(lim.off),x:nf(-lim.left)}):tr('lmLeft',{u:nf(lim.used),o:nf(lim.off),l:nf(lim.left)})}</div></div>`:'';
   const split=st&&!monthly&&off?(()=>{const tot=C.basePay+C.otPay,a=r2(Math.min(off*P.rate,tot));return`<div class="muted" style="margin-top:6px">${tr('payOfficialSplit',{a:fx(a),b:fx(tot-a)})}</div>`})():'';
   const num=(label,path,val,step='0.01',ph='')=>`<label class="f"><span>${label}${tipBtn(hintKey(path))}</span><input type="number" step="${step}" inputmode="decimal" data-pf="${path}" value="${val}" placeholder="${ph}"></label>`;
   const prem=(k,l)=>`<label class="f"><span>${tr(l)}${tipBtn(hintKey('prem.'+k))}</span><div class="row" style="flex-wrap:nowrap;gap:6px"><input type="number" step="0.01" inputmode="decimal" data-pf="prem.${k}.v" value="${P.prem[k].v}" style="min-width:0">
@@ -2249,7 +3257,7 @@ function renderPayNow(){
   box.innerHTML=head(tr('payTitle'))+`
     <div class="paymon"><button class="icon" data-pm="-1" aria-label="${tr('prev')}">‹</button><span>${monthLabel(cur)}</span><button class="icon" data-pm="1" aria-label="${tr('next')}">›</button></div>
     <div class="paybig"><small>${tr('payNet')}</small><b>≈ ${fx(C.net)} €</b></div>
-    <div>${r}</div>${split}
+    ${fc}${limHtml}<div>${r}</div>${split}
     ${st?`<div class="muted" style="margin-top:8px">${tr('payStudentNote')}</div>`:''}
     <div class="sec"><h3>${tr('payCheck')}</h3><div class="muted">${tr('payCheckHint')}${tipBtn('hActual')}</div>
       <div class="row" style="margin-top:8px"><input type="number" id="payActual" step="0.01" inputmode="decimal" placeholder="${fx(C.net0)}" style="width:130px">
@@ -2469,6 +3477,14 @@ try{if(localStorage.getItem(HELP_KEY)!=='1'){if(!Object.keys(S.days).length)show
 if(showHelp)setTimeout(openHelp,2100);
 else if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},2100);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
+if(location.hash.startsWith('#f=')){
+  const code=location.hash;
+  try{history.replaceState(null,'',location.pathname+location.search)}catch{}
+  setTimeout(()=>unpackShare(code).then(o=>{
+    if(!confirm(tr('frAddQ',{n:o.n||tr('frNoName')})))return;
+    addFriend(o);render();menuPage='friends';frOpen=null;renderMenuNow();openDlg($('menuDlg'));
+  }).catch(()=>toast(tr('frBad'),false)),2200);
+}
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   const had=!!navigator.serviceWorker.controller;let reloaded=false;
   navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});
