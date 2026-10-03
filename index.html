@@ -120,6 +120,24 @@ label.btn input{display:none}
 .hdots i{width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--muted) 35%,transparent);transition:width .3s,background .3s}
 .hdots i.on{width:20px;border-radius:999px;background:var(--accent)}
 .hlang{display:flex;justify-content:flex-end}
+:focus-visible{outline:2px solid color-mix(in srgb,var(--accent) 75%,transparent);outline-offset:2px}
+#hstage.center{text-align:center}
+.hart>*{animation:hpop .5s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(var(--i,0)*55ms)}
+@keyframes hpop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+.hart.hello{position:relative;overflow:hidden;min-height:168px;background:radial-gradient(circle at 50% 42%,var(--accent-soft),var(--bg2) 72%)}
+.hello .glow{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 38%,transparent),transparent 68%);animation:glow 3.2s ease-in-out infinite}
+.hello img{width:92px;height:92px;border-radius:28px;position:relative;z-index:1;box-shadow:0 14px 34px color-mix(in srgb,var(--accent) 38%,transparent);animation:hpop .75s cubic-bezier(.3,1.5,.5,1) both,bob 4.2s ease-in-out .8s infinite}
+.hello .fl{position:absolute;width:26px;height:26px;border-radius:50%;animation:hpop .6s cubic-bezier(.3,1.5,.5,1) both,bob 5s ease-in-out infinite}
+.hello .f1{left:15%;top:24%;background:#e08a00;animation-delay:.25s,.9s}
+.hello .f2{right:17%;top:18%;width:20px;height:20px;background:#4f46e5;animation-delay:.4s,1.4s}
+.hello .f3{right:24%;bottom:16%;width:16px;height:16px;background:#10b981;animation-delay:.55s,2s}
+@keyframes bob{50%{transform:translateY(-9px)}}
+@keyframes glow{50%{transform:scale(1.18);opacity:.75}}
+.htitle.big{font-size:28px;margin-top:2px}
+dialog.welcome[open]{animation:welcomeIn .7s cubic-bezier(.2,.9,.3,1)}
+dialog.welcome[open]::backdrop{animation:fade .7s ease}
+@keyframes welcomeIn{from{opacity:0;transform:translateY(34px) scale(.93)}to{opacity:1;transform:none}}
+@keyframes appIn{from{opacity:0;transform:translateY(12px)}}
 /* шторка выбора категории: выезжает снизу, закрывается тем же жестом */
 dialog.sheet{width:100%;max-width:520px;margin:auto auto 0;border-radius:28px 28px 0 0;max-height:88vh;max-height:88dvh}
 dialog.sheet[open]{animation:sheetIn .36s cubic-bezier(.2,.9,.3,1)}
@@ -134,8 +152,8 @@ dialog.sheet.closing{animation:sheetOut .24s ease forwards}
 .catpick{border-color:color-mix(in srgb,var(--c) 45%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent)}
 /* меню: список разделов */
 .navlist{display:flex;flex-direction:column;gap:6px}
-.nav{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;border-radius:22px}
-.nav .nm{flex:1;min-width:0;font-weight:600}
+.navrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;border-radius:22px}
+.navrow .nm{flex:1;min-width:0;font-weight:600}
 .mic{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent-soft);font-size:18px}
 /* окно выбора языка */
 .langlist{display:flex;flex-direction:column;gap:6px}
@@ -163,7 +181,17 @@ dialog.sheet.closing{animation:sheetOut .24s ease forwards}
 .pr.neg b{color:#e5484d}
 .paydet{margin-top:14px;background:var(--bg2);border-radius:24px;padding:4px 16px 16px}
 .paydet summary{cursor:pointer;padding:12px 0;font-weight:600}
+.paydet:not([open]){padding-bottom:0}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+/* подсказка «где найти на листе» */
+.tip{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;min-height:0;padding:0;margin-left:6px;vertical-align:middle;border:0;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent);font:700 12px/1 var(--f-soft);text-transform:none;letter-spacing:0;transition:background .2s,color .2s,transform .12s}
+.tip::after{content:"";position:absolute;inset:-12px}
+.tip.on{background:var(--accent);color:#fff}
+.tipbox{grid-column:1/-1;display:flex;flex-direction:column;gap:3px;margin:0 0 12px;padding:11px 14px;border-radius:18px;background:var(--accent-soft);
+  color:var(--text);font-size:13px;line-height:1.5;transform-origin:top left;animation:tipIn .3s cubic-bezier(.3,1.4,.5,1)}
+.tipbox b{color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+@keyframes tipIn{from{opacity:0;transform:translateY(-6px) scale(.96)}}
 .bonus{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .bonus input[type=text]{flex:1 1 100%;min-width:0}
 .bonus input[type=number]{width:96px;min-width:0}
@@ -326,11 +354,23 @@ details[open]>:not(summary){animation:fadeUp .28s ease both}
   dialog{margin:auto;width:min(560px,calc(100% - 24px));border-radius:28px;max-height:94vh;max-height:94dvh}
   .dlg{max-height:94vh;max-height:94dvh}
 }
+/* заставка при запуске: пунктирный круг «заполняется» цветом, затем плавный переход к календарю */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:grid;place-items:center;transition:opacity .5s ease,visibility .5s}
+#splash.out{opacity:0;visibility:hidden}
+.sp-c{width:92px;height:92px;border-radius:50%;border:3px dashed var(--accent);display:grid;place-items:center;position:relative;animation:spIn .6s cubic-bezier(.2,.8,.2,1) both}
+.sp-c::after{content:"";position:absolute;inset:-3px;border-radius:50%;background:var(--accent);transform:scale(0);animation:spFill .6s .55s cubic-bezier(.2,.8,.2,1) forwards}
+.sp-l{position:relative;z-index:1;opacity:0;transform:scale(.6);animation:spLogo .45s .95s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes spIn{from{opacity:0;transform:scale(.6) rotate(-90deg)}to{opacity:1;transform:none}}
+@keyframes spFill{to{transform:scale(1)}}
+@keyframes spLogo{to{opacity:1;transform:none}}
+.wrap.pre{opacity:0;transform:translateY(14px) scale(.985)}
+.wrap{transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="splash" aria-hidden="true"><div class="sp-c"><svg class="sp-l" viewBox="0 0 48 48" width="52" height="52"><rect x="4" y="7" width="40" height="36" rx="7" fill="#fff"/><path d="M4 14a7 7 0 0 1 7-7h26a7 7 0 0 1 7 7v4H4z" fill="#ff9d3d"/><circle cx="14" cy="27" r="3.4" fill="#f59e0b"/><circle cx="24" cy="27" r="3.4" fill="#5b6cff"/><circle cx="34" cy="27" r="3.4" fill="#10b981"/><circle cx="14" cy="36" r="3.4" fill="#5b6cff"/><circle cx="24" cy="36" r="3.4" fill="#f59e0b"/><circle cx="34" cy="36" r="3.4" fill="#10b981"/></svg></div></div>
+<div class="wrap pre" id="wrapEl">
   <header>
     <div class="ttl"><small id="yr"></small><h1 id="title"></h1></div>
     <div class="nav">
@@ -355,13 +395,44 @@ details[open]>:not(summary){animation:fadeUp .28s ease both}
 <dialog id="payDlg"><div class="dlg" id="payBody"></div></dialog>
 <dialog id="helpDlg"><div class="dlg" id="helpBody"></div></dialog>
 <dialog id="langDlg"><div class="dlg" id="langBody"></div></dialog>
+<dialog id="countryDlg"><div class="dlg" id="countryBody"></div></dialog>
 <dialog id="catSheet" class="sheet"><div class="dlg" id="catBody"></div></dialog>
 <div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo"></button></div>
 
 <script>
 /* ---------- переводы ---------- */
 const I18N={
-ru:{moreBtn:'Подробнее',pickCat:'Выбрать категорию',lookTitle:'Внешний вид и язык',navBal:'Отпуск и Paragraf',navOn:'Вкл',navOff:'Выкл',autoTag:'запланировано',payGrpBasic:'Основное',payGrpPrem:'Надбавки и nadčas',payGrpTax:'Налоги и взносы',payGrpLeave:'Отпуск, PN, Paragraf',title:'Мои смены',today:'Сегодня',prev:'Назад',next:'Вперёд',menu:'Меню',close:'Закрыть',h:'ч',
+ru:{hintTitle:'Где найти на листе',
+ hTypeLbl:'Если в блоке «Základné zložky mzdy» есть «Základný plat» (оклад) или в договоре указана «mesačná mzda» — выбирайте «Оклад в месяц». Если платят за часы («hodinová mzda» или строки «dohoda – čiastka») — «Почасовая».',
+ hRate:'Часовая ставка («hodinová mzda») указана в договоре или на листе. Можно и разделить сумму «dohoda – čiastka krátená» (или «Základná mzda») на «Počet odprac. hodín». Пример: 546,00 ÷ 84 ч = 6,50 €.',
+ hBase:'Месячная hrubá mzda: «Základný plat» или «Tarifná mzda» в блоке «Základné zložky mzdy», либо сумма из договора.',
+ hDayH:'Сколько часов в обычном рабочем дне: чаще всего 8 (при 37,5-часовой неделе — 7,5). Смотрите «pracovný čas» в договоре.',
+ hFund:'Строка «Fond prac. doby v hodinách» в блоке «HODINOVÉ POLOŽKY». Если оставить пустым, приложение посчитает само (рабочие дни × часы в дне).',
+ hNight:'В «FINANČNÉ POLOŽKY» найдите «príplatok za nočnú prácu». Ставка = сумма ÷ ночные часы из «HODINOVÉ POLOŽKY». Если такой строки нет — оставьте 0.',
+ hSat:'Строка «práca v sobotu» (или «príplatok za sobotu») в «FINANČNÉ POLOŽKY». Ставка = сумма ÷ часы субботы. Пример: 40,76 ÷ 15,5 ч = 2,63 €/ч.',
+ hSun:'Строка «práca v nedeľu» (или «príplatok za nedeľu») в «FINANČNÉ POLOŽKY». Ставка = сумма ÷ часы воскресенья. Если строки нет — 0.',
+ hHol:'Строка «práca vo sviatok» (или «príplatok za sviatok») в «FINANČNÉ POLOŽKY». Ставка = сумма ÷ праздничные часы. Если строки нет — 0.',
+ hOtPct:'Строка «príplatok za nadčas» в «FINANČNÉ POLOŽKY». Процент = сумма ÷ (часы nadčas × часовая ставка). По закону не меньше 25 %.',
+ hTaxRate:'Строка «Daň zo mzdy – preddavok»: процент = налог ÷ («Hrubá mzda» − «Odvody celkom» − необлагаемая часть). Обычно 15 % или 19 %. Пример: 135,32 ÷ 712,20 = 19 %.',
+ hDeduct:'Из блока «VYMERIAVACIE ZÁKLADY»: «Hrubá mzda» минус база «starobné poistenie». Пример: 750,75 − 550,75 = 200 €. Если числа равны — вычета нет, поставьте 0.',
+ hOfficial:'Строка «Počet odprac. hodín» в блоке «HODINOVÉ POLOŽKY». Это часы, оплаченные как «čiastka krátená»; остальное выплачивается отдельной премией («odmena»).',
+ hTaxFree:'Строка «Nezdaniteľná časť» или «Odpočítateľná položka» в блоке «Úprava zákl. dane». Применяется, только если вы подписали у работодателя «vyhlásenie»; иначе 0.',
+ hChild:'Строка «Daňový bonus» в блоке «Úprava zákl. dane». Есть, только если у вас есть дети и вы заявили бонус у работодателя; иначе 0.',
+ hContrib:'Строки «DPs-zamestnanec», «DPi-zamestnanec» (и «Zdravotné», «Nemocenské», «Nezamestnanosť») в «FINANČNÉ POLOŽKY». Процент = сумма ÷ «Vymeriavací základ».',
+ hVacH:'Сколько часов фирма оплачивает за один день отпуска: обычно длина смены (8 или 12 ч). Смотрите блок «Dovolenka» (D-čerpaná) и часы отпуска в «HODINOVÉ POLOŽKY».',
+ hPgH:'Часы, которые фирма оплачивает за день Paragraf (визит к врачу): «návšteva lekára» в «HODINOVÉ POLOŽKY». Остаток дней указан вверху листа: «Zostatok návštevy lekára».',
+ hAvgNah:'Оранжевое окошко «Priemer pre náhrady» справа вверху листа (€/ч). По этому среднему оплачиваются отпуск и Paragraf.',
+ hAvgNem:'Оранжевое окошко «Priemer na nemoc» справа вверху листа (€/ч). От него считается оплата первых дней PN.',
+ hNem:'Проценты, которые фирма платит за дни PN (обычно дни 1–3 и 4–10), указаны в строках «náhrada príjmu pri PN» на листе или в правилах фирмы.',
+ hBonus:'Бонусы на листе — строки «odmena», «prémia», «bonus» в «FINANČNÉ POLOŽKY». Если сумма каждый месяц разная, вносите её в «Разовая премия» нужного месяца.',
+ hExtra:'Разовая выплата за этот месяц: «prémia», «odmena» или «13. plat» в «FINANČNÉ POLOŽKY».',
+ hG:'Строка «HRUBÁ MZDA» в блоке «FINANČNÉ POLOŽKY».',
+ hB:'Блок «VYMERIAVACIE ZÁKLADY», строка «starobné poistenie» (или «invalidné poistenie»).',
+ hO:'Строка «Odvody celkom» (сумма «DPs-zamestnanec», «DPi-zamestnanec» и других).',
+ hT:'Строка «Daň zo mzdy – preddavok» в «FINANČNÉ POLOŽKY».',
+ hN:'Строка «Nezdaniteľná časť» в блоке «Úprava zákl. dane». Если её нет — оставьте пустым.',
+ hActual:'Строка «ČISTÁ MZDA» в «FINANČNÉ POLOŽKY» или «Mzda k výplate» вверху листа.',
+ hlp0t:'Добро пожаловать!',hlp0b:'Это ваш личный календарь смен. Он сам найдёт закономерность в вашем графике, напомнит о смене и посчитает зарплату. Давайте познакомимся — это займёт меньше минуты.',helpGo:'Познакомиться',moreBtn:'Подробнее',pickCat:'Выбрать категорию',lookTitle:'Внешний вид и язык',navBal:'Отпуск и Paragraf',navOn:'Вкл',navOff:'Выкл',autoTag:'запланировано',payGrpBasic:'Основное',payGrpPrem:'Надбавки и nadčas',payGrpTax:'Налоги и взносы',payGrpLeave:'Отпуск, PN, Paragraf',title:'Мои смены',today:'Сегодня',prev:'Назад',next:'Вперёд',menu:'Меню',close:'Закрыть',h:'ч',
  undo:'Отменить',undoBtn:'↶ Отменить последнее действие',summary:'Итоги — {m}',totalHours:'всего часов',noHours:'без часов',
  noteTitle:'Заметка',notePh:'Например: подмена, врач в 10:00…',overlayTitle:'Поверх смены',pDay:'День',pNight:'Ночь',timeTitle:'Время смены',reset:'Сбросить',
  clearShift:'Очистить смену',done:'Готово',add:'Добавить',update:'Обновить',remove:'Убрать',nextDay:'до следующего дня',
@@ -418,7 +489,37 @@ ru:{moreBtn:'Подробнее',pickCat:'Выбрать категорию',loo
  ignoreLbl:'Не учитывать в анализе графика',ignoreHint:'Для отпуска, больничного и любых нерегулярных дней.',
  delete:'Удалить',cancel:'Отмена',save:'Сохранить',
  types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-uk:{moreBtn:'Докладніше',pickCat:'Вибрати категорію',lookTitle:'Вигляд і мова',navBal:'Відпустка і Paragraf',navOn:'Увімк.',navOff:'Вимк.',autoTag:'заплановано',payGrpBasic:'Основне',payGrpPrem:'Надбавки і nadčas',payGrpTax:'Податки і внески',payGrpLeave:'Відпустка, PN, Paragraf',title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
+uk:{hintTitle:'Де знайти на листку',
+ hTypeLbl:'Якщо в блоці «Základné zložky mzdy» є «Základný plat» (оклад) або в договорі вказано «mesačná mzda» — обирайте «Оклад на місяць». Якщо платять за години («hodinová mzda» або рядки «dohoda – čiastka») — «Погодинна».',
+ hRate:'Погодинна ставка («hodinová mzda») вказана в договорі або на листку. Можна й поділити суму «dohoda – čiastka krátená» (або «Základná mzda») на «Počet odprac. hodín». Приклад: 546,00 ÷ 84 год = 6,50 €.',
+ hBase:'Місячна hrubá mzda: «Základný plat» або «Tarifná mzda» в блоці «Základné zložky mzdy», або сума з договору.',
+ hDayH:'Скільки годин у звичайному робочому дні: найчастіше 8 (при 37,5-годинному тижні — 7,5). Дивіться «pracovný čas» у договорі.',
+ hFund:'Рядок «Fond prac. doby v hodinách» у блоці «HODINOVÉ POLOŽKY». Якщо залишити порожнім, застосунок порахує сам (робочі дні × години в дні).',
+ hNight:'У «FINANČNÉ POLOŽKY» знайдіть «príplatok za nočnú prácu». Ставка = сума ÷ нічні години з «HODINOVÉ POLOŽKY». Якщо такого рядка немає — залиште 0.',
+ hSat:'Рядок «práca v sobotu» (або «príplatok za sobotu») у «FINANČNÉ POLOŽKY». Ставка = сума ÷ години суботи. Приклад: 40,76 ÷ 15,5 год = 2,63 €/год.',
+ hSun:'Рядок «práca v nedeľu» (або «príplatok za nedeľu») у «FINANČNÉ POLOŽKY». Ставка = сума ÷ години неділі. Якщо рядка немає — 0.',
+ hHol:'Рядок «práca vo sviatok» (або «príplatok za sviatok») у «FINANČNÉ POLOŽKY». Ставка = сума ÷ святкові години. Якщо рядка немає — 0.',
+ hOtPct:'Рядок «príplatok za nadčas» у «FINANČNÉ POLOŽKY». Відсоток = сума ÷ (години nadčas × погодинна ставка). За законом не менше 25 %.',
+ hTaxRate:'Рядок «Daň zo mzdy – preddavok»: відсоток = податок ÷ («Hrubá mzda» − «Odvody celkom» − неоподатковувана частина). Зазвичай 15 % або 19 %. Приклад: 135,32 ÷ 712,20 = 19 %.',
+ hDeduct:'З блоку «VYMERIAVACIE ZÁKLADY»: «Hrubá mzda» мінус база «starobné poistenie». Приклад: 750,75 − 550,75 = 200 €. Якщо числа рівні — відрахування немає, поставте 0.',
+ hOfficial:'Рядок «Počet odprac. hodín» у блоці «HODINOVÉ POLOŽKY». Це години, оплачені як «čiastka krátená»; решта виплачується окремою премією («odmena»).',
+ hTaxFree:'Рядок «Nezdaniteľná časť» або «Odpočítateľná položka» у блоці «Úprava zákl. dane». Застосовується, лише якщо ви підписали в роботодавця «vyhlásenie»; інакше 0.',
+ hChild:'Рядок «Daňový bonus» у блоці «Úprava zákl. dane». Є, лише якщо у вас є діти і ви заявили бонус у роботодавця; інакше 0.',
+ hContrib:'Рядки «DPs-zamestnanec», «DPi-zamestnanec» (і «Zdravotné», «Nemocenské», «Nezamestnanosť») у «FINANČNÉ POLOŽKY». Відсоток = сума ÷ «Vymeriavací základ».',
+ hVacH:'Скільки годин фірма оплачує за один день відпустки: зазвичай довжина зміни (8 або 12 год). Дивіться блок «Dovolenka» (D-čerpaná) і години відпустки в «HODINOVÉ POLOŽKY».',
+ hPgH:'Години, які фірма оплачує за день Paragraf (візит до лікаря): «návšteva lekára» в «HODINOVÉ POLOŽKY». Залишок днів вказано вгорі листка: «Zostatok návštevy lekára».',
+ hAvgNah:'Помаранчеве віконце «Priemer pre náhrady» праворуч угорі листка (€/год). За цим середнім оплачуються відпустка і Paragraf.',
+ hAvgNem:'Помаранчеве віконце «Priemer na nemoc» праворуч угорі листка (€/год). Від нього рахується оплата перших днів PN.',
+ hNem:'Відсотки, які фірма платить за дні PN (зазвичай дні 1–3 і 4–10), вказані в рядках «náhrada príjmu pri PN» на листку або в правилах фірми.',
+ hBonus:'Бонуси на листку — рядки «odmena», «prémia», «bonus» у «FINANČNÉ POLOŽKY». Якщо сума щомісяця різна, вносьте її в «Разова премія» потрібного місяця.',
+ hExtra:'Разова виплата за цей місяць: «prémia», «odmena» або «13. plat» у «FINANČNÉ POLOŽKY».',
+ hG:'Рядок «HRUBÁ MZDA» у блоці «FINANČNÉ POLOŽKY».',
+ hB:'Блок «VYMERIAVACIE ZÁKLADY», рядок «starobné poistenie» (або «invalidné poistenie»).',
+ hO:'Рядок «Odvody celkom» (сума «DPs-zamestnanec», «DPi-zamestnanec» та інших).',
+ hT:'Рядок «Daň zo mzdy – preddavok» у «FINANČNÉ POLOŽKY».',
+ hN:'Рядок «Nezdaniteľná časť» у блоці «Úprava zákl. dane». Якщо його немає — залиште порожнім.',
+ hActual:'Рядок «ČISTÁ MZDA» у «FINANČNÉ POLOŽKY» або «Mzda k výplate» вгорі листка.',
+ hlp0t:'Ласкаво просимо!',hlp0b:'Це ваш особистий календар змін. Він сам знайде закономірність у вашому графіку, нагадає про зміну та порахує зарплату. Давайте познайомимось — це займе менше хвилини.',helpGo:'Познайомитись',moreBtn:'Докладніше',pickCat:'Вибрати категорію',lookTitle:'Вигляд і мова',navBal:'Відпустка і Paragraf',navOn:'Увімк.',navOff:'Вимк.',autoTag:'заплановано',payGrpBasic:'Основне',payGrpPrem:'Надбавки і nadčas',payGrpTax:'Податки і внески',payGrpLeave:'Відпустка, PN, Paragraf',title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
  undo:'Скасувати',undoBtn:'↶ Скасувати останню дію',summary:'Підсумки — {m}',totalHours:'усього годин',noHours:'без годин',
  noteTitle:'Нотатка',notePh:'Наприклад: підміна, лікар о 10:00…',overlayTitle:'Поверх зміни',pDay:'День',pNight:'Ніч',timeTitle:'Час зміни',reset:'Скинути',
  clearShift:'Очистити зміну',done:'Готово',add:'Додати',update:'Оновити',remove:'Прибрати',nextDay:'до наступного дня',
@@ -475,7 +576,37 @@ uk:{moreBtn:'Докладніше',pickCat:'Вибрати категорію',l
  ignoreLbl:'Не враховувати в аналізі графіка',ignoreHint:'Для відпустки, лікарняного та будь-яких нерегулярних днів.',
  delete:'Видалити',cancel:'Скасувати',save:'Зберегти',
  types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-sk:{moreBtn:'Podrobnosti',pickCat:'Vybrať kategóriu',lookTitle:'Vzhľad a jazyk',navBal:'Dovolenka a Paragraf',navOn:'Zap.',navOff:'Vyp.',autoTag:'naplánované',payGrpBasic:'Základ',payGrpPrem:'Príplatky a nadčas',payGrpTax:'Dane a odvody',payGrpLeave:'Dovolenka, PN, Paragraf',title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
+sk:{hintTitle:'Kde to nájdete na páske',
+ hTypeLbl:'Ak je v bloku „Základné zložky mzdy“ riadok „Základný plat“ alebo je v zmluve „mesačná mzda“, vyberte Mesačná mzda. Ak platia za hodiny („hodinová mzda“ alebo riadky „dohoda – čiastka“), vyberte Hodinová.',
+ hRate:'Hodinová sadzba („hodinová mzda“) je v zmluve alebo na páske. Môžete aj vydeliť sumu „dohoda – čiastka krátená“ (alebo „Základná mzda“) počtom „Počet odprac. hodín“. Príklad: 546,00 ÷ 84 h = 6,50 €.',
+ hBase:'Mesačná hrubá mzda: „Základný plat“ alebo „Tarifná mzda“ v bloku „Základné zložky mzdy“, prípadne suma zo zmluvy.',
+ hDayH:'Koľko hodín má bežný pracovný deň: najčastejšie 8 (pri 37,5-hodinovom týždni 7,5). Pozrite „pracovný čas“ v zmluve.',
+ hFund:'Riadok „Fond prac. doby v hodinách“ v bloku „HODINOVÉ POLOŽKY“. Ak ho necháte prázdny, aplikácia ho vypočíta sama (pracovné dni × hodiny za deň).',
+ hNight:'V „FINANČNÉ POLOŽKY“ nájdite „príplatok za nočnú prácu“. Sadzba = suma ÷ nočné hodiny z „HODINOVÉ POLOŽKY“. Ak taký riadok nie je, nechajte 0.',
+ hSat:'Riadok „práca v sobotu“ (alebo „príplatok za sobotu“) v „FINANČNÉ POLOŽKY“. Sadzba = suma ÷ hodiny soboty. Príklad: 40,76 ÷ 15,5 h = 2,63 €/h.',
+ hSun:'Riadok „práca v nedeľu“ (alebo „príplatok za nedeľu“) v „FINANČNÉ POLOŽKY“. Sadzba = suma ÷ hodiny nedele. Ak riadok nie je, nechajte 0.',
+ hHol:'Riadok „práca vo sviatok“ (alebo „príplatok za sviatok“) v „FINANČNÉ POLOŽKY“. Sadzba = suma ÷ sviatkové hodiny. Ak riadok nie je, nechajte 0.',
+ hOtPct:'Riadok „príplatok za nadčas“ v „FINANČNÉ POLOŽKY“. Percento = suma ÷ (hodiny nadčasu × hodinová sadzba). Podľa zákona aspoň 25 %.',
+ hTaxRate:'Riadok „Daň zo mzdy – preddavok“: percento = daň ÷ („Hrubá mzda“ − „Odvody celkom“ − nezdaniteľná časť). Zvyčajne 15 % alebo 19 %. Príklad: 135,32 ÷ 712,20 = 19 %.',
+ hDeduct:'Z bloku „VYMERIAVACIE ZÁKLADY“: „Hrubá mzda“ mínus základ „starobné poistenie“. Príklad: 750,75 − 550,75 = 200 €. Ak sú čísla rovnaké, odpočet nie je, zadajte 0.',
+ hOfficial:'Riadok „Počet odprac. hodín“ v bloku „HODINOVÉ POLOŽKY“. Sú to hodiny vyplatené ako „čiastka krátená“; zvyšok sa vypláca zvlášť ako odmena („odmena“).',
+ hTaxFree:'Riadok „Nezdaniteľná časť“ alebo „Odpočítateľná položka“ v bloku „Úprava zákl. dane“. Uplatní sa, iba ak ste u zamestnávateľa podpísali „vyhlásenie“; inak 0.',
+ hChild:'Riadok „Daňový bonus“ v bloku „Úprava zákl. dane“. Je tam, iba ak máte deti a bonus ste si uplatnili u zamestnávateľa; inak 0.',
+ hContrib:'Riadky „DPs-zamestnanec“, „DPi-zamestnanec“ (aj „Zdravotné“, „Nemocenské“, „Nezamestnanosť“) v „FINANČNÉ POLOŽKY“. Percento = suma ÷ „Vymeriavací základ“.',
+ hVacH:'Koľko hodín firma platí za jeden deň dovolenky: zvyčajne dĺžka zmeny (8 alebo 12 h). Pozrite blok „Dovolenka“ (D-čerpaná) a hodiny dovolenky v „HODINOVÉ POLOŽKY“.',
+ hPgH:'Hodiny, ktoré firma platí za deň Paragraf (návšteva lekára): „návšteva lekára“ v „HODINOVÉ POLOŽKY“. Zostávajúce dni sú hore na páske: „Zostatok návštevy lekára“.',
+ hAvgNah:'Oranžové okienko „Priemer pre náhrady“ vpravo hore na páske (€/h). Podľa tohto priemeru sa platí dovolenka a Paragraf.',
+ hAvgNem:'Oranžové okienko „Priemer na nemoc“ vpravo hore na páske (€/h). Podľa neho sa počíta náhrada za prvé dni PN.',
+ hNem:'Percentá, ktoré firma platí za dni PN (zvyčajne dni 1–3 a 4–10), sú v riadkoch „náhrada príjmu pri PN“ na páske alebo vo vnútorných pravidlách firmy.',
+ hBonus:'Bonusy na páske sú riadky „odmena“, „prémia“, „bonus“ v „FINANČNÉ POLOŽKY“. Ak je suma každý mesiac iná, zadajte ju do „Jednorazová odmena“ príslušného mesiaca.',
+ hExtra:'Jednorazová platba za tento mesiac: „prémia“, „odmena“ alebo „13. plat“ v „FINANČNÉ POLOŽKY“.',
+ hG:'Riadok „HRUBÁ MZDA“ v bloku „FINANČNÉ POLOŽKY“.',
+ hB:'Blok „VYMERIAVACIE ZÁKLADY“, riadok „starobné poistenie“ (alebo „invalidné poistenie“).',
+ hO:'Riadok „Odvody celkom“ (súčet „DPs-zamestnanec“, „DPi-zamestnanec“ a ďalších).',
+ hT:'Riadok „Daň zo mzdy – preddavok“ v „FINANČNÉ POLOŽKY“.',
+ hN:'Riadok „Nezdaniteľná časť“ v bloku „Úprava zákl. dane“. Ak tam nie je, nechajte prázdne.',
+ hActual:'Riadok „ČISTÁ MZDA“ v „FINANČNÉ POLOŽKY“ alebo „Mzda k výplate“ hore na páske.',
+ hlp0t:'Vitajte!',hlp0b:'Toto je váš osobný kalendár zmien. Sám nájde pravidelnosť vo vašom rozpise, pripomenie zmenu a vypočíta mzdu. Zoznámme sa — zaberie to menej než minútu.',helpGo:'Zoznámiť sa',moreBtn:'Podrobnosti',pickCat:'Vybrať kategóriu',lookTitle:'Vzhľad a jazyk',navBal:'Dovolenka a Paragraf',navOn:'Zap.',navOff:'Vyp.',autoTag:'naplánované',payGrpBasic:'Základ',payGrpPrem:'Príplatky a nadčas',payGrpTax:'Dane a odvody',payGrpLeave:'Dovolenka, PN, Paragraf',title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
  undo:'Späť',undoBtn:'↶ Vrátiť poslednú akciu',summary:'Súhrn — {m}',totalHours:'hodín spolu',noHours:'bez hodín',
  noteTitle:'Poznámka',notePh:'Napr.: zastupovanie, lekár o 10:00…',overlayTitle:'Popri zmene',pDay:'Deň',pNight:'Noc',timeTitle:'Čas zmeny',reset:'Obnoviť',
  clearShift:'Vymazať zmenu',done:'Hotovo',add:'Pridať',update:'Aktualizovať',remove:'Odstrániť',nextDay:'do nasledujúceho dňa',
@@ -532,7 +663,37 @@ sk:{moreBtn:'Podrobnosti',pickCat:'Vybrať kategóriu',lookTitle:'Vzhľad a jazy
  ignoreLbl:'Nezahŕňať do analýzy rozpisu',ignoreHint:'Pre dovolenku, PN a akékoľvek nepravidelné dni.',
  delete:'Odstrániť',cancel:'Zrušiť',save:'Uložiť',
  types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-en:{moreBtn:'Details',pickCat:'Choose category',lookTitle:'Appearance & language',navBal:'Vacation & Paragraf',navOn:'On',navOff:'Off',autoTag:'planned',payGrpBasic:'Basics',payGrpPrem:'Premiums & overtime',payGrpTax:'Taxes & contributions',payGrpLeave:'Vacation, sick, Paragraf',title:'My Shifts',today:'Today',prev:'Back',next:'Forward',menu:'Menu',close:'Close',h:'h',
+en:{hintTitle:'Where to find it on the payslip',
+ hTypeLbl:'If the “Základné zložky mzdy” box shows “Základný plat” (a base salary) or your contract states a “mesačná mzda”, choose Monthly salary. If you are paid per hour (“hodinová mzda” or “dohoda – čiastka” lines), choose Hourly.',
+ hRate:'The hourly rate (“hodinová mzda”) is in your contract or on the payslip. You can also divide the “dohoda – čiastka krátená” (or “Základná mzda”) amount by “Počet odprac. hodín”. Example: 546.00 ÷ 84 h = €6.50.',
+ hBase:'Monthly gross pay: “Základný plat” or “Tarifná mzda” in the “Základné zložky mzdy” box, or the amount in your contract.',
+ hDayH:'Hours in a normal working day: usually 8 (7.5 for a 37.5-hour week). See “pracovný čas” in your contract.',
+ hFund:'The “Fond prac. doby v hodinách” line in the “HODINOVÉ POLOŽKY” block. If left empty, the app calculates it (working days × hours per day).',
+ hNight:'In “FINANČNÉ POLOŽKY” look for “príplatok za nočnú prácu”. Rate = amount ÷ night hours listed in “HODINOVÉ POLOŽKY”. If there is no such line, leave 0.',
+ hSat:'The “práca v sobotu” (or “príplatok za sobotu”) line in “FINANČNÉ POLOŽKY”. Rate = amount ÷ Saturday hours. Example: 40.76 ÷ 15.5 h = €2.63/h.',
+ hSun:'The “práca v nedeľu” (or “príplatok za nedeľu”) line in “FINANČNÉ POLOŽKY”. Rate = amount ÷ Sunday hours. If there is no such line, leave 0.',
+ hHol:'The “práca vo sviatok” (or “príplatok za sviatok”) line in “FINANČNÉ POLOŽKY”. Rate = amount ÷ holiday hours. If there is no such line, leave 0.',
+ hOtPct:'The “príplatok za nadčas” line in “FINANČNÉ POLOŽKY”. Percentage = amount ÷ (overtime hours × hourly rate). By law at least 25%.',
+ hTaxRate:'In the “Daň zo mzdy – preddavok” line: percentage = tax ÷ (“Hrubá mzda” − “Odvody celkom” − tax-free amount). Usually 15% or 19%. Example: 135.32 ÷ 712.20 = 19%.',
+ hDeduct:'From the “VYMERIAVACIE ZÁKLADY” block: “Hrubá mzda” minus the “starobné poistenie” base. Example: 750.75 − 550.75 = €200. If the numbers are equal there is no deduction, enter 0.',
+ hOfficial:'The “Počet odprac. hodín” line in “HODINOVÉ POLOŽKY”. These are the hours paid as “čiastka krátená”; the rest is paid as a separate bonus (“odmena”).',
+ hTaxFree:'The “Nezdaniteľná časť” or “Odpočítateľná položka” line in the “Úprava zákl. dane” box. It applies only if you signed the declaration (“vyhlásenie”) with your employer; otherwise enter 0.',
+ hChild:'The “Daňový bonus” line in the “Úprava zákl. dane” box. It exists only if you have children and claimed the bonus with your employer; otherwise 0.',
+ hContrib:'Lines “DPs-zamestnanec”, “DPi-zamestnanec” (and “Zdravotné”, “Nemocenské”, “Nezamestnanosť”) in “FINANČNÉ POLOŽKY”. Percentage = amount ÷ “Vymeriavací základ”.',
+ hVacH:'How many hours the company pays for one vacation day: usually the shift length (8 or 12 h). See the “Dovolenka” box (D-čerpaná) and vacation hours in “HODINOVÉ POLOŽKY”.',
+ hPgH:'Hours the company pays for one Paragraf day (doctor visit): “návšteva lekára” in “HODINOVÉ POLOŽKY”. The remaining days are shown at the top: “Zostatok návštevy lekára”.',
+ hAvgNah:'The orange box “Priemer pre náhrady” at the top right of the payslip (€/h). Vacation and Paragraf are paid at this average.',
+ hAvgNem:'The orange box “Priemer na nemoc” at the top right of the payslip (€/h). The first days of sick leave are calculated from it.',
+ hNem:'The percentages the employer pays for sick days (usually days 1–3 and 4–10) are shown in the “náhrada príjmu pri PN” lines on the payslip or in the company rules.',
+ hBonus:'Bonuses on the payslip are the “odmena”, “prémia” or “bonus” lines in “FINANČNÉ POLOŽKY”. If the amount differs every month, enter it in “One-time bonus” for that month.',
+ hExtra:'A one-off payment for this month: “prémia”, “odmena” or “13. plat” in “FINANČNÉ POLOŽKY”.',
+ hG:'The “HRUBÁ MZDA” line in the “FINANČNÉ POLOŽKY” block.',
+ hB:'The “VYMERIAVACIE ZÁKLADY” block, “starobné poistenie” (or “invalidné poistenie”) line.',
+ hO:'The “Odvody celkom” line (the sum of “DPs-zamestnanec”, “DPi-zamestnanec” and others).',
+ hT:'The “Daň zo mzdy – preddavok” line in “FINANČNÉ POLOŽKY”.',
+ hN:'The “Nezdaniteľná časť” line in the “Úprava zákl. dane” box. If there is none, leave it empty.',
+ hActual:'The “ČISTÁ MZDA” line in “FINANČNÉ POLOŽKY” or “Mzda k výplate” at the top of the payslip.',
+ hlp0t:'Welcome!',hlp0b:'This is your personal shift calendar. It finds the pattern in your schedule on its own, reminds you about your shifts and calculates your pay. Let us get acquainted — it takes less than a minute.',helpGo:'Get started',moreBtn:'Details',pickCat:'Choose category',lookTitle:'Appearance & language',navBal:'Vacation & Paragraf',navOn:'On',navOff:'Off',autoTag:'planned',payGrpBasic:'Basics',payGrpPrem:'Premiums & overtime',payGrpTax:'Taxes & contributions',payGrpLeave:'Vacation, sick, Paragraf',title:'My Shifts',today:'Today',prev:'Back',next:'Forward',menu:'Menu',close:'Close',h:'h',
  undo:'Undo',undoBtn:'↶ Undo last action',summary:'Summary — {m}',totalHours:'total hours',noHours:'no hours',
  noteTitle:'Note',notePh:'E.g. covering a shift, doctor at 10:00…',overlayTitle:'On top of shift',pDay:'Day',pNight:'Night',timeTitle:'Shift time',reset:'Reset',
  clearShift:'Clear shift',done:'Done',add:'Add',update:'Update',updateApp:'Update app',remove:'Remove',nextDay:'until the next day',
@@ -591,7 +752,37 @@ en:{moreBtn:'Details',pickCat:'Choose category',lookTitle:'Appearance & language
  ignoreLbl:'Ignore in schedule analysis',ignoreHint:'For vacation, sick leave and any irregular days.',
  delete:'Delete',cancel:'Cancel',save:'Save',
  types:{d:['Day','D'],n:['Night','N'],o:['Day off','Off'],v:['Vacation','Vac'],s:['Sick leave','Sick'],ot:['Overtime','OT'],pg:['Doctor (Paragraf)','Dr']}},
-cs:{moreBtn:'Podrobnosti',pickCat:'Vybrat kategorii',lookTitle:'Vzhled a jazyk',navBal:'Dovolená a Paragraf',navOn:'Zap.',navOff:'Vyp.',autoTag:'naplánováno',payGrpBasic:'Základ',payGrpPrem:'Příplatky a přesčas',payGrpTax:'Daně a odvody',payGrpLeave:'Dovolená, nemocenská, Paragraf',title:'Moje směny',today:'Dnes',prev:'Zpět',next:'Vpřed',menu:'Menu',close:'Zavřít',h:'h',
+cs:{hintTitle:'Kde to najdete na pásce',
+ hTypeLbl:'Pokud je v bloku „Základné zložky mzdy“ řádek „Základný plat“ nebo je ve smlouvě „mesačná mzda“, zvolte Měsíční mzda. Pokud platí za hodiny („hodinová mzda“ nebo řádky „dohoda – čiastka“), zvolte Hodinová.',
+ hRate:'Hodinová sazba („hodinová mzda“) je ve smlouvě nebo na pásce. Můžete také vydělit částku „dohoda – čiastka krátená“ (nebo „Základná mzda“) počtem „Počet odprac. hodín“. Příklad: 546,00 ÷ 84 h = 6,50 €.',
+ hBase:'Měsíční hrubá mzda: „Základný plat“ nebo „Tarifná mzda“ v bloku „Základné zložky mzdy“, případně částka ze smlouvy.',
+ hDayH:'Kolik hodin má běžný pracovní den: nejčastěji 8 (při 37,5hodinovém týdnu 7,5). Podívejte se na „pracovný čas“ ve smlouvě.',
+ hFund:'Řádek „Fond prac. doby v hodinách“ v bloku „HODINOVÉ POLOŽKY“. Když pole necháte prázdné, aplikace ho spočítá sama (pracovní dny × hodiny za den).',
+ hNight:'V „FINANČNÉ POLOŽKY“ najděte „príplatok za nočnú prácu“. Sazba = částka ÷ noční hodiny z „HODINOVÉ POLOŽKY“. Pokud takový řádek není, nechte 0.',
+ hSat:'Řádek „práca v sobotu“ (nebo „príplatok za sobotu“) v „FINANČNÉ POLOŽKY“. Sazba = částka ÷ hodiny soboty. Příklad: 40,76 ÷ 15,5 h = 2,63 €/h.',
+ hSun:'Řádek „práca v nedeľu“ (nebo „príplatok za nedeľu“) v „FINANČNÉ POLOŽKY“. Sazba = částka ÷ hodiny neděle. Pokud řádek není, nechte 0.',
+ hHol:'Řádek „práca vo sviatok“ (nebo „príplatok za sviatok“) v „FINANČNÉ POLOŽKY“. Sazba = částka ÷ svátkové hodiny. Pokud řádek není, nechte 0.',
+ hOtPct:'Řádek „príplatok za nadčas“ v „FINANČNÉ POLOŽKY“. Procento = částka ÷ (hodiny přesčasu × hodinová sazba). Ze zákona alespoň 25 %.',
+ hTaxRate:'Řádek „Daň zo mzdy – preddavok“: procento = daň ÷ („Hrubá mzda“ − „Odvody celkom“ − nezdanitelná část). Obvykle 15 % nebo 19 %. Příklad: 135,32 ÷ 712,20 = 19 %.',
+ hDeduct:'Z bloku „VYMERIAVACIE ZÁKLADY“: „Hrubá mzda“ minus základ „starobné poistenie“. Příklad: 750,75 − 550,75 = 200 €. Pokud jsou čísla stejná, odpočet není, zadejte 0.',
+ hOfficial:'Řádek „Počet odprac. hodín“ v bloku „HODINOVÉ POLOŽKY“. Jsou to hodiny vyplacené jako „čiastka krátená“; zbytek se vyplácí zvlášť jako odměna („odmena“).',
+ hTaxFree:'Řádek „Nezdaniteľná časť“ nebo „Odpočítateľná položka“ v bloku „Úprava zákl. dane“. Uplatní se, jen když jste u zaměstnavatele podepsali „vyhlásenie“; jinak 0.',
+ hChild:'Řádek „Daňový bonus“ v bloku „Úprava zákl. dane“. Je tam, jen když máte děti a bonus jste si uplatnili u zaměstnavatele; jinak 0.',
+ hContrib:'Řádky „DPs-zamestnanec“, „DPi-zamestnanec“ (i „Zdravotné“, „Nemocenské“, „Nezamestnanosť“) v „FINANČNÉ POLOŽKY“. Procento = částka ÷ „Vymeriavací základ“.',
+ hVacH:'Kolik hodin firma platí za jeden den dovolené: obvykle délka směny (8 nebo 12 h). Podívejte se na blok „Dovolenka“ (D-čerpaná) a hodiny dovolené v „HODINOVÉ POLOŽKY“.',
+ hPgH:'Hodiny, které firma platí za den Paragraf (návštěva lékaře): „návšteva lekára“ v „HODINOVÉ POLOŽKY“. Zbývající dny jsou nahoře na pásce: „Zostatok návštevy lekára“.',
+ hAvgNah:'Oranžové okénko „Priemer pre náhrady“ vpravo nahoře na pásce (€/h). Podle tohoto průměru se platí dovolená a Paragraf.',
+ hAvgNem:'Oranžové okénko „Priemer na nemoc“ vpravo nahoře na pásce (€/h). Podle něj se počítá náhrada za první dny PN.',
+ hNem:'Procenta, která firma platí za dny PN (obvykle dny 1–3 a 4–10), jsou v řádcích „náhrada príjmu pri PN“ na pásce nebo ve vnitřních pravidlech firmy.',
+ hBonus:'Bonusy na pásce jsou řádky „odmena“, „prémia“, „bonus“ v „FINANČNÉ POLOŽKY“. Pokud je částka každý měsíc jiná, zadejte ji do „Jednorázová odměna“ příslušného měsíce.',
+ hExtra:'Jednorázová platba za tento měsíc: „prémia“, „odmena“ nebo „13. plat“ v „FINANČNÉ POLOŽKY“.',
+ hG:'Řádek „HRUBÁ MZDA“ v bloku „FINANČNÉ POLOŽKY“.',
+ hB:'Blok „VYMERIAVACIE ZÁKLADY“, řádek „starobné poistenie“ (nebo „invalidné poistenie“).',
+ hO:'Řádek „Odvody celkom“ (součet „DPs-zamestnanec“, „DPi-zamestnanec“ a dalších).',
+ hT:'Řádek „Daň zo mzdy – preddavok“ v „FINANČNÉ POLOŽKY“.',
+ hN:'Řádek „Nezdaniteľná časť“ v bloku „Úprava zákl. dane“. Pokud tam není, nechte prázdné.',
+ hActual:'Řádek „ČISTÁ MZDA“ v „FINANČNÉ POLOŽKY“ nebo „Mzda k výplate“ nahoře na pásce.',
+ hlp0t:'Vítejte!',hlp0b:'Toto je váš osobní kalendář směn. Sám najde pravidelnost ve vašem rozpisu, připomene směnu a spočítá mzdu. Pojďme se seznámit — zabere to méně než minutu.',helpGo:'Seznámit se',moreBtn:'Podrobnosti',pickCat:'Vybrat kategorii',lookTitle:'Vzhled a jazyk',navBal:'Dovolená a Paragraf',navOn:'Zap.',navOff:'Vyp.',autoTag:'naplánováno',payGrpBasic:'Základ',payGrpPrem:'Příplatky a přesčas',payGrpTax:'Daně a odvody',payGrpLeave:'Dovolená, nemocenská, Paragraf',title:'Moje směny',today:'Dnes',prev:'Zpět',next:'Vpřed',menu:'Menu',close:'Zavřít',h:'h',
  undo:'Zpět',undoBtn:'↶ Vrátit poslední akci',summary:'Souhrn — {m}',totalHours:'hodin celkem',noHours:'bez hodin',
  noteTitle:'Poznámka',notePh:'Např.: zástup, lékař v 10:00…',overlayTitle:'Navíc ke směně',pDay:'Den',pNight:'Noc',timeTitle:'Čas směny',reset:'Obnovit',
  clearShift:'Smazat směnu',done:'Hotovo',add:'Přidat',update:'Aktualizovat',updateApp:'Aktualizovat aplikaci',remove:'Odebrat',nextDay:'do následujícího dne',
@@ -650,7 +841,37 @@ cs:{moreBtn:'Podrobnosti',pickCat:'Vybrat kategorii',lookTitle:'Vzhled a jazyk',
  ignoreLbl:'Nezahrnovat do analýzy rozpisu',ignoreHint:'Pro dovolenou, nemocenskou a jakékoli nepravidelné dny.',
  delete:'Smazat',cancel:'Zrušit',save:'Uložit',
  types:{d:['Den','D'],n:['Noc','N'],o:['Volno','V'],v:['Dovolená','Dov'],s:['Nemocenská','PN'],ot:['Přesčas','Př'],pg:['Lékař (paragraf)','Dr']}},
-pl:{moreBtn:'Szczegóły',pickCat:'Wybierz kategorię',lookTitle:'Wygląd i język',navBal:'Urlop i Paragraf',navOn:'Wł.',navOff:'Wył.',autoTag:'zaplanowane',payGrpBasic:'Podstawa',payGrpPrem:'Dodatki i nadgodziny',payGrpTax:'Podatki i składki',payGrpLeave:'Urlop, zwolnienie, Paragraf',title:'Moje zmiany',today:'Dziś',prev:'Wstecz',next:'Dalej',menu:'Menu',close:'Zamknij',h:'godz.',
+pl:{hintTitle:'Gdzie to znaleźć na pasku',
+ hTypeLbl:'Jeśli w bloku „Základné zložky mzdy” jest „Základný plat” albo w umowie podano „mesačná mzda”, wybierz Miesięczne. Jeśli płacą za godziny („hodinová mzda” lub wiersze „dohoda – čiastka”), wybierz Godzinowe.',
+ hRate:'Stawka godzinowa („hodinová mzda”) jest w umowie lub na pasku. Możesz też podzielić kwotę „dohoda – čiastka krátená” (lub „Základná mzda”) przez „Počet odprac. hodín”. Przykład: 546,00 ÷ 84 godz. = 6,50 €.',
+ hBase:'Miesięczna hrubá mzda: „Základný plat” lub „Tarifná mzda” w bloku „Základné zložky mzdy” albo kwota z umowy.',
+ hDayH:'Ile godzin ma zwykły dzień pracy: najczęściej 8 (przy tygodniu 37,5 godz. — 7,5). Zobacz „pracovný čas” w umowie.',
+ hFund:'Wiersz „Fond prac. doby v hodinách” w bloku „HODINOVÉ POLOŽKY”. Jeśli zostawisz puste, aplikacja policzy sama (dni robocze × godziny w dniu).',
+ hNight:'W „FINANČNÉ POLOŽKY” znajdź „príplatok za nočnú prácu”. Stawka = kwota ÷ godziny nocne z „HODINOVÉ POLOŽKY”. Jeśli takiego wiersza nie ma, zostaw 0.',
+ hSat:'Wiersz „práca v sobotu” (lub „príplatok za sobotu”) w „FINANČNÉ POLOŽKY”. Stawka = kwota ÷ godziny soboty. Przykład: 40,76 ÷ 15,5 godz. = 2,63 €/godz.',
+ hSun:'Wiersz „práca v nedeľu” (lub „príplatok za nedeľu”) w „FINANČNÉ POLOŽKY”. Stawka = kwota ÷ godziny niedzieli. Jeśli wiersza nie ma, zostaw 0.',
+ hHol:'Wiersz „práca vo sviatok” (lub „príplatok za sviatok”) w „FINANČNÉ POLOŽKY”. Stawka = kwota ÷ godziny świąteczne. Jeśli wiersza nie ma, zostaw 0.',
+ hOtPct:'Wiersz „príplatok za nadčas” w „FINANČNÉ POLOŽKY”. Procent = kwota ÷ (godziny nadgodzin × stawka godzinowa). Według prawa co najmniej 25%.',
+ hTaxRate:'Wiersz „Daň zo mzdy – preddavok”: procent = podatek ÷ („Hrubá mzda” − „Odvody celkom” − kwota wolna). Zwykle 15% lub 19%. Przykład: 135,32 ÷ 712,20 = 19%.',
+ hDeduct:'Z bloku „VYMERIAVACIE ZÁKLADY”: „Hrubá mzda” minus podstawa „starobné poistenie”. Przykład: 750,75 − 550,75 = 200 €. Jeśli liczby są równe, nie ma odliczenia — wpisz 0.',
+ hOfficial:'Wiersz „Počet odprac. hodín” w bloku „HODINOVÉ POLOŽKY”. To godziny wypłacone jako „čiastka krátená”; reszta jest wypłacana osobno jako premia („odmena”).',
+ hTaxFree:'Wiersz „Nezdaniteľná časť” lub „Odpočítateľná položka” w bloku „Úprava zákl. dane”. Stosuje się tylko, jeśli podpisałeś u pracodawcy „vyhlásenie”; w przeciwnym razie 0.',
+ hChild:'Wiersz „Daňový bonus” w bloku „Úprava zákl. dane”. Jest tylko wtedy, gdy masz dzieci i zgłosiłeś bonus u pracodawcy; w przeciwnym razie 0.',
+ hContrib:'Wiersze „DPs-zamestnanec”, „DPi-zamestnanec” (oraz „Zdravotné”, „Nemocenské”, „Nezamestnanosť”) w „FINANČNÉ POLOŽKY”. Procent = kwota ÷ „Vymeriavací základ”.',
+ hVacH:'Ile godzin firma płaci za jeden dzień urlopu: zwykle długość zmiany (8 lub 12 godz.). Zobacz blok „Dovolenka” (D-čerpaná) i godziny urlopu w „HODINOVÉ POLOŽKY”.',
+ hPgH:'Godziny, które firma płaci za dzień Paragraf (wizyta u lekarza): „návšteva lekára” w „HODINOVÉ POLOŽKY”. Pozostałe dni są na górze paska: „Zostatok návštevy lekára”.',
+ hAvgNah:'Pomarańczowe okienko „Priemer pre náhrady” w prawym górnym rogu paska (€/godz.). Według tej średniej płaci się urlop i Paragraf.',
+ hAvgNem:'Pomarańczowe okienko „Priemer na nemoc” w prawym górnym rogu paska (€/godz.). Od niego liczy się wynagrodzenie za pierwsze dni zwolnienia.',
+ hNem:'Procenty, które firma płaci za dni zwolnienia (zwykle dni 1–3 i 4–10), są w wierszach „náhrada príjmu pri PN” na pasku lub w regulaminie firmy.',
+ hBonus:'Premie na pasku to wiersze „odmena”, „prémia”, „bonus” w „FINANČNÉ POLOŽKY”. Jeśli kwota co miesiąc jest inna, wpisz ją w „Premia jednorazowa” danego miesiąca.',
+ hExtra:'Jednorazowa wypłata za ten miesiąc: „prémia”, „odmena” lub „13. plat” w „FINANČNÉ POLOŽKY”.',
+ hG:'Wiersz „HRUBÁ MZDA” w bloku „FINANČNÉ POLOŽKY”.',
+ hB:'Blok „VYMERIAVACIE ZÁKLADY”, wiersz „starobné poistenie” (lub „invalidné poistenie”).',
+ hO:'Wiersz „Odvody celkom” (suma „DPs-zamestnanec”, „DPi-zamestnanec” i innych).',
+ hT:'Wiersz „Daň zo mzdy – preddavok” w „FINANČNÉ POLOŽKY”.',
+ hN:'Wiersz „Nezdaniteľná časť” w bloku „Úprava zákl. dane”. Jeśli go nie ma, zostaw puste.',
+ hActual:'Wiersz „ČISTÁ MZDA” w „FINANČNÉ POLOŽKY” lub „Mzda k výplate” na górze paska.',
+ hlp0t:'Witamy!',hlp0b:'To Twój osobisty kalendarz zmian. Sam znajdzie prawidłowość w grafiku, przypomni o zmianie i obliczy wynagrodzenie. Poznajmy się — zajmie to mniej niż minutę.',helpGo:'Poznajmy się',moreBtn:'Szczegóły',pickCat:'Wybierz kategorię',lookTitle:'Wygląd i język',navBal:'Urlop i Paragraf',navOn:'Wł.',navOff:'Wył.',autoTag:'zaplanowane',payGrpBasic:'Podstawa',payGrpPrem:'Dodatki i nadgodziny',payGrpTax:'Podatki i składki',payGrpLeave:'Urlop, zwolnienie, Paragraf',title:'Moje zmiany',today:'Dziś',prev:'Wstecz',next:'Dalej',menu:'Menu',close:'Zamknij',h:'godz.',
  undo:'Cofnij',undoBtn:'↶ Cofnij ostatnią czynność',summary:'Podsumowanie — {m}',totalHours:'godzin łącznie',noHours:'bez godzin',
  noteTitle:'Notatka',notePh:'Np.: zastępstwo, lekarz o 10:00…',overlayTitle:'Dodatkowo do zmiany',pDay:'Dzień',pNight:'Noc',timeTitle:'Czas zmiany',reset:'Przywróć',
  clearShift:'Wyczyść zmianę',done:'Gotowe',add:'Dodaj',update:'Zaktualizuj',updateApp:'Zaktualizuj aplikację',remove:'Usuń',nextDay:'do następnego dnia',
@@ -709,7 +930,37 @@ pl:{moreBtn:'Szczegóły',pickCat:'Wybierz kategorię',lookTitle:'Wygląd i jęz
  ignoreLbl:'Nie uwzględniaj w analizie grafiku',ignoreHint:'Dla urlopu, zwolnienia i wszelkich nieregularnych dni.',
  delete:'Usuń',cancel:'Anuluj',save:'Zapisz',
  types:{d:['Dzień','D'],n:['Noc','N'],o:['Wolne','W'],v:['Urlop','Url'],s:['Zwolnienie','L4'],ot:['Nadgodziny','Ng'],pg:['Lekarz (Paragraf)','Dr']}},
-de:{moreBtn:'Details',pickCat:'Kategorie wählen',lookTitle:'Design und Sprache',navBal:'Urlaub und Paragraf',navOn:'An',navOff:'Aus',autoTag:'geplant',payGrpBasic:'Grundlagen',payGrpPrem:'Zuschläge und Überstunden',payGrpTax:'Steuern und Abgaben',payGrpLeave:'Urlaub, Krank, Paragraf',title:'Meine Schichten',today:'Heute',prev:'Zurück',next:'Weiter',menu:'Menü',close:'Schließen',h:'Std.',
+de:{hintTitle:'Wo Sie es auf der Abrechnung finden',
+ hTypeLbl:'Steht im Block „Základné zložky mzdy“ ein „Základný plat“ (Grundgehalt) oder im Vertrag eine „mesačná mzda“, wählen Sie Monatsgehalt. Wird nach Stunden bezahlt („hodinová mzda“ oder Zeilen „dohoda – čiastka“), wählen Sie Stundenlohn.',
+ hRate:'Der Stundensatz („hodinová mzda“) steht im Vertrag oder auf der Abrechnung. Sie können auch den Betrag „dohoda – čiastka krátená“ (oder „Základná mzda“) durch „Počet odprac. hodín“ teilen. Beispiel: 546,00 ÷ 84 Std. = 6,50 €.',
+ hBase:'Monatliche hrubá mzda: „Základný plat“ oder „Tarifná mzda“ im Block „Základné zložky mzdy“ oder der Betrag aus dem Vertrag.',
+ hDayH:'Wie viele Stunden ein normaler Arbeitstag hat: meist 8 (bei einer 37,5-Stunden-Woche 7,5). Siehe „pracovný čas“ im Vertrag.',
+ hFund:'Die Zeile „Fond prac. doby v hodinách“ im Block „HODINOVÉ POLOŽKY“. Bleibt das Feld leer, berechnet die App den Wert selbst (Arbeitstage × Stunden pro Tag).',
+ hNight:'In „FINANČNÉ POLOŽKY“ die Zeile „príplatok za nočnú prácu“ suchen. Satz = Betrag ÷ Nachtstunden aus „HODINOVÉ POLOŽKY“. Gibt es keine solche Zeile, lassen Sie 0.',
+ hSat:'Die Zeile „práca v sobotu“ (oder „príplatok za sobotu“) in „FINANČNÉ POLOŽKY“. Satz = Betrag ÷ Samstagsstunden. Beispiel: 40,76 ÷ 15,5 Std. = 2,63 €/Std.',
+ hSun:'Die Zeile „práca v nedeľu“ (oder „príplatok za nedeľu“) in „FINANČNÉ POLOŽKY“. Satz = Betrag ÷ Sonntagsstunden. Gibt es keine solche Zeile, lassen Sie 0.',
+ hHol:'Die Zeile „práca vo sviatok“ (oder „príplatok za sviatok“) in „FINANČNÉ POLOŽKY“. Satz = Betrag ÷ Feiertagsstunden. Gibt es keine solche Zeile, lassen Sie 0.',
+ hOtPct:'Die Zeile „príplatok za nadčas“ in „FINANČNÉ POLOŽKY“. Prozentsatz = Betrag ÷ (Überstunden × Stundensatz). Gesetzlich mindestens 25 %.',
+ hTaxRate:'Die Zeile „Daň zo mzdy – preddavok“: Prozentsatz = Steuer ÷ („Hrubá mzda“ − „Odvody celkom“ − Freibetrag). Meist 15 % oder 19 %. Beispiel: 135,32 ÷ 712,20 = 19 %.',
+ hDeduct:'Aus dem Block „VYMERIAVACIE ZÁKLADY“: „Hrubá mzda“ minus die Grundlage „starobné poistenie“. Beispiel: 750,75 − 550,75 = 200 €. Sind die Zahlen gleich, gibt es keinen Abzug: 0 eintragen.',
+ hOfficial:'Die Zeile „Počet odprac. hodín“ im Block „HODINOVÉ POLOŽKY“. Das sind die als „čiastka krátená“ bezahlten Stunden; der Rest wird separat als Prämie („odmena“) gezahlt.',
+ hTaxFree:'Die Zeile „Nezdaniteľná časť“ oder „Odpočítateľná položka“ im Block „Úprava zákl. dane“. Sie gilt nur, wenn Sie beim Arbeitgeber das „vyhlásenie“ unterschrieben haben; sonst 0.',
+ hChild:'Die Zeile „Daňový bonus“ im Block „Úprava zákl. dane“. Sie erscheint nur, wenn Sie Kinder haben und den Bonus beim Arbeitgeber beantragt haben; sonst 0.',
+ hContrib:'Die Zeilen „DPs-zamestnanec“, „DPi-zamestnanec“ (und „Zdravotné“, „Nemocenské“, „Nezamestnanosť“) in „FINANČNÉ POLOŽKY“. Prozentsatz = Betrag ÷ „Vymeriavací základ“.',
+ hVacH:'Wie viele Stunden die Firma für einen Urlaubstag zahlt: meist die Schichtlänge (8 oder 12 Std.). Siehe Block „Dovolenka“ (D-čerpaná) und Urlaubsstunden in „HODINOVÉ POLOŽKY“.',
+ hPgH:'Stunden, die die Firma für einen Paragraf-Tag (Arztbesuch) zahlt: „návšteva lekára“ in „HODINOVÉ POLOŽKY“. Die verbleibenden Tage stehen oben auf der Abrechnung: „Zostatok návštevy lekára“.',
+ hAvgNah:'Das orange Feld „Priemer pre náhrady“ oben rechts auf der Abrechnung (€/Std.). Nach diesem Durchschnitt werden Urlaub und Paragraf bezahlt.',
+ hAvgNem:'Das orange Feld „Priemer na nemoc“ oben rechts auf der Abrechnung (€/Std.). Daraus wird die Vergütung der ersten Krankheitstage berechnet.',
+ hNem:'Die Prozentsätze, die die Firma für Krankheitstage zahlt (meist Tage 1–3 und 4–10), stehen in den Zeilen „náhrada príjmu pri PN“ auf der Abrechnung oder in den Firmenregeln.',
+ hBonus:'Boni auf der Abrechnung sind die Zeilen „odmena“, „prémia“, „bonus“ in „FINANČNÉ POLOŽKY“. Ist der Betrag jeden Monat anders, tragen Sie ihn in „Einmalige Prämie“ des Monats ein.',
+ hExtra:'Eine einmalige Zahlung für diesen Monat: „prémia“, „odmena“ oder „13. plat“ in „FINANČNÉ POLOŽKY“.',
+ hG:'Die Zeile „HRUBÁ MZDA“ im Block „FINANČNÉ POLOŽKY“.',
+ hB:'Block „VYMERIAVACIE ZÁKLADY“, Zeile „starobné poistenie“ (oder „invalidné poistenie“).',
+ hO:'Die Zeile „Odvody celkom“ (Summe aus „DPs-zamestnanec“, „DPi-zamestnanec“ und weiteren).',
+ hT:'Die Zeile „Daň zo mzdy – preddavok“ in „FINANČNÉ POLOŽKY“.',
+ hN:'Die Zeile „Nezdaniteľná časť“ im Block „Úprava zákl. dane“. Gibt es sie nicht, lassen Sie das Feld leer.',
+ hActual:'Die Zeile „ČISTÁ MZDA“ in „FINANČNÉ POLOŽKY“ oder „Mzda k výplate“ oben auf der Abrechnung.',
+ hlp0t:'Willkommen!',hlp0b:'Das ist Ihr persönlicher Schichtkalender. Er findet selbst das Muster in Ihrem Dienstplan, erinnert Sie an Ihre Schicht und berechnet den Lohn. Lernen wir uns kennen — das dauert weniger als eine Minute.',helpGo:'Kennenlernen',moreBtn:'Details',pickCat:'Kategorie wählen',lookTitle:'Design und Sprache',navBal:'Urlaub und Paragraf',navOn:'An',navOff:'Aus',autoTag:'geplant',payGrpBasic:'Grundlagen',payGrpPrem:'Zuschläge und Überstunden',payGrpTax:'Steuern und Abgaben',payGrpLeave:'Urlaub, Krank, Paragraf',title:'Meine Schichten',today:'Heute',prev:'Zurück',next:'Weiter',menu:'Menü',close:'Schließen',h:'Std.',
  undo:'Rückgängig',undoBtn:'↶ Letzte Aktion rückgängig machen',summary:'Übersicht — {m}',totalHours:'Stunden gesamt',noHours:'ohne Stunden',
  noteTitle:'Notiz',notePh:'Z. B.: Vertretung, Arzt um 10:00…',overlayTitle:'Zusätzlich zur Schicht',pDay:'Tag',pNight:'Nacht',timeTitle:'Schichtzeit',reset:'Zurücksetzen',
  clearShift:'Schicht löschen',done:'Fertig',add:'Hinzufügen',update:'Aktualisieren',updateApp:'App aktualisieren',remove:'Entfernen',nextDay:'bis zum nächsten Tag',
@@ -768,7 +1019,37 @@ de:{moreBtn:'Details',pickCat:'Kategorie wählen',lookTitle:'Design und Sprache'
  ignoreLbl:'In der Dienstplananalyse ignorieren',ignoreHint:'Für Urlaub, Krankheit und alle unregelmäßigen Tage.',
  delete:'Löschen',cancel:'Abbrechen',save:'Speichern',
  types:{d:['Tag','T'],n:['Nacht','N'],o:['Frei','Fr'],v:['Urlaub','Url'],s:['Krankenstand','Kr'],ot:['Überstunden','ÜS'],pg:['Arzttermin (Paragraf)','Dr']}},
-hu:{moreBtn:'Részletek',pickCat:'Kategória választása',lookTitle:'Megjelenés és nyelv',navBal:'Szabadság és Paragraf',navOn:'Be',navOff:'Ki',autoTag:'tervezett',payGrpBasic:'Alapok',payGrpPrem:'Pótlékok és túlóra',payGrpTax:'Adók és járulékok',payGrpLeave:'Szabadság, betegség, Paragraf',title:'Műszakjaim',today:'Ma',prev:'Vissza',next:'Előre',menu:'Menü',close:'Bezárás',h:'ó',
+hu:{hintTitle:'Hol találja a bérpapíron',
+ hTypeLbl:'Ha a „Základné zložky mzdy” blokkban van „Základný plat” (alapfizetés), vagy a szerződésben „mesačná mzda” szerepel, válassza a Havi fizetés lehetőséget. Ha órabért kap („hodinová mzda” vagy „dohoda – čiastka” sorok), válassza az Órabéres lehetőséget.',
+ hRate:'Az órabér („hodinová mzda”) a szerződésben vagy a bérpapíron szerepel. Kiszámolhatja úgy is, hogy a „dohoda – čiastka krátená” (vagy „Základná mzda”) összeget elosztja a „Počet odprac. hodín” értékével. Példa: 546,00 ÷ 84 óra = 6,50 €.',
+ hBase:'Havi hrubá mzda: „Základný plat” vagy „Tarifná mzda” a „Základné zložky mzdy” blokkban, vagy a szerződésben szereplő összeg.',
+ hDayH:'Hány óra egy átlagos munkanap: leggyakrabban 8 (37,5 órás héten 7,5). Nézze meg a szerződés „pracovný čas” részét.',
+ hFund:'A „Fond prac. doby v hodinách” sor a „HODINOVÉ POLOŽKY” blokkban. Ha üresen hagyja, az alkalmazás kiszámolja (munkanapok × óra naponta).',
+ hNight:'A „FINANČNÉ POLOŽKY” blokkban keresse a „príplatok za nočnú prácu” sort. Pótlék = összeg ÷ az éjszakai órák a „HODINOVÉ POLOŽKY” blokkból. Ha nincs ilyen sor, hagyja 0-n.',
+ hSat:'A „práca v sobotu” (vagy „príplatok za sobotu”) sor a „FINANČNÉ POLOŽKY” blokkban. Pótlék = összeg ÷ a szombati órák. Példa: 40,76 ÷ 15,5 óra = 2,63 €/óra.',
+ hSun:'A „práca v nedeľu” (vagy „príplatok za nedeľu”) sor a „FINANČNÉ POLOŽKY” blokkban. Pótlék = összeg ÷ a vasárnapi órák. Ha nincs ilyen sor, hagyja 0-n.',
+ hHol:'A „práca vo sviatok” (vagy „príplatok za sviatok”) sor a „FINANČNÉ POLOŽKY” blokkban. Pótlék = összeg ÷ az ünnepnapi órák. Ha nincs ilyen sor, hagyja 0-n.',
+ hOtPct:'A „príplatok za nadčas” sor a „FINANČNÉ POLOŽKY” blokkban. Százalék = összeg ÷ (túlórák × órabér). A törvény szerint legalább 25%.',
+ hTaxRate:'A „Daň zo mzdy – preddavok” sor: százalék = adó ÷ („Hrubá mzda” − „Odvody celkom” − adómentes rész). Általában 15% vagy 19%. Példa: 135,32 ÷ 712,20 = 19%.',
+ hDeduct:'A „VYMERIAVACIE ZÁKLADY” blokkból: „Hrubá mzda” mínusz a „starobné poistenie” alapja. Példa: 750,75 − 550,75 = 200 €. Ha a két szám egyenlő, nincs levonás, írjon 0-t.',
+ hOfficial:'A „Počet odprac. hodín” sor a „HODINOVÉ POLOŽKY” blokkban. Ezek a „čiastka krátená” címén kifizetett órák; a többit külön jutalomként („odmena”) fizetik.',
+ hTaxFree:'A „Nezdaniteľná časť” vagy „Odpočítateľná položka” sor az „Úprava zákl. dane” blokkban. Csak akkor érvényes, ha a munkáltatónál aláírta a „vyhlásenie” nyilatkozatot; különben 0.',
+ hChild:'A „Daňový bonus” sor az „Úprava zákl. dane” blokkban. Csak akkor van, ha vannak gyermekei, és a munkáltatónál igényelte a kedvezményt; különben 0.',
+ hContrib:'A „DPs-zamestnanec”, „DPi-zamestnanec” (és „Zdravotné”, „Nemocenské”, „Nezamestnanosť”) sorok a „FINANČNÉ POLOŽKY” blokkban. Százalék = összeg ÷ „Vymeriavací základ”.',
+ hVacH:'Hány órát fizet a cég egy szabadságnapra: általában a műszak hossza (8 vagy 12 óra). Nézze a „Dovolenka” blokkot (D-čerpaná) és a szabadság óráit a „HODINOVÉ POLOŽKY” blokkban.',
+ hPgH:'A cég által egy Paragraf-napra (orvosi vizit) fizetett órák: „návšteva lekára” a „HODINOVÉ POLOŽKY” blokkban. A hátralévő napok a bérpapír tetején állnak: „Zostatok návštevy lekára”.',
+ hAvgNah:'A narancssárga „Priemer pre náhrady” mező a bérpapír jobb felső részén (€/óra). Ezen az átlagon fizetik a szabadságot és a Paragrafot.',
+ hAvgNem:'A narancssárga „Priemer na nemoc” mező a bérpapír jobb felső részén (€/óra). Ebből számolják a betegszabadság első napjainak térítését.',
+ hNem:'A százalékokat, amelyeket a cég a betegnapokra fizet (általában az 1–3. és a 4–10. nap), a bérpapír „náhrada príjmu pri PN” soraiban vagy a cég szabályzatában találja.',
+ hBonus:'A bérpapíron a bónuszok az „odmena”, „prémia”, „bonus” sorok a „FINANČNÉ POLOŽKY” blokkban. Ha az összeg minden hónapban más, írja be az adott hónap „Egyszeri jutalom” mezőjébe.',
+ hExtra:'Egyszeri kifizetés erre a hónapra: „prémia”, „odmena” vagy „13. plat” a „FINANČNÉ POLOŽKY” blokkban.',
+ hG:'A „HRUBÁ MZDA” sor a „FINANČNÉ POLOŽKY” blokkban.',
+ hB:'A „VYMERIAVACIE ZÁKLADY” blokk „starobné poistenie” (vagy „invalidné poistenie”) sora.',
+ hO:'Az „Odvody celkom” sor („DPs-zamestnanec”, „DPi-zamestnanec” és mások összege).',
+ hT:'A „Daň zo mzdy – preddavok” sor a „FINANČNÉ POLOŽKY” blokkban.',
+ hN:'A „Nezdaniteľná časť” sor az „Úprava zákl. dane” blokkban. Ha nincs, hagyja üresen.',
+ hActual:'A „ČISTÁ MZDA” sor a „FINANČNÉ POLOŽKY” blokkban vagy a „Mzda k výplate” a bérpapír tetején.',
+ hlp0t:'Üdvözöljük!',hlp0b:'Ez az Ön személyes műszaknaptára. Magától megtalálja a mintát a beosztásában, emlékeztet a műszakra, és kiszámolja a fizetést. Ismerkedjünk meg — kevesebb mint egy percet vesz igénybe.',helpGo:'Ismerkedjünk meg',moreBtn:'Részletek',pickCat:'Kategória választása',lookTitle:'Megjelenés és nyelv',navBal:'Szabadság és Paragraf',navOn:'Be',navOff:'Ki',autoTag:'tervezett',payGrpBasic:'Alapok',payGrpPrem:'Pótlékok és túlóra',payGrpTax:'Adók és járulékok',payGrpLeave:'Szabadság, betegség, Paragraf',title:'Műszakjaim',today:'Ma',prev:'Vissza',next:'Előre',menu:'Menü',close:'Bezárás',h:'ó',
  undo:'Visszavonás',undoBtn:'↶ Utolsó művelet visszavonása',summary:'Összesítés — {m}',totalHours:'óra összesen',noHours:'óra nélkül',
  noteTitle:'Jegyzet',notePh:'Pl.: helyettesítés, orvos 10:00-kor…',overlayTitle:'A műszak mellett',pDay:'Nappal',pNight:'Éjszaka',timeTitle:'Műszak ideje',reset:'Visszaállítás',
  clearShift:'Műszak törlése',done:'Kész',add:'Hozzáadás',update:'Frissítés',updateApp:'Alkalmazás frissítése',remove:'Eltávolítás',nextDay:'a következő napig',
@@ -840,7 +1121,7 @@ const L=()=>I18N[LANG];
 const tr=(k,v)=>{let s=L()[k]??I18N.en[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
 
 /* ---------- данные ---------- */
-const APP_VERSION='3.3';
+const APP_VERSION='3.6.1';
 const KEY='shiftcal.v1',TK='shiftcal.theme';
 const DEF={types:[
  {id:'d',key:'d',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
@@ -938,6 +1219,7 @@ function setLang(l){
     if($('payDlg').open)renderPayNow();
     if($('helpDlg').open)renderHelpNow();
     if($('langDlg').open)renderLangNow();
+    if($('countryDlg').open)renderCountryNow();
   },document.querySelector('.wrap'));
 }
 
@@ -980,7 +1262,11 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- окна ---------- */
-function openDlg(d){d.showModal()}
+function openDlg(d){
+  d.showModal();
+  // фокус на контейнер, а не на первую кнопку (иначе при открытии она обведена рамкой); клавиатурой всё по-прежнему доступно
+  const c=d.querySelector('.dlg');if(c){c.tabIndex=-1;c.style.outline='none';c.focus({preventScroll:true})}
+}
 function closeDlg(d){
   if(!d.open||d.classList.contains('closing'))return;
   d.classList.add('closing');
@@ -1075,6 +1361,17 @@ function holidaysFor(c,y){   // для расчётов: страна задан
 }
 const holidayOf=k=>holidayMap(+k.slice(0,4))[k];
 
+// Название месяца всегда пишется полностью: если оно не помещается рядом с кнопками, шрифт уменьшается (но не меньше 15 px).
+function fitTitle(){
+  const h=$('title');if(!h)return;
+  h.style.fontSize='';
+  let fs=parseFloat(getComputedStyle(h).fontSize)||32;
+  while(h.scrollWidth>h.clientWidth+1&&fs>15){fs-=1;h.style.fontSize=fs+'px'}
+}
+addEventListener('resize',fitTitle);
+addEventListener('orientationchange',()=>setTimeout(fitTitle,150));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitTitle);   // шрифт Geologica подгружается позже и меняет ширину
+
 const monthAt=o=>{const d=new Date(cur);d.setDate(1);d.setMonth(d.getMonth()+o);return d};
 const nf=n=>String(r2(n)).replace('.',',');
 function isoWeek(dt){
@@ -1101,7 +1398,8 @@ function gridHtml(m){
     if(i%7===0)h+=`<span class="wn">${isoWeek(d)}</span>`;
     const k=fmt(d),e=S.days[k]||{},t=e.t&&type(e.t),other=d.getMonth()!==mo;
     let cls='disc',st='';
-    if(t&&!t.overlay){cls+=isOff(t)?' off':e.auto?' on auto':' on';st=` style="--c:${t.color};--ink:${inkOn(t.color)}"`}
+    // будущие дни — пунктирный контур, наступившие (сегодня и раньше) — полный круг цвета
+    if(t&&!t.overlay){cls+=k>today?' on auto':isOff(t)?' off':e.auto?' on auto':' on';st=` style="--c:${t.color};--ink:${inkOn(t.color)}"`}
     const ov=Object.entries(e.ov||{}).filter(([id])=>type(id));
     const ob=ov.length?`<u class="ob" style="background:${type(ov[0][0]).color}">+${nf(ov.reduce((a,[,v])=>a+(+v||0),0))}</u>`:'';
     const hn=holidayOf(k);
@@ -1134,6 +1432,7 @@ function renderBar(){
 // анимируется только transform (GPU), перерисовка происходит один раз — когда анимация закончилась.
 function render(){
   $('title').textContent=cur.toLocaleDateString(LOC[LANG],{month:'long'});
+  fitTitle();
   $('yr').textContent=cur.getFullYear();
   $('dow').innerHTML='<span></span>'+Array.from({length:7},(_,i)=>`<span>${new Date(2024,0,1+i).toLocaleDateString(LOC[LANG],{weekday:'short'})}</span>`).join('');
   const tt=monthTotals(cur),now=new Date();
@@ -1376,12 +1675,6 @@ function balancesHtml(){
   return rows+(noLimit?`<div class="muted">${tr('limitHint')}</div>`:'');
 }
 const renderMenu=()=>$('menuDlg').open?smooth(renderMenuNow,$('menuBody')):renderMenuNow();
-function holOptions(){
-  const auto=COUNTRY[LANG];
-  return`<option value="auto"${HC==='auto'?' selected':''}>${tr('holAuto')}${auto?` (${regionName(auto)})`:''}</option>
-    <option value="none"${HC==='none'?' selected':''}>${tr('holOff')}</option>`+
-    HCOUNTRIES.map(c=>`<option value="${c}"${HC===c?' selected':''}>${esc(regionName(c))}</option>`).join('');
-}
 // Меню — это список разделов; каждый раздел открывается отдельным экраном со стрелкой «назад».
 let menuPage=null,lastMenuPage=null;
 const MENU_NAV=[
@@ -1408,7 +1701,7 @@ function menuSection(p){
   if(p==='bal')return`<div class="muted" style="margin-bottom:8px">${tr('balTitle',{y:cur.getFullYear()})}</div>${balancesHtml()}`;
   if(p==='hol')return`<div class="hrow"><div>${tr('holShow')}</div>
       <label class="sw"><input type="checkbox" id="holToggle" ${HOL?'checked':''}><span></span></label></div>
-    <label class="f"><span>${tr('holCountry')}</span><select id="holCountrySel" style="width:100%">${holOptions()}</select></label>
+    <div class="sec"><h3>${tr('holCountry')}</h3>${countryRow()}</div>
     <div class="muted" style="margin-top:6px">${HOL&&!holCountry()?tr('holPick')+' ':''}${tr('holHint')}</div>`;
   if(p==='rem')return`<div class="hrow"><div>${tr('remShifts')}<div class="muted">${tr('remShiftsHint')}</div></div>
       <label class="sw"><input type="checkbox" id="remOn" ${getRem().on?'checked':''}><span></span></label></div>
@@ -1438,7 +1731,7 @@ function menuSection(p){
 function renderMenuNow(){
   const page=menuPage&&['cats','auto','bal','hol','rem','look','data'].includes(menuPage)?menuPage:null;
   if(!page){
-    const nav=(attr,ic,label,hint)=>`<button class="nav" ${attr}><span class="mic">${ic}</span><span class="nm">${label}</span><span class="muted">${hint}</span><span class="muted">›</span></button>`;
+    const nav=(attr,ic,label,hint)=>`<button class="navrow" ${attr}><span class="mic">${ic}</span><span class="nm">${label}</span><span class="muted">${hint}</span><span class="muted">›</span></button>`;
     $('menuBody').innerHTML=`
       <div class="dhead"><h2>${tr('menu')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
       <button data-undo ${hist.length?'':'disabled'} style="width:100%">${tr('undoBtn')}</button>
@@ -1458,9 +1751,6 @@ $('menuBody').addEventListener('change',e=>{
   else if(t.id==='remTime'){if(t.value){setRem({time:t.value});try{localStorage.removeItem(RL)}catch{}}}
   else if(t.id==='holToggle'){
     HOL=t.checked;try{localStorage.setItem(HK,HOL?'1':'0')}catch{}
-    smooth(()=>{render();renderMenuNow()},$('menuBody'));
-  }else if(t.id==='holCountrySel'){
-    HC=t.value;try{localStorage.setItem(HCK,HC)}catch{}
     smooth(()=>{render();renderMenuNow()},$('menuBody'));
   }else if(t.dataset.quota){
     const ty=type(t.dataset.quota);if(!ty)return;
@@ -1482,6 +1772,7 @@ $('menuBody').onclick=e=>{
   else if(d.mp){menuPage=d.mp;renderMenu()}
   else if('mback' in d){menuPage=null;renderMenu()}
   else if('langdlg' in d)openLangDlg();
+  else if('countrydlg' in d)openCountryDlg();
   else if('undo' in d)undo();
   else if(d.edit)openType(d.edit);
   else if('add' in d)openType(null);
@@ -1847,6 +2138,32 @@ function payPill(){
   return`<button class="pill" data-pay><i style="background:var(--accent)"></i>${tr('payTitle')} <span>≈</span><b>${Math.round(C.net)} €</b></button>`;
 }
 
+// какая подсказка относится к какому полю (по пути в настройках)
+const HINTS={rate:'hRate',base:'hBase',dayH:'hDayH',otPct:'hOtPct',taxRate:'hTaxRate',deduct:'hDeduct',taxFree:'hTaxFree',childBonus:'hChild',
+  vacH:'hVacH',pgH:'hPgH',avgNah:'hAvgNah',avgNem:'hAvgNem',nem1:'hNem',nem2:'hNem','prem.night':'hNight','prem.sat':'hSat','prem.sun':'hSun','prem.hol':'hHol'};
+const hintKey=path=>HINTS[path]||HINTS[path.split('.').slice(0,2).join('.')]||
+  (path.startsWith('fund.')?'hFund':path.startsWith('official.')?'hOfficial':path.startsWith('extra.')?'hExtra':path.startsWith('contrib.')?'hContrib':null);
+const tipBtn=k=>k?`<button type="button" class="tip" data-tip="${k}" aria-label="${esc(tr('hintTitle'))}">i</button>`:'';
+function closeTip(){
+  document.querySelectorAll('#payBody .tipbox').forEach(x=>x.remove());
+  document.querySelectorAll('#payBody .tip.on').forEach(x=>x.classList.remove('on'));
+}
+// Нажали «i» — под полем выскакивает подсказка; повторное нажатие или другая «i» её закрывает.
+function toggleTip(btn){
+  const host=btn.closest('label.f')||btn.closest('.muted')||btn.parentElement;
+  const open=document.querySelector('#payBody .tipbox');
+  const same=open&&open.dataset.for===btn.dataset.tip&&open.previousElementSibling===host;
+  closeTip();
+  if(same)return;
+  const box=document.createElement('div');
+  box.className='tipbox';box.dataset.for=btn.dataset.tip;
+  const t=document.createElement('b');t.textContent=tr('hintTitle');
+  const s=document.createElement('span');s.textContent=tr(btn.dataset.tip);
+  box.append(t,s);
+  host.insertAdjacentElement('afterend',box);
+  btn.classList.add('on');
+  box.scrollIntoView({block:'nearest',behavior:reduceMotion()?'auto':'smooth'});
+}
 let payStep=null,payDraft={},payOpen=false,payProposal=null;
 const payOpenSet=new Set();
 function openPay(step){
@@ -1869,7 +2186,7 @@ function renderPayNow(){
     box.innerHTML=head(tr('payRateTitle'))+`
       <div class="seg" id="ptype"><button data-ptype="hourly" class="${monthly?'':'on'}">${tr('payTypeHourly')}</button><button data-ptype="monthly" class="${monthly?'on':''}">${tr('payTypeMonthly')}</button></div>
       <div class="muted" id="payRateHint" style="margin-top:10px">${tr(monthly?'payBaseHint':'payRateHint')}</div>
-      <label class="f"><span id="payRateLbl">${tr(monthly?'payBase':'payRate')}</span><input type="number" id="payRateIn" step="0.01" min="0" inputmode="decimal" placeholder="${monthly?'1200':'6,50'}"></label>
+      <label class="f"><span><span id="payRateLbl">${tr(monthly?'payBase':'payRate')}</span><button type="button" class="tip" id="payRateTip" data-tip="${monthly?'hBase':'hRate'}" aria-label="${esc(tr('hintTitle'))}">i</button></span><input type="number" id="payRateIn" step="0.01" min="0" inputmode="decimal" placeholder="${monthly?'1200':'6,50'}"></label>
       <div class="foot"><button data-pback>${tr('payBack')}</button><button class="primary" data-psave>${tr('payContinue')}</button></div>`;
     setTimeout(()=>{const i=$('payRateIn');if(i)i.focus()},60);
     return;
@@ -1900,13 +2217,13 @@ function renderPayNow(){
   r+=row(tr('payNet'),P.calib!==1?tr('payCalib',{k:P.calib.toFixed(3)}):'',fx(C.net)+' €','tot');
   const off=+P.official[ym]||0;
   const split=st&&!monthly&&off?(()=>{const tot=C.basePay+C.otPay,a=r2(Math.min(off*P.rate,tot));return`<div class="muted" style="margin-top:6px">${tr('payOfficialSplit',{a:fx(a),b:fx(tot-a)})}</div>`})():'';
-  const num=(label,path,val,step='0.01',ph='')=>`<label class="f"><span>${label}</span><input type="number" step="${step}" inputmode="decimal" data-pf="${path}" value="${val}" placeholder="${ph}"></label>`;
-  const prem=(k,l)=>`<label class="f"><span>${tr(l)}</span><div class="row" style="flex-wrap:nowrap;gap:6px"><input type="number" step="0.01" inputmode="decimal" data-pf="prem.${k}.v" value="${P.prem[k].v}" style="min-width:0">
+  const num=(label,path,val,step='0.01',ph='')=>`<label class="f"><span>${label}${tipBtn(hintKey(path))}</span><input type="number" step="${step}" inputmode="decimal" data-pf="${path}" value="${val}" placeholder="${ph}"></label>`;
+  const prem=(k,l)=>`<label class="f"><span>${tr(l)}${tipBtn(hintKey('prem.'+k))}</span><div class="row" style="flex-wrap:nowrap;gap:6px"><input type="number" step="0.01" inputmode="decimal" data-pf="prem.${k}.v" value="${P.prem[k].v}" style="min-width:0">
     <select data-pf="prem.${k}.u" data-str><option value="€"${P.prem[k].unit==='€'?' selected':''}>€/${H}</option><option value="%"${P.prem[k].unit==='%'?' selected':''}>%</option></select></div></label>`;
   // настройки сгруппированы: каждая группа раскрывается отдельно и помнит, открыта ли она
   const BU=[['€','payBU1'],['%','payBU2'],['€/h','payBU3'],['€/s','payBU4']];
   const grp=(k,t,c)=>`<details class="paydet" data-g="${k}" ${payOpenSet.has(k)?'open':''}><summary>${t}</summary>${c}</details>`;
-  const g1=`<label class="f"><span>${tr('payTypeLbl')}</span><select data-pf="payType" data-str><option value="hourly"${monthly?'':' selected'}>${tr('payTypeHourly')}</option><option value="monthly"${monthly?' selected':''}>${tr('payTypeMonthly')}</option></select></label>
+  const g1=`<label class="f"><span>${tr('payTypeLbl')}${tipBtn('hTypeLbl')}</span><select data-pf="payType" data-str><option value="hourly"${monthly?'':' selected'}>${tr('payTypeHourly')}</option><option value="monthly"${monthly?' selected':''}>${tr('payTypeMonthly')}</option></select></label>
     <div class="pgrid">${monthly?num(tr('payBase'),'base',P.base)+num(tr('payDayH'),'dayH',P.dayH,'0.5')+num(`${tr('payFund')}, ${H} · ${monthLabel(cur)}`,'fund.'+ym,P.fund[ym]||'','1',nf(C.fund)):num(tr('payRate'),'rate',P.rate)}</div>`;
   const g2=`<div class="muted">${tr('payPremH')} — ${tr('payPremHint')}</div><div class="pgrid">${prem('night','payNight')}${prem('sat','paySat')}${prem('sun','paySun')}${prem('hol','payHol')}</div>
     <div class="pgrid">${num(tr('payOtPct'),'otPct',P.otPct,'1')}</div>`;
@@ -1918,7 +2235,7 @@ function renderPayNow(){
   const g4=st?'':`<div class="pgrid">${num(tr('payVacH'),'vacH',P.vacH,'0.5')}${num(tr('payPgH'),'pgH',P.pgH,'0.5')}</div>
     <div class="muted" style="margin-top:12px">${tr('payAvgHint')}</div>
     <div class="pgrid">${num(tr('payAvgNah'),'avgNah',P.avgNah,'0.0001',fx(C.hr))}${num(tr('payAvgNem'),'avgNem',P.avgNem,'0.0001',fx(C.hr))}${num(tr('payNem1'),'nem1',P.nem1,'1')}${num(tr('payNem2'),'nem2',P.nem2,'1')}</div>`;
-  const g5=`<div class="muted">${tr('payBonusHint')}</div>`+
+  const g5=`<div class="muted">${tr('payBonusHint')}${tipBtn('hBonus')}</div>`+
     P.bonus.map((b,i)=>`<div class="bonus"><input type="text" data-pf="bonus.${i}.n" data-str value="${esc(b.n||'')}" placeholder="${esc(tr('payBonusName'))}" maxlength="40">
       <input type="number" step="0.01" inputmode="decimal" data-pf="bonus.${i}.v" value="${b.v}">
       <select data-pf="bonus.${i}.u" data-str>${BU.map(([u,l])=>`<option value="${u}"${(b.u||'€')===u?' selected':''}>${tr(l)}</option>`).join('')}</select>
@@ -1926,7 +2243,7 @@ function renderPayNow(){
     `<div class="row" style="margin-top:8px"><button data-pbadd>+ ${tr('payBonusAdd')}</button></div>
      <div class="pgrid">${num(`${tr('payExtra')} · ${monthLabel(cur)}`,'extra.'+ym,P.extra[ym]||'')}</div>`;
   const learn=`<div class="muted">${tr('payLearnHint')}</div>
-    <div class="pgrid">${[['payG','payG'],['payB','payB'],['payO','payO'],['payT','payT'],['payN','payN']].map(([id,l])=>`<label class="f"><span>${tr(l)}</span><input type="number" step="0.01" inputmode="decimal" id="${id}"></label>`).join('')}</div>
+    <div class="pgrid">${[['payG','payG'],['payB','payB'],['payO','payO'],['payT','payT'],['payN','payN']].map(([id,l])=>`<label class="f"><span>${tr(l)}${tipBtn({payG:'hG',payB:'hB',payO:'hO',payT:'hT',payN:'hN'}[id])}</span><input type="number" step="0.01" inputmode="decimal" id="${id}"></label>`).join('')}</div>
     <div class="row" style="margin-top:10px"><button data-plearn>${tr('payLearnBtn')}</button></div>
     <div class="muted" id="payLearnRes" style="margin-top:8px"></div>`;
   box.innerHTML=head(tr('payTitle'))+`
@@ -1934,7 +2251,7 @@ function renderPayNow(){
     <div class="paybig"><small>${tr('payNet')}</small><b>≈ ${fx(C.net)} €</b></div>
     <div>${r}</div>${split}
     ${st?`<div class="muted" style="margin-top:8px">${tr('payStudentNote')}</div>`:''}
-    <div class="sec"><h3>${tr('payCheck')}</h3><div class="muted">${tr('payCheckHint')}</div>
+    <div class="sec"><h3>${tr('payCheck')}</h3><div class="muted">${tr('payCheckHint')}${tipBtn('hActual')}</div>
       <div class="row" style="margin-top:8px"><input type="number" id="payActual" step="0.01" inputmode="decimal" placeholder="${fx(C.net0)}" style="width:130px">
         <button data-pcheck>${tr('payCheckApply')}</button>${P.calib!==1?`<button class="ghost" data-pcalreset>${tr('payCalibReset')}</button>`:''}</div>
       <div class="muted" id="payCheckRes" style="margin-top:6px"></div></div>
@@ -1945,6 +2262,7 @@ function renderPayNow(){
 $('payBody').addEventListener('toggle',e=>{const g=e.target.dataset&&e.target.dataset.g;if(g){if(e.target.open)payOpenSet.add(g);else payOpenSet.delete(g)}},true);
 $('payBody').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(b.classList.contains('tip')){toggleTip(b);return}
   if(d.pmode){
     if(d.pmode==='none'){snap();S.pay={mode:'none'};save();render();closeDlg($('payDlg'));return}
     payDraft={mode:d.pmode,type:'hourly'};payStep='rate';renderPay();
@@ -1953,7 +2271,7 @@ $('payBody').addEventListener('click',e=>{
     payDraft.type=d.ptype;
     b.parentElement.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b));
     const m=d.ptype==='monthly';
-    $('payRateLbl').textContent=tr(m?'payBase':'payRate');$('payRateHint').textContent=tr(m?'payBaseHint':'payRateHint');
+    $('payRateLbl').textContent=tr(m?'payBase':'payRate');$('payRateTip').dataset.tip=m?'hBase':'hRate';closeTip();$('payRateHint').textContent=tr(m?'payBaseHint':'payRateHint');
     $('payRateIn').placeholder=m?'1200':'6,50';
   }
   else if('pback' in d){payStep='mode';renderPay()}
@@ -2022,10 +2340,37 @@ $('langBody').addEventListener('click',e=>{
   setTimeout(()=>closeDlg($('langDlg')),340);
 });
 
-/* ---------- инструкция для новых пользователей ---------- */
-// Показывается один раз при первом запуске (если в календаре ещё нет смен) и всегда доступна в меню.
-const HELP_KEY='shiftcal.help',HELP_STEPS=5;
-let helpStep=0;
+/* ---------- окно выбора страны для праздников ---------- */
+// Выглядит так же, как выбор языка: круглый значок, название, галочка у выбранного.
+const CLANG={SK:'sk',UA:'uk',CZ:'cs',PL:'pl',HU:'hu',DE:'de'};
+const regionNative=c=>{try{return new Intl.DisplayNames([CLANG[c]],{type:'region'}).of(c)}catch{return c}};
+const holAutoName=()=>tr('holAuto')+(COUNTRY[LANG]?` (${regionName(COUNTRY[LANG])})`:'');
+function holChoice(){   // что выбрано сейчас: [значок, название]
+  if(HC==='none')return['⊘',tr('holOff')];
+  if(HC==='auto')return['🌐',holAutoName()];
+  return[HC,regionName(HC)];
+}
+const countryRow=()=>{const[b,n]=holChoice();
+  return`<button class="lrow" data-countrydlg><span class="lcode">${b}</span><span class="lname"><b>${esc(n)}</b></span><span class="muted">›</span></button>`};
+function renderCountryNow(){
+  const rows=[['auto','🌐',holAutoName(),''],['none','⊘',tr('holOff'),''],...HCOUNTRIES.map(c=>[c,c,regionName(c),regionNative(c)])];
+  $('countryBody').innerHTML=`<div class="dhead"><h2>${tr('holCountry')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+    <div class="langlist">${rows.map(([v,b,n,s])=>`<button class="lrow${v===HC?' on':''}" data-hc="${v}"><span class="lcode">${b}</span>
+      <span class="lname"><b>${esc(n)}</b>${s&&s!==n?`<small>${esc(s)}</small>`:''}</span><span class="lck">✓</span></button>`).join('')}</div>`;
+}
+function openCountryDlg(){renderCountryNow();openDlg($('countryDlg'))}
+$('countryBody').addEventListener('click',e=>{
+  const b=e.target.closest('[data-hc]');if(!b)return;
+  HC=b.dataset.hc;try{localStorage.setItem(HCK,HC)}catch{}
+  smooth(()=>{render();renderCountryNow();if($('menuDlg').open)renderMenuNow()},document.querySelector('.wrap'));
+  setTimeout(()=>closeDlg($('countryDlg')),340);
+});
+
+/* ---------- знакомство с приложением ---------- */
+// Показывается один раз при первом запуске (если в календаре ещё нет смен) и всегда доступно в меню.
+// Шаг 0 — приветствие, шаги 1–5 — правила. Шаги сменяются плавно: старый уезжает, новый заезжает с нужной стороны.
+const HELP_KEY='shiftcal.help',HELP_STEPS=6;
+let helpStep=0,helpBusy=false;
 const isStandalone=()=>matchMedia('(display-mode:standalone)').matches||navigator.standalone===true;
 const platform=()=>{
   const ua=navigator.userAgent||'';
@@ -2038,32 +2383,69 @@ function helpArt(i){
   const disc=(k,cls)=>`<span class="disc ${cls}" style="--c:${C[k]};--ink:#fff">${esc(T[k][1])}</span>`;
   const solid=['d','d','n','n','o','o','o','o'].map(k=>disc(k,k==='o'?'off':'on')).join('');
   const plan=['d','d','n','n'].map(k=>disc(k,'on auto')).join('');
-  if(i===0)return solid+'<span class="arr">→</span>'+plan;
-  if(i===1)return['d','n','o'].map(k=>`<span class="cat" style="--c:${C[k]}"><b>${esc(T[k][1])}</b>${esc(T[k][0])}</span>`).join('');
-  if(i===2)return`<span class="btnlike">${tr('build')}</span><span class="arr">→</span>`+plan;
-  if(i===3)return`<span class="pill"><i style="background:#ec4899"></i>${esc(T.v[0])} <span>${tr('left')}</span><b>17</b><span>/ 20</span></span>
+  if(i===0)return'<span class="glow"></span><img src="icon-192.png" alt=""><i class="fl f1"></i><i class="fl f2"></i><i class="fl f3"></i>';
+  if(i===1)return solid+'<span class="arr">→</span>'+plan;
+  if(i===2)return['d','n','o'].map(k=>`<span class="cat" style="--c:${C[k]}"><b>${esc(T[k][1])}</b>${esc(T[k][0])}</span>`).join('');
+  if(i===3)return`<span class="btnlike">${tr('build')}</span><span class="arr">→</span>`+plan;
+  if(i===4)return`<span class="pill"><i style="background:#ec4899"></i>${esc(T.v[0])} <span>${tr('left')}</span><b>17</b><span>/ 20</span></span>
     <span class="pill"><i style="background:var(--accent)"></i>${tr('payTitle')} <span>≈</span><b>577 €</b></span>`;
   return'<img src="icon-192.png" alt="">';
 }
+function helpStage(i){
+  const last=i===HELP_STEPS-1;
+  const body=i===0?tr('hlp0b'):last?(isStandalone()?'':tr('hlp5b_'+platform())+' ')+tr('hlp5b'):tr('hlp'+i+'b');
+  return`<div class="hart${i===0?' hello':''}">${helpArt(i)}</div>
+    <h2 class="htitle${i===0?' big':''}">${tr('hlp'+i+'t')}</h2><p class="hbody">${body}</p>`;
+}
+const helpFoot=i=>`${i?`<button data-hback>${tr('helpBack')}</button>`:`<button data-hskip>${tr('helpSkip')}</button>`}<button class="primary" data-hnext>${tr(i===HELP_STEPS-1?'helpStart':i===0?'helpGo':'helpNext')}</button>`;
+// элементы картинки появляются по очереди
+function helpPop(){$('hstage').querySelectorAll('.hart>*').forEach((el,k)=>el.style.setProperty('--i',k))}
 const renderHelp=()=>$('helpDlg').open?smooth(renderHelpNow,$('helpBody')):renderHelpNow();
 function renderHelpNow(){
-  const i=helpStep,last=i===HELP_STEPS-1;
-  const body=last?(isStandalone()?'':tr('hlp5b_'+platform())+' ')+tr('hlp5b'):tr('hlp'+(i+1)+'b');
+  const i=helpStep;
   $('helpBody').innerHTML=`
     <div class="hlang"><button data-hlangdlg>🌐 ${LANGS.find(l=>l[0]===LANG)[1]} ▾</button></div>
-    <div class="hart">${helpArt(i)}</div>
-    <h2 class="htitle">${tr('hlp'+(i+1)+'t')}</h2><p class="hbody">${body}</p>
+    <div id="hstage" class="${i===0?'center':''}">${helpStage(i)}</div>
     <div class="hdots">${Array.from({length:HELP_STEPS},(_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
-    <div class="foot">${i?`<button data-hback>${tr('helpBack')}</button>`:`<button data-hskip>${tr('helpSkip')}</button>`}<button class="primary" data-hnext>${tr(last?'helpStart':'helpNext')}</button></div>`;
+    <div class="foot" id="hfoot">${helpFoot(i)}</div>`;
+  helpPop();
 }
-function openHelp(){helpStep=0;renderHelpNow();openDlg($('helpDlg'))}
+function openHelp(){
+  helpStep=0;helpBusy=false;renderHelpNow();
+  $('helpDlg').classList.add('welcome');
+  openDlg($('helpDlg'));
+  // фокус не на кнопку языка (иначе на приветствии она обведена рамкой), а на сам контейнер
+  const hb=$('helpBody');hb.tabIndex=-1;hb.style.outline='none';hb.focus({preventScroll:true});
+}
+const animate=(el,kf,o)=>el&&el.animate?el.animate(kf,o).finished.catch(()=>{}):Promise.resolve();
+async function helpGo(n){
+  if(helpBusy||n===helpStep||n<0||n>=HELP_STEPS)return;
+  helpBusy=true;
+  const dir=n>helpStep?1:-1,stage=$('hstage'),mo=!reduceMotion();
+  if(mo)await animate(stage,[{opacity:1,transform:'none'},{opacity:0,transform:`translateX(${-dir*30}px)`}],{duration:170,easing:'ease-in'});
+  helpStep=n;
+  stage.className=n===0?'center':'';
+  stage.innerHTML=helpStage(n);helpPop();
+  document.querySelectorAll('#helpBody .hdots i').forEach((d,k)=>d.classList.toggle('on',k===n));
+  $('hfoot').innerHTML=helpFoot(n);
+  if(mo)await animate(stage,[{opacity:0,transform:`translateX(${dir*30}px)`},{opacity:1,transform:'none'}],{duration:340,easing:'cubic-bezier(.2,.9,.3,1)'});
+  helpBusy=false;
+}
 $('helpBody').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if('hlangdlg' in d)openLangDlg();
   else if('hskip' in d)closeDlg($('helpDlg'));
-  else if('hback' in d){helpStep=Math.max(0,helpStep-1);renderHelp()}
-  else if('hnext' in d){if(helpStep>=HELP_STEPS-1)closeDlg($('helpDlg'));else{helpStep++;renderHelp()}}
+  else if('hback' in d)helpGo(helpStep-1);
+  else if('hnext' in d){if(helpStep>=HELP_STEPS-1)closeDlg($('helpDlg'));else helpGo(helpStep+1)}
 });
+// листание пальцем
+let hx=null;
+$('helpBody').addEventListener('touchstart',e=>{hx=e.touches[0].clientX},{passive:true});
+$('helpBody').addEventListener('touchend',e=>{
+  if(hx===null)return;
+  const dx=e.changedTouches[0].clientX-hx;hx=null;
+  if(Math.abs(dx)>60)helpGo(helpStep+(dx<0?1:-1));
+},{passive:true});
 // после инструкции — выбор режима зарплаты
 $('helpDlg').addEventListener('close',()=>{
   try{localStorage.setItem(HELP_KEY,'1')}catch{}
@@ -2077,8 +2459,15 @@ checkReminders();setInterval(checkReminders,60000);
 // первый запуск: сначала инструкция (только если смен ещё нет), потом выбор режима зарплаты
 let showHelp=false;
 try{if(localStorage.getItem(HELP_KEY)!=='1'){if(!Object.keys(S.days).length)showHelp=true;else localStorage.setItem(HELP_KEY,'1')}}catch{}
-if(showHelp)setTimeout(openHelp,600);
-else if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},700);
+// заставка → плавное появление календаря
+{
+  const sp=$('splash'),wr=$('wrapEl');
+  const quick=reduceMotion();
+  const reveal=()=>{wr.classList.remove('pre');sp.classList.add('out');setTimeout(()=>sp.remove(),600)};
+  setTimeout(reveal,quick?50:1500);
+}
+if(showHelp)setTimeout(openHelp,2100);
+else if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},2100);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   const had=!!navigator.serviceWorker.controller;let reloaded=false;
