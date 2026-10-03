@@ -44,8 +44,14 @@ body:has(dialog[open]){overflow:hidden}
   padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 
 /* анимация смены темы */
-::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
-::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}
+/* смена темы — круговое раскрытие; остальные изменения (язык, панели, расчёты) — мягкое перетекание */
+::view-transition-old(root),::view-transition-new(root){mix-blend-mode:normal}
+html[data-vt=theme]::view-transition-old(root),html[data-vt=theme]::view-transition-new(root){animation:none}
+html[data-vt=theme]::view-transition-old(root){z-index:1}html[data-vt=theme]::view-transition-new(root){z-index:2}
+html[data-vt=fade]::view-transition-old(root){animation:vtOut .24s ease both}
+html[data-vt=fade]::view-transition-new(root){animation:vtIn .24s ease both}
+@keyframes vtOut{to{opacity:0}}
+@keyframes vtIn{from{opacity:0}}
 .theming,.theming *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease!important}
 
 header{display:flex;align-items:flex-end;gap:8px;margin:2px 0 6px;flex:none}
@@ -101,6 +107,46 @@ label.btn input{display:none}
 .nt{position:absolute;left:50%;bottom:3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:currentColor;opacity:.7}
 .hl{position:absolute;left:1px;top:1px;width:7px;height:7px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 1.5px var(--card)}
 .hnote{margin:-6px 0 12px;font-size:13px;color:#e5484d;font-weight:500}
+/* инструкция для новых пользователей */
+.hart{--ds:34px;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;min-height:84px;margin:10px 0 16px;padding:16px;background:var(--bg2);border-radius:24px}
+.hart .disc{font-size:12px}
+.hart img{width:68px;height:68px;border-radius:20px;box-shadow:var(--shadow)}
+.hart .arr{color:var(--muted);font-size:18px;padding:0 2px}
+.btnlike{padding:8px 14px;border-radius:999px;background:var(--accent);color:#fff;font-weight:600;font-size:13px}
+.htitle{font:700 22px/1.2 var(--f-soft);margin:0 0 8px;letter-spacing:-.01em}
+.hbody{margin:0;color:var(--muted);font-size:15px;line-height:1.55}
+.hbody b{color:var(--text)}
+.hdots{display:flex;justify-content:center;gap:6px;margin:18px 0 0}
+.hdots i{width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--muted) 35%,transparent);transition:width .3s,background .3s}
+.hdots i.on{width:20px;border-radius:999px;background:var(--accent)}
+.hlang{display:flex;justify-content:flex-end}
+/* шторка выбора категории: выезжает снизу, закрывается тем же жестом */
+dialog.sheet{width:100%;max-width:520px;margin:auto auto 0;border-radius:28px 28px 0 0;max-height:88vh;max-height:88dvh}
+dialog.sheet[open]{animation:sheetIn .36s cubic-bezier(.2,.9,.3,1)}
+dialog.sheet.closing{animation:sheetOut .24s ease forwards}
+@keyframes sheetIn{from{transform:translateY(100%)}to{transform:none}}
+@keyframes sheetOut{to{transform:translateY(100%)}}
+.sheet .dlg{padding-bottom:calc(18px + env(safe-area-inset-bottom));max-height:88vh;max-height:88dvh}
+.grab{width:44px;height:5px;border-radius:999px;background:color-mix(in srgb,var(--muted) 45%,transparent);margin:-6px auto 12px}
+.sheetfoot{justify-content:space-between}
+.sheetfoot .danger{margin-right:0}
+.catpick .lcode{background:var(--c);color:#fff}
+.catpick{border-color:color-mix(in srgb,var(--c) 45%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent)}
+/* меню: список разделов */
+.navlist{display:flex;flex-direction:column;gap:6px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;border-radius:22px}
+.nav .nm{flex:1;min-width:0;font-weight:600}
+.mic{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent-soft);font-size:18px}
+/* окно выбора языка */
+.langlist{display:flex;flex-direction:column;gap:6px}
+.lrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;border-radius:22px}
+.lcode{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:700 12px var(--f-soft);letter-spacing:.02em}
+.lname{flex:1;min-width:0}
+.lname b{display:block;font-size:15px}
+.lname small{color:var(--muted);font-size:12px}
+.lck{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;color:#fff;background:var(--accent);opacity:0;transform:scale(.4);transition:opacity .25s,transform .3s cubic-bezier(.3,1.6,.5,1)}
+.lrow.on{border-color:var(--accent);background:var(--accent-soft)}
+.lrow.on .lck{opacity:1;transform:none}
 /* зарплата */
 .payopt{display:block;width:100%;text-align:left;padding:14px 18px;border-radius:24px;margin-bottom:8px}
 .payopt b{display:block;font-size:15px;margin-bottom:2px}
@@ -189,7 +235,8 @@ dialog.closing::backdrop{animation:fade .18s reverse forwards}
 .stat.big{background:var(--accent-soft)}
 
 .seg{display:inline-flex;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:3px}
-.seg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--muted)}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--muted);
+  transition:color .25s,background .25s,box-shadow .25s,transform .12s}
 .seg button.on{color:var(--text);background:var(--card);box-shadow:var(--shadow)}
 
 .catlist{display:flex;flex-direction:column;gap:6px}
@@ -227,6 +274,10 @@ label.chk small{display:block;color:var(--muted)}
   display:none;align-items:center;gap:12px;padding:10px 10px 10px 16px;border:0;border-radius:24px;background:var(--text);color:var(--bg);
   box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;z-index:50;width:max-content;max-width:calc(100% - 24px);overflow:visible}
 #toast.on{display:flex;animation:tin .25s cubic-bezier(.2,.9,.3,1.1)}
+#toast.on.out{animation:tout .22s ease forwards}
+@keyframes tout{to{opacity:0;transform:translate(-50%,10px)}}
+details[open]>:not(summary){animation:fadeUp .28s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px)}}
 #toast button{background:transparent;border:0;color:var(--accent);font-weight:700;padding:6px 10px}
 :root[data-theme=dark] #toast button{color:#3b54e0}
 @keyframes tin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
@@ -302,12 +353,15 @@ label.chk small{display:block;color:var(--muted)}
 <dialog id="menuDlg"><div class="dlg" id="menuBody"></div></dialog>
 <dialog id="typeDlg"><div class="dlg" id="typeBody"></div></dialog>
 <dialog id="payDlg"><div class="dlg" id="payBody"></div></dialog>
+<dialog id="helpDlg"><div class="dlg" id="helpBody"></div></dialog>
+<dialog id="langDlg"><div class="dlg" id="langBody"></div></dialog>
+<dialog id="catSheet" class="sheet"><div class="dlg" id="catBody"></div></dialog>
 <div id="toast" popover="manual"><span id="tmsg"></span><button id="tundo"></button></div>
 
 <script>
 /* ---------- переводы ---------- */
 const I18N={
-ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'Вперёд',menu:'Меню',close:'Закрыть',h:'ч',
+ru:{moreBtn:'Подробнее',pickCat:'Выбрать категорию',lookTitle:'Внешний вид и язык',navBal:'Отпуск и Paragraf',navOn:'Вкл',navOff:'Выкл',autoTag:'запланировано',payGrpBasic:'Основное',payGrpPrem:'Надбавки и nadčas',payGrpTax:'Налоги и взносы',payGrpLeave:'Отпуск, PN, Paragraf',title:'Мои смены',today:'Сегодня',prev:'Назад',next:'Вперёд',menu:'Меню',close:'Закрыть',h:'ч',
  undo:'Отменить',undoBtn:'↶ Отменить последнее действие',summary:'Итоги — {m}',totalHours:'всего часов',noHours:'без часов',
  noteTitle:'Заметка',notePh:'Например: подмена, врач в 10:00…',overlayTitle:'Поверх смены',pDay:'День',pNight:'Ночь',timeTitle:'Время смены',reset:'Сбросить',
  clearShift:'Очистить смену',done:'Готово',add:'Добавить',update:'Обновить',remove:'Убрать',nextDay:'до следующего дня',
@@ -325,8 +379,8 @@ ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'В�
  catTitle:'Категория',newCat:'Новая категория',name:'Название',namePh:'Например: Подработка',short:'Метка',hours:'Часы',color:'Цвет',
  start:'Начало смены',end:'Конец смены',noTime:'Без времени',
  timeHint:'Если время задано, часы считаются сами (конец раньше начала — смена через полночь). Обед вычитается из часов.',
- lunch:'Обед, мин',net:'Итого с вычетом обеда: {h} ч',lunchShort:'обед {m} мин',update:'Обновить приложение',version:'Версия',shiftsWord:'смен',netWord:'чистых',offsWord:'выходных',edit:'Изменить',noShiftToday:'Сегодня · нет смены',
- holTitle:'Праздники',holShow:'Показывать праздники',holNone:'Для русского языка праздники не показываются. Выберите украинский или словацкий.',holiday:'Праздник',
+ lunch:'Обед, мин',net:'Итого с вычетом обеда: {h} ч',lunchShort:'обед {m} мин',updateApp:'Обновить приложение',version:'Версия',shiftsWord:'смен',netWord:'чистых',offsWord:'выходных',edit:'Изменить',noShiftToday:'Сегодня · нет смены',
+ holTitle:'Праздники',holShow:'Показывать праздники',holCountry:'Страна',holAuto:'По языку',holOff:'Нет',holPick:'Выберите страну, чтобы увидеть праздники.',holHint:'Государственные праздники выбранной страны отмечаются красной точкой. Даты ориентировочные: сверьте с официальным календарём.',holiday:'Праздник',
  balTitle:'Остатки · {y}',daysShort:'дн.',marked:'отмечено',left:'осталось',limit:'Лимит',limitHint:'Задайте лимит дней в год, чтобы видеть остаток.',limitSaved:'Лимит сохранён',
  remTitle:'Уведомления',remShifts:'Напоминать о сменах',remShiftsHint:'За день до смены. По умолчанию включено, здесь можно выключить.',remTime:'Напоминать накануне в',
  remPerm:'Разрешить системные уведомления',remPermOn:'Системные уведомления разрешены',remPermDenied:'Уведомления запрещены в настройках браузера',
@@ -352,11 +406,19 @@ ru:{title:'Мои смены',today:'Сегодня',prev:'Назад',next:'В�
  payLearnBtn:'Определить',payLearnRes:'Найдено: вычет из базы {d} €, взносы {c} %, налог {t} %',payApply:'Применить',payLearnNeed:'Введите «Hrubá mzda» и хотя бы «Odvody» или «Daň».',
  payBonuses:'Бонусы и премии',payBonusHint:'входят в брутто, с них считаются взносы и налог',payBonusName:'Название, например «премия за качество»',payBonusAdd:'Добавить бонус',payBonus:'Бонус',payExtra:'Разовая премия',
  payBU1:'€ в месяц',payBU2:'% от оклада',payBU3:'€ за час',payBU4:'€ за смену',
+ helpTitle:'Помощь',helpBtn:'Как пользоваться',helpNext:'Далее',helpBack:'Назад',helpSkip:'Пропустить',helpStart:'Начать',
+ hlp1t:'Календарь сам строит график',hlp1b:'Отметьте свои смены за последние <b>2–4 недели</b>. Приложение проанализирует их, найдёт повторяющийся цикл (например, 2 дня, 2 ночи, 4 выходных) и продолжит график на месяцы вперёд.',
+ hlp2t:'Как отмечать смены',hlp2b:'Нажмите на день и выберите категорию: день, ночь, выходной, отпуск, больничный, Paragraf. В том же окне можно указать время смены, <b>nadčas</b> и заметку. Каждое действие можно отменить.',
+ hlp3t:'Автоплан',hlp3b:'Откройте <b>⚙ → «Авто-планирование»</b>, выберите, на сколько месяцев вперёд, и нажмите «Построить». Запланированные смены нарисованы пунктиром: подтвердите их или поправьте вручную.',
+ hlp4t:'Ещё полезное',hlp4b:'Остатки отпуска и Paragraf, праздники Словакии и Украины, напоминания накануне смены и расчёт зарплаты по вашему расчётному листу. Всё включается в меню ⚙.',
+ hlp5t:'Установка и данные',hlp5b_ios:'<b>iPhone:</b> откройте страницу в Safari, нажмите «Поделиться» → «На экран „Домой“». Тогда приложение будет работать как обычное, даже без интернета.',
+ hlp5b_and:'<b>Android:</b> в меню Chrome выберите «Установить приложение». Тогда оно будет работать как обычное, даже без интернета.',hlp5b_pc:'Установить приложение можно через значок в адресной строке браузера.',
+ hlp5b:'Данные хранятся только на вашем устройстве. Делайте «Экспорт» в меню ⚙, чтобы сохранить резервную копию.',
  overlayLbl:'Ставится поверх смены',overlayHint:'Как nadčas: день сохраняет свою смену и получает бейдж с часами.',
  ignoreLbl:'Не учитывать в анализе графика',ignoreHint:'Для отпуска, больничного и любых нерегулярных дней.',
  delete:'Удалить',cancel:'Отмена',save:'Сохранить',
  types:{d:['День','Д'],n:['Ночь','Н'],o:['Выходной','В'],v:['Отпуск','О'],s:['Больничный','Б'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
+uk:{moreBtn:'Докладніше',pickCat:'Вибрати категорію',lookTitle:'Вигляд і мова',navBal:'Відпустка і Paragraf',navOn:'Увімк.',navOff:'Вимк.',autoTag:'заплановано',payGrpBasic:'Основне',payGrpPrem:'Надбавки і nadčas',payGrpTax:'Податки і внески',payGrpLeave:'Відпустка, PN, Paragraf',title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'Вперед',menu:'Меню',close:'Закрити',h:'год',
  undo:'Скасувати',undoBtn:'↶ Скасувати останню дію',summary:'Підсумки — {m}',totalHours:'усього годин',noHours:'без годин',
  noteTitle:'Нотатка',notePh:'Наприклад: підміна, лікар о 10:00…',overlayTitle:'Поверх зміни',pDay:'День',pNight:'Ніч',timeTitle:'Час зміни',reset:'Скинути',
  clearShift:'Очистити зміну',done:'Готово',add:'Додати',update:'Оновити',remove:'Прибрати',nextDay:'до наступного дня',
@@ -374,8 +436,8 @@ uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'�
  catTitle:'Категорія',newCat:'Нова категорія',name:'Назва',namePh:'Наприклад: Підробіток',short:'Мітка',hours:'Години',color:'Колір',
  start:'Початок зміни',end:'Кінець зміни',noTime:'Без часу',
  timeHint:'Якщо час задано, години рахуються самі (кінець раніше за початок — зміна через північ). Обід віднімається від годин.',
- lunch:'Обід, хв',net:'Разом з вирахуванням обіду: {h} год',lunchShort:'обід {m} хв',update:'Оновити застосунок',version:'Версія',shiftsWord:'змін',netWord:'чистих',offsWord:'вихідних',edit:'Змінити',noShiftToday:'Сьогодні · немає зміни',
- holTitle:'Свята',holShow:'Показувати свята',holInfo:'Державні свята України',holiday:'Свято',
+ lunch:'Обід, хв',net:'Разом з вирахуванням обіду: {h} год',lunchShort:'обід {m} хв',updateApp:'Оновити застосунок',version:'Версія',shiftsWord:'змін',netWord:'чистих',offsWord:'вихідних',edit:'Змінити',noShiftToday:'Сьогодні · немає зміни',
+ holTitle:'Свята',holShow:'Показувати свята',holCountry:'Країна',holAuto:'За мовою',holOff:'Немає',holPick:'Виберіть країну, щоб побачити свята.',holHint:'Державні свята вибраної країни позначаються червоною крапкою. Дати орієнтовні: звірте з офіційним календарем.',holiday:'Свято',
  balTitle:'Залишки · {y}',daysShort:'дн.',marked:'позначено',left:'залишилось',limit:'Ліміт',limitHint:'Вкажіть ліміт днів на рік, щоб бачити залишок.',limitSaved:'Ліміт збережено',
  remTitle:'Сповіщення',remShifts:'Нагадувати про зміни',remShiftsHint:'За день до зміни. За замовчуванням увімкнено, тут можна вимкнути.',remTime:'Нагадувати напередодні о',
  remPerm:'Дозволити системні сповіщення',remPermOn:'Системні сповіщення дозволено',remPermDenied:'Сповіщення заборонено в налаштуваннях браузера',
@@ -401,11 +463,19 @@ uk:{title:'Мої зміни',today:'Сьогодні',prev:'Назад',next:'�
  payLearnBtn:'Визначити',payLearnRes:'Знайдено: відрахування з бази {d} €, внески {c} %, податок {t} %',payApply:'Застосувати',payLearnNeed:'Введіть «Hrubá mzda» і хоча б «Odvody» або «Daň».',
  payBonuses:'Бонуси та премії',payBonusHint:'входять у брутто, з них рахуються внески й податок',payBonusName:'Назва, наприклад «премія за якість»',payBonusAdd:'Додати бонус',payBonus:'Бонус',payExtra:'Разова премія',
  payBU1:'€ на місяць',payBU2:'% від окладу',payBU3:'€ за годину',payBU4:'€ за зміну',
+ helpTitle:'Допомога',helpBtn:'Як користуватися',helpNext:'Далі',helpBack:'Назад',helpSkip:'Пропустити',helpStart:'Почати',
+ hlp1t:'Календар сам будує графік',hlp1b:'Позначте свої зміни за останні <b>2–4 тижні</b>. Застосунок проаналізує їх, знайде цикл, що повторюється (наприклад, 2 дні, 2 ночі, 4 вихідних), і продовжить графік на місяці вперед.',
+ hlp2t:'Як позначати зміни',hlp2b:'Натисніть на день і виберіть категорію: день, ніч, вихідний, відпустка, лікарняний, Paragraf. У тому ж вікні можна вказати час зміни, <b>nadčas</b> і нотатку. Кожну дію можна скасувати.',
+ hlp3t:'Автоплан',hlp3b:'Відкрийте <b>⚙ → «Авто-планування»</b>, виберіть, на скільки місяців уперед, і натисніть «Побудувати». Заплановані зміни намальовані пунктиром: підтвердьте їх або виправте вручну.',
+ hlp4t:'Ще корисне',hlp4b:'Залишки відпустки та Paragraf, свята Словаччини й України, нагадування напередодні зміни та розрахунок зарплати за вашим розрахунковим листком. Усе вмикається в меню ⚙.',
+ hlp5t:'Встановлення і дані',hlp5b_ios:'<b>iPhone:</b> відкрийте сторінку в Safari, натисніть «Поділитися» → «На початковий екран». Тоді застосунок працюватиме як звичайний, навіть без інтернету.',
+ hlp5b_and:'<b>Android:</b> у меню Chrome виберіть «Установити застосунок». Тоді він працюватиме як звичайний, навіть без інтернету.',hlp5b_pc:'Встановити застосунок можна через значок в адресному рядку браузера.',
+ hlp5b:'Дані зберігаються лише на вашому пристрої. Робіть «Експорт» у меню ⚙, щоб мати резервну копію.',
  overlayLbl:'Ставиться поверх зміни',overlayHint:'Як nadčas: день зберігає свою зміну й отримує бейдж із годинами.',
  ignoreLbl:'Не враховувати в аналізі графіка',ignoreHint:'Для відпустки, лікарняного та будь-яких нерегулярних днів.',
  delete:'Видалити',cancel:'Скасувати',save:'Зберегти',
  types:{d:['День','Д'],n:['Ніч','Н'],o:['Вихідний','В'],v:['Відпустка','Від'],s:['Лікарняний','Л'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
-sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
+sk:{moreBtn:'Podrobnosti',pickCat:'Vybrať kategóriu',lookTitle:'Vzhľad a jazyk',navBal:'Dovolenka a Paragraf',navOn:'Zap.',navOff:'Vyp.',autoTag:'naplánované',payGrpBasic:'Základ',payGrpPrem:'Príplatky a nadčas',payGrpTax:'Dane a odvody',payGrpLeave:'Dovolenka, PN, Paragraf',title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',menu:'Menu',close:'Zavrieť',h:'h',
  undo:'Späť',undoBtn:'↶ Vrátiť poslednú akciu',summary:'Súhrn — {m}',totalHours:'hodín spolu',noHours:'bez hodín',
  noteTitle:'Poznámka',notePh:'Napr.: zastupovanie, lekár o 10:00…',overlayTitle:'Popri zmene',pDay:'Deň',pNight:'Noc',timeTitle:'Čas zmeny',reset:'Obnoviť',
  clearShift:'Vymazať zmenu',done:'Hotovo',add:'Pridať',update:'Aktualizovať',remove:'Odstrániť',nextDay:'do nasledujúceho dňa',
@@ -423,8 +493,8 @@ sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',
  catTitle:'Kategória',newCat:'Nová kategória',name:'Názov',namePh:'Napr.: Brigáda',short:'Značka',hours:'Hodiny',color:'Farba',
  start:'Začiatok zmeny',end:'Koniec zmeny',noTime:'Bez času',
  timeHint:'Ak je čas zadaný, hodiny sa počítajú samy (koniec skôr ako začiatok — zmena cez polnoc). Obed sa odpočíta z hodín.',
- lunch:'Obed, min',net:'Spolu po odpočítaní obeda: {h} h',lunchShort:'obed {m} min',update:'Aktualizovať aplikáciu',version:'Verzia',shiftsWord:'zmien',netWord:'čisté',offsWord:'voľných',edit:'Upraviť',noShiftToday:'Dnes · bez zmeny',
- holTitle:'Sviatky',holShow:'Zobrazovať sviatky',holInfo:'Štátne sviatky Slovenska',holiday:'Sviatok',
+ lunch:'Obed, min',net:'Spolu po odpočítaní obeda: {h} h',lunchShort:'obed {m} min',updateApp:'Aktualizovať aplikáciu',version:'Verzia',shiftsWord:'zmien',netWord:'čisté',offsWord:'voľných',edit:'Upraviť',noShiftToday:'Dnes · bez zmeny',
+ holTitle:'Sviatky',holShow:'Zobrazovať sviatky',holCountry:'Krajina',holAuto:'Podľa jazyka',holOff:'Žiadna',holPick:'Vyberte krajinu, aby ste videli jej sviatky.',holHint:'Štátne sviatky vybranej krajiny sú označené červenou bodkou. Dátumy sú orientačné: overte ich podľa oficiálneho kalendára.',holiday:'Sviatok',
  balTitle:'Zostatky · {y}',daysShort:'dní',marked:'označené',left:'zostáva',limit:'Limit',limitHint:'Zadajte ročný limit dní, aby ste videli zostatok.',limitSaved:'Limit uložený',
  remTitle:'Upozornenia',remShifts:'Pripomínať zmeny',remShiftsHint:'Deň vopred. Predvolene zapnuté, tu sa dá vypnúť.',remTime:'Pripomenúť deň vopred o',
  remPerm:'Povoliť systémové upozornenia',remPermOn:'Systémové upozornenia sú povolené',remPermDenied:'Upozornenia sú zakázané v nastaveniach prehliadača',
@@ -450,21 +520,327 @@ sk:{title:'Moje zmeny',today:'Dnes',prev:'Predchádzajúci',next:'Nasledujúci',
  payLearnBtn:'Zistiť',payLearnRes:'Nájdené: odpočet zo základu {d} €, odvody {c} %, daň {t} %',payApply:'Použiť',payLearnNeed:'Zadajte „Hrubá mzda“ a aspoň „Odvody“ alebo „Daň“.',
  payBonuses:'Bonusy a odmeny',payBonusHint:'sú súčasťou hrubej mzdy, platia sa z nich odvody aj daň',payBonusName:'Názov, napr. „odmena za kvalitu“',payBonusAdd:'Pridať bonus',payBonus:'Bonus',payExtra:'Jednorazová odmena',
  payBU1:'€ mesačne',payBU2:'% z mzdy',payBU3:'€ za hodinu',payBU4:'€ za zmenu',
+ helpTitle:'Pomocník',helpBtn:'Ako to používať',helpNext:'Ďalej',helpBack:'Späť',helpSkip:'Preskočiť',helpStart:'Začať',
+ hlp1t:'Kalendár si zostaví rozpis sám',hlp1b:'Označte svoje zmeny za posledné <b>2–4 týždne</b>. Aplikácia ich analyzuje, nájde opakujúci sa cyklus (napr. 2 dni, 2 noci, 4 voľné) a rozpis predĺži na mesiace dopredu.',
+ hlp2t:'Ako označovať zmeny',hlp2b:'Ťuknite na deň a vyberte kategóriu: deň, noc, voľno, dovolenka, PN, Paragraf. V tom istom okne môžete zadať čas zmeny, <b>nadčas</b> a poznámku. Každú akciu možno vrátiť späť.',
+ hlp3t:'Automatický plán',hlp3b:'Otvorte <b>⚙ → „Automatické plánovanie“</b>, vyberte na koľko mesiacov dopredu a stlačte „Vytvoriť“. Naplánované zmeny sú bodkované: potvrďte ich alebo upravte ručne.',
+ hlp4t:'Ďalšie funkcie',hlp4b:'Zostatky dovolenky a Paragrafu, sviatky Slovenska a Ukrajiny, pripomienky deň vopred a výpočet mzdy podľa vašej výplatnej pásky. Všetko sa zapína v menu ⚙.',
+ hlp5t:'Inštalácia a dáta',hlp5b_ios:'<b>iPhone:</b> otvorte stránku v Safari, ťuknite na „Zdieľať“ → „Pridať na plochu“. Aplikácia potom funguje ako bežná, aj bez internetu.',
+ hlp5b_and:'<b>Android:</b> v ponuke Chrome vyberte „Inštalovať aplikáciu“. Potom funguje ako bežná, aj bez internetu.',hlp5b_pc:'Aplikáciu môžete nainštalovať cez ikonu v paneli s adresou prehliadača.',
+ hlp5b:'Dáta sa ukladajú iba vo vašom zariadení. Robte „Export“ v menu ⚙ ako zálohu.',
  overlayLbl:'Pridáva sa popri zmene',overlayHint:'Ako nadčas: deň si ponechá svoju zmenu a dostane odznak s hodinami.',
  ignoreLbl:'Nezahŕňať do analýzy rozpisu',ignoreHint:'Pre dovolenku, PN a akékoľvek nepravidelné dni.',
  delete:'Odstrániť',cancel:'Zrušiť',save:'Uložiť',
- types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}}
+ types:{d:['Deň','D'],n:['Noc','N'],o:['Voľno','V'],v:['Dovolenka','Dov'],s:['Práceneschopnosť','PN'],ot:['Nadčas','Nč'],pg:['Paragraf','Pg']}},
+en:{moreBtn:'Details',pickCat:'Choose category',lookTitle:'Appearance & language',navBal:'Vacation & Paragraf',navOn:'On',navOff:'Off',autoTag:'planned',payGrpBasic:'Basics',payGrpPrem:'Premiums & overtime',payGrpTax:'Taxes & contributions',payGrpLeave:'Vacation, sick, Paragraf',title:'My Shifts',today:'Today',prev:'Back',next:'Forward',menu:'Menu',close:'Close',h:'h',
+ undo:'Undo',undoBtn:'↶ Undo last action',summary:'Summary — {m}',totalHours:'total hours',noHours:'no hours',
+ noteTitle:'Note',notePh:'E.g. covering a shift, doctor at 10:00…',overlayTitle:'On top of shift',pDay:'Day',pNight:'Night',timeTitle:'Shift time',reset:'Reset',
+ clearShift:'Clear shift',done:'Done',add:'Add',update:'Update',updateApp:'Update app',remove:'Remove',nextDay:'until the next day',
+ shiftChanged:'Shift changed',shiftCleared:'Shift cleared',timeReset:'Time reset',otSaved:'Overtime saved',removed:'Removed',
+ timeChanged:'Time changed',undone:'Undone',autoConfirmed:'Planned shifts confirmed',autoCleared:'Planned shifts removed',
+ imported:'Data imported',typeSaved:'Category saved',typeDeleted:'Category deleted',built:'Schedule built',monthCleared:'Month cleared',
+ categories:'Categories',addCat:'+ Custom category',overlayTag:'on top of shift',auto:'Auto-planning',autoOn:'For',months:'months ahead',build:'Build',
+ confirmAuto:'Confirm planned shifts',clearAuto:'Remove planned shifts',autoHint:'Planned shifts are dashed on the calendar.',
+ theme:'Theme',light:'☀️ Light',themeAuto:'Auto',dark:'🌙 Dark',language:'Language',data:'Data',export:'Export',import:'Import',
+ localNote:'Data is stored only on this device.',clearSec:'Clear',clearMonthBtn:'Clear: {m}',clearHint:'Removes all shifts, overtime and notes of this month.',
+ found:'Cycle of {p} days found: {pat} — {c}% match, over {n} days.',
+ notEnough:'Not enough data: mark at least 2 shift cycles (usually 2–4 weeks) and I will find the pattern.',
+ badFile:'Invalid file',cantDetect:'I cannot detect the cycle yet. Fill in more past days.',
+ confirmDelType:'Delete the category? Days with it will be cleared.',confirmClear:'Clear everything for {m}? Shifts, overtime and notes will be deleted (can be undone).',
+ catTitle:'Category',newCat:'New category',name:'Name',namePh:'E.g. Side job',short:'Label',hours:'Hours',color:'Color',
+ start:'Shift start',end:'Shift end',noTime:'No time',
+ timeHint:'If a time is set, hours are calculated automatically (an end earlier than the start means the shift crosses midnight). The lunch break is deducted from the hours.',
+ lunch:'Lunch, min',net:'Total after lunch: {h} h',lunchShort:'lunch {m} min',
+ version:'Version',shiftsWord:'shifts',netWord:'net',offsWord:'days off',edit:'Edit',noShiftToday:'Today · no shift',
+ holTitle:'Holidays',holShow:'Show holidays',holCountry:'Country',holAuto:'By language',holOff:'None',holPick:'Choose a country to see its holidays.',
+ holHint:'Public holidays of the selected country are marked with a red dot. Dates are for reference: check them against the official calendar.',holiday:'Holiday',
+ balTitle:'Balances · {y}',daysShort:'d',marked:'marked',left:'left',limit:'Limit',limitHint:'Set a yearly limit of days to see the balance.',limitSaved:'Limit saved',
+ remTitle:'Notifications',remShifts:'Remind about shifts',remShiftsHint:'The day before the shift. On by default, you can turn it off here.',remTime:'Remind the day before at',
+ remPerm:'Allow system notifications',remPermOn:'System notifications are allowed',remPermDenied:'Notifications are blocked in the browser settings',
+ remIcs:'Add shifts to the phone calendar',remIcsHint:'This way reminders arrive even when the app is closed. Open the received .ics file and choose “Add to Calendar”. Exporting again updates the events.',
+ remNote:'The app itself shows the reminder when you open it. For alerts while the app is closed, use the phone calendar.',
+ remOt:'Remind',remTomorrow:'Tomorrow: {list}',remNotifTitle:'Shift tomorrow',icsEmpty:'No upcoming shifts or overtime with a reminder',
+ payTitle:'Salary',payMenuBtn:'Salary calculation',payWizTitle:'How do you work?',
+ payModeStudent:'Student job (brigáda)',payModeStudentHint:'Slovak “dohoda o brigádnickej práci študentov”. Defaults: contributions 4% + 3% with a €200 deduction, tax 19% (as on the payslips of one company). Yours may differ: adjust using your payslip.',
+ payModeRegular:'Regular employee',payModeRegularHint:'Slovak employment contract (pracovná zmluva): contributions 13.4%, tax 15% with a tax-free amount. The values are approximate, check them against your payslip.',
+ payModeSkip:'Do not calculate salary',payRateTitle:'Hourly rate',payRateHint:'How much you are paid per hour before tax (hrubá). You can set the rest later.',payRate:'Rate, €/h',payBack:'Back',payContinue:'Continue',
+ payNet:'Take-home (Čistá mzda)',payGross:'Gross (Hrubá mzda)',payHoursPay:'Hours × rate',payNight:'Night',paySat:'Saturday',paySun:'Sunday',payHol:'Holidays',payVac:'Vacation',payPg:'Paragraf',payPn:'Sick pay (employer)',payTax:'Tax (Daň)',
+ payFootnote:'Calculated from the calendar, including planned shifts. This is an estimate, not a payslip: compare it with your payslip.',payStudentNote:'For student jobs the employer does not pay vacation, sick leave or Paragraf.',
+ paySettings:'Calculation settings',payPremH:'Premium, €/hour',payPremHint:'For a regular employee the legal minimums are pre-filled; check them against your payslip.',payOtPct:'Overtime: premium, %',payVacH:'Hours per vacation day',payPgH:'Hours per Paragraf day',
+ payAvgNem:'Priemer na nemoc, €/h',payAvgNah:'Priemer pre náhrady, €/h',payAvgHint:'Values from the orange boxes on the payslip.',payNem1:'Sick leave days 1–3, %',payNem2:'Sick leave days 4–10, %',
+ payDeduct:'Deduction from the contribution base, €/month',payTaxRate:'Tax, %',payTaxFree:'Tax-free amount, €/month',payChild:'Child tax bonus, €/month',payContribRates:'Employee contributions',
+ payOfficial:'Official hours',payOfficialSplit:'On the payslip: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Compare with payslip',payCheckHint:'Enter “Čistá mzda” from the payslip for this month.',payCheckApply:'Adjust calculation',payCheckDiff:'Difference from calculation: {d} €',payCalib:'Calculation correction: ×{k}',payCalibReset:'Reset',
+ paySaved:'Salary settings saved',payChange:'Change mode',
+ payTypeLbl:'Pay type',payTypeHourly:'Hourly',payTypeMonthly:'Monthly salary',payBase:'Salary (hrubá mzda), €/month',payBaseHint:'Your monthly hrubá mzda under the contract, before tax. Premiums are added on top.',
+ payBaseLine:'Pay for time worked',payFund:'Hours fund',payDayH:'Hours per working day',
+ payLearn:'Set up from a payslip',payLearnHint:'Enter the numbers from a payslip: the app will find the deduction, contributions and tax of your own company.',
+ payG:'Hrubá mzda',payB:'Contribution base (vymeriavací základ)',payO:'Odvody celkom (employee contributions)',payT:'Daň (tax)',payN:'Tax-free amount, €/month (if any)',
+ payLearnBtn:'Detect',payLearnRes:'Found: deduction from base {d} €, contributions {c}%, tax {t}%',payApply:'Apply',payLearnNeed:'Enter “Hrubá mzda” and at least “Odvody” or “Daň”.',
+ payBonuses:'Bonuses',payBonusHint:'included in gross pay; contributions and tax are calculated from them',payBonusName:'Name, e.g. “quality bonus”',payBonusAdd:'Add bonus',payBonus:'Bonus',payExtra:'One-time bonus',
+ payBU1:'€ per month',payBU2:'% of salary',payBU3:'€ per hour',payBU4:'€ per shift',
+ helpTitle:'Help',helpBtn:'How to use',helpNext:'Next',helpBack:'Back',helpSkip:'Skip',helpStart:'Start',
+ hlp1t:'The calendar plans your schedule',hlp1b:'Mark your shifts for the last <b>2–4 weeks</b>. The app analyzes them, finds the repeating cycle (for example 2 days, 2 nights, 4 days off) and continues the schedule months ahead.',
+ hlp2t:'How to mark shifts',hlp2b:'Tap a day and choose a category: day, night, day off, vacation, sick leave, Paragraf. In the same window you can set the shift time, <b>overtime</b> and a note. Every action can be undone.',
+ hlp3t:'Auto-planning',hlp3b:'Open <b>⚙ → “Auto-planning”</b>, choose how many months ahead and tap “Build”. Planned shifts are dashed: confirm them or edit by hand.',
+ hlp4t:'More features',hlp4b:'Vacation and Paragraf balances, public holidays, reminders the day before a shift and salary calculation from your payslip. Everything is switched on in the ⚙ menu.',
+ hlp5t:'Install and data',hlp5b_ios:'<b>iPhone:</b> open the page in Safari, tap “Share” → “Add to Home Screen”. The app then works like a regular one, even offline.',
+ hlp5b_and:'<b>Android:</b> in the Chrome menu choose “Install app”. It then works like a regular app, even offline.',hlp5b_pc:'You can install the app with the icon in the browser address bar.',
+ hlp5b:'Data is stored only on your device. Use “Export” in the ⚙ menu to keep a backup.',
+ overlayLbl:'Added on top of a shift',overlayHint:'Like overtime: the day keeps its shift and gets a badge with hours.',
+ ignoreLbl:'Ignore in schedule analysis',ignoreHint:'For vacation, sick leave and any irregular days.',
+ delete:'Delete',cancel:'Cancel',save:'Save',
+ types:{d:['Day','D'],n:['Night','N'],o:['Day off','Off'],v:['Vacation','Vac'],s:['Sick leave','Sick'],ot:['Overtime','OT'],pg:['Doctor (Paragraf)','Dr']}},
+cs:{moreBtn:'Podrobnosti',pickCat:'Vybrat kategorii',lookTitle:'Vzhled a jazyk',navBal:'Dovolená a Paragraf',navOn:'Zap.',navOff:'Vyp.',autoTag:'naplánováno',payGrpBasic:'Základ',payGrpPrem:'Příplatky a přesčas',payGrpTax:'Daně a odvody',payGrpLeave:'Dovolená, nemocenská, Paragraf',title:'Moje směny',today:'Dnes',prev:'Zpět',next:'Vpřed',menu:'Menu',close:'Zavřít',h:'h',
+ undo:'Zpět',undoBtn:'↶ Vrátit poslední akci',summary:'Souhrn — {m}',totalHours:'hodin celkem',noHours:'bez hodin',
+ noteTitle:'Poznámka',notePh:'Např.: zástup, lékař v 10:00…',overlayTitle:'Navíc ke směně',pDay:'Den',pNight:'Noc',timeTitle:'Čas směny',reset:'Obnovit',
+ clearShift:'Smazat směnu',done:'Hotovo',add:'Přidat',update:'Aktualizovat',updateApp:'Aktualizovat aplikaci',remove:'Odebrat',nextDay:'do následujícího dne',
+ shiftChanged:'Směna změněna',shiftCleared:'Směna smazána',timeReset:'Čas obnoven',otSaved:'Přesčas uložen',removed:'Odebráno',
+ timeChanged:'Čas změněn',undone:'Vráceno zpět',autoConfirmed:'Naplánované směny potvrzeny',autoCleared:'Naplánované směny odebrány',
+ imported:'Data naimportována',typeSaved:'Kategorie uložena',typeDeleted:'Kategorie smazána',built:'Rozpis vytvořen',monthCleared:'Měsíc vymazán',
+ categories:'Kategorie',addCat:'+ Vlastní kategorie',overlayTag:'navíc ke směně',auto:'Automatické plánování',autoOn:'Na',months:'měs. dopředu',build:'Vytvořit',
+ confirmAuto:'Potvrdit naplánované směny',clearAuto:'Odebrat naplánované směny',autoHint:'Naplánované směny jsou v kalendáři tečkované.',
+ theme:'Vzhled',light:'☀️ Světlý',themeAuto:'Auto',dark:'🌙 Tmavý',language:'Jazyk',data:'Data',export:'Export',import:'Import',
+ localNote:'Data se ukládají pouze v tomto zařízení.',clearSec:'Vymazání',clearMonthBtn:'Vymazat: {m}',clearHint:'Odstraní všechny směny, přesčasy a poznámky tohoto měsíce.',
+ found:'Nalezen cyklus {p} dní: {pat} — shoda {c} %, z {n} dní.',
+ notEnough:'Málo údajů: označte alespoň 2 cykly směn (obvykle 2–4 týdny) a najdu pravidelnost.',
+ badFile:'Neplatný soubor',cantDetect:'Cyklus zatím neumím určit. Vyplňte více minulých dnů.',
+ confirmDelType:'Smazat kategorii? Dny s ní budou vymazány.',confirmClear:'Vymazat vše za {m}? Směny, přesčasy a poznámky budou odstraněny (lze vrátit zpět).',
+ catTitle:'Kategorie',newCat:'Nová kategorie',name:'Název',namePh:'Např.: Brigáda',short:'Značka',hours:'Hodiny',color:'Barva',
+ start:'Začátek směny',end:'Konec směny',noTime:'Bez času',
+ timeHint:'Je-li čas zadán, hodiny se počítají samy (konec dřív než začátek — směna přes půlnoc). Pauza na oběd se od hodin odečte.',
+ lunch:'Oběd, min',net:'Celkem po odečtení oběda: {h} h',lunchShort:'oběd {m} min',
+ version:'Verze',shiftsWord:'směn',netWord:'čisté',offsWord:'volných',edit:'Upravit',noShiftToday:'Dnes · bez směny',
+ holTitle:'Svátky',holShow:'Zobrazovat svátky',holCountry:'Země',holAuto:'Podle jazyka',holOff:'Žádná',holPick:'Vyberte zemi, abyste viděli její svátky.',
+ holHint:'Státní svátky vybrané země jsou označeny červenou tečkou. Data jsou orientační: ověřte je podle oficiálního kalendáře.',holiday:'Svátek',
+ balTitle:'Zůstatky · {y}',daysShort:'dní',marked:'označeno',left:'zbývá',limit:'Limit',limitHint:'Zadejte roční limit dní, abyste viděli zůstatek.',limitSaved:'Limit uložen',
+ remTitle:'Upozornění',remShifts:'Připomínat směny',remShiftsHint:'Den předem. Ve výchozím nastavení zapnuto, zde lze vypnout.',remTime:'Připomenout den předem v',
+ remPerm:'Povolit systémová upozornění',remPermOn:'Systémová upozornění jsou povolena',remPermDenied:'Upozornění jsou zakázána v nastavení prohlížeče',
+ remIcs:'Přidat směny do kalendáře telefonu',remIcsHint:'Takto připomínky přijdou, i když je aplikace zavřená. Otevřete získaný soubor .ics a vyberte „Přidat do kalendáře“. Opakovaný export události aktualizuje.',
+ remNote:'Samotná aplikace zobrazí připomínku, když ji otevřete. Pro upozornění při zavřené aplikaci použijte kalendář telefonu.',
+ remOt:'Připomenout',remTomorrow:'Zítra: {list}',remNotifTitle:'Zítra směna',icsEmpty:'Žádné nadcházející směny ani přesčasy s připomínkou',
+ payTitle:'Mzda',payMenuBtn:'Výpočet mzdy',payWizTitle:'Jak pracujete?',
+ payModeStudent:'Brigádník (student)',payModeStudentHint:'Slovenská „dohoda o brigádnickej práci študentov“. Výchozí: odvody 4 % + 3 % s odpočtem 200 €, daň 19 % (tak je to na výplatních páskách jedné firmy). Vaše firma může mít jinak: nastavte podle své pásky.',
+ payModeRegular:'Běžný zaměstnanec',payModeRegularHint:'Slovenská pracovní smlouva (pracovná zmluva): odvody 13,4 %, daň 15 % s nezdanitelnou částí. Hodnoty jsou orientační, porovnejte je se svou páskou.',
+ payModeSkip:'Nepočítat mzdu',payRateTitle:'Hodinová sazba',payRateHint:'Kolik vám platí za hodinu před zdaněním (hrubá). Zbytek můžete nastavit později.',payRate:'Sazba, €/h',payBack:'Zpět',payContinue:'Pokračovat',
+ payNet:'Čistá mzda',payGross:'Hrubá mzda',payHoursPay:'Hodiny × sazba',payNight:'Noční',paySat:'Sobota',paySun:'Neděle',payHol:'Svátky',payVac:'Dovolená',payPg:'Paragraf',payPn:'Nemocenská (platí firma)',payTax:'Daň ze mzdy',
+ payFootnote:'Výpočet podle kalendáře včetně naplánovaných směn. Je to odhad, ne výplatní páska: porovnejte ho s páskou.',payStudentNote:'Brigádníkům firma neplatí dovolenou, nemocenskou ani Paragraf.',
+ paySettings:'Nastavení výpočtu',payPremH:'Příplatek, €/h',payPremHint:'Pro běžného zaměstnance jsou předvyplněna zákonná minima, porovnejte je se svou páskou.',payOtPct:'Přesčas: příplatek, %',payVacH:'Hodin za den dovolené',payPgH:'Hodin za den Paragraf',
+ payAvgNem:'Priemer na nemoc, €/h',payAvgNah:'Priemer pre náhrady, €/h',payAvgHint:'Hodnoty z oranžových okének výplatní pásky.',payNem1:'Nemocenská dny 1–3, %',payNem2:'Nemocenská dny 4–10, %',
+ payDeduct:'Odpočet ze základu odvodů, €/měs.',payTaxRate:'Daň, %',payTaxFree:'Nezdanitelná část, €/měs.',payChild:'Daňový bonus na děti, €/měs.',payContribRates:'Odvody zaměstnance',
+ payOfficial:'Oficiální hodiny',payOfficialSplit:'Na pásce: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Porovnání s páskou',payCheckHint:'Zadejte „Čistá mzda“ z výplatní pásky za tento měsíc.',payCheckApply:'Upravit výpočet',payCheckDiff:'Rozdíl oproti výpočtu: {d} €',payCalib:'Korekce výpočtu: ×{k}',payCalibReset:'Zrušit',
+ paySaved:'Nastavení mzdy uloženo',payChange:'Změnit režim',
+ payTypeLbl:'Typ odměňování',payTypeHourly:'Hodinová',payTypeMonthly:'Měsíční mzda',payBase:'Měsíční hrubá mzda, €',payBaseHint:'Kolik je vaše hrubá mzda měsíčně podle smlouvy, před zdaněním. Příplatky se připočtou navíc.',
+ payBaseLine:'Mzda za odpracované',payFund:'Fond hodin',payDayH:'Hodin v pracovním dni',
+ payLearn:'Nastavit podle výplatní pásky',payLearnHint:'Zadejte čísla z pásky: program najde odpočet, odvody a daň právě vaší firmy.',
+ payG:'Hrubá mzda',payB:'Základ pro odvody (vymeriavací základ)',payO:'Odvody celkom (zaměstnanec)',payT:'Daň zo mzdy',payN:'Nezdanitelná část, €/měs. (pokud je)',
+ payLearnBtn:'Zjistit',payLearnRes:'Nalezeno: odpočet ze základu {d} €, odvody {c} %, daň {t} %',payApply:'Použít',payLearnNeed:'Zadejte „Hrubá mzda“ a alespoň „Odvody“ nebo „Daň“.',
+ payBonuses:'Bonusy a odměny',payBonusHint:'jsou součástí hrubé mzdy, platí se z nich odvody i daň',payBonusName:'Název, např. „odměna za kvalitu“',payBonusAdd:'Přidat bonus',payBonus:'Bonus',payExtra:'Jednorázová odměna',
+ payBU1:'€ měsíčně',payBU2:'% z mzdy',payBU3:'€ za hodinu',payBU4:'€ za směnu',
+ helpTitle:'Nápověda',helpBtn:'Jak to používat',helpNext:'Dále',helpBack:'Zpět',helpSkip:'Přeskočit',helpStart:'Začít',
+ hlp1t:'Kalendář si sestaví rozpis sám',hlp1b:'Označte své směny za posledních <b>2–4 týdny</b>. Aplikace je analyzuje, najde opakující se cyklus (např. 2 dny, 2 noci, 4 volné) a rozpis prodlouží na měsíce dopředu.',
+ hlp2t:'Jak označovat směny',hlp2b:'Klepněte na den a vyberte kategorii: den, noc, volno, dovolená, nemocenská, Paragraf. Ve stejném okně můžete zadat čas směny, <b>přesčas</b> a poznámku. Každou akci lze vrátit zpět.',
+ hlp3t:'Automatický plán',hlp3b:'Otevřete <b>⚙ → „Automatické plánování“</b>, vyberte na kolik měsíců dopředu a stiskněte „Vytvořit“. Naplánované směny jsou tečkované: potvrďte je nebo upravte ručně.',
+ hlp4t:'Další funkce',hlp4b:'Zůstatky dovolené a Paragrafu, státní svátky, připomínky den předem a výpočet mzdy podle vaší výplatní pásky. Vše se zapíná v menu ⚙.',
+ hlp5t:'Instalace a data',hlp5b_ios:'<b>iPhone:</b> otevřete stránku v Safari, klepněte na „Sdílet“ → „Přidat na plochu“. Aplikace pak funguje jako běžná, i bez internetu.',
+ hlp5b_and:'<b>Android:</b> v nabídce Chrome vyberte „Instalovat aplikaci“. Pak funguje jako běžná, i bez internetu.',hlp5b_pc:'Aplikaci můžete nainstalovat přes ikonu v adresním řádku prohlížeče.',
+ hlp5b:'Data se ukládají pouze ve vašem zařízení. Dělejte „Export“ v menu ⚙ jako zálohu.',
+ overlayLbl:'Přidává se ke směně',overlayHint:'Jako přesčas: den si ponechá svou směnu a dostane odznak s hodinami.',
+ ignoreLbl:'Nezahrnovat do analýzy rozpisu',ignoreHint:'Pro dovolenou, nemocenskou a jakékoli nepravidelné dny.',
+ delete:'Smazat',cancel:'Zrušit',save:'Uložit',
+ types:{d:['Den','D'],n:['Noc','N'],o:['Volno','V'],v:['Dovolená','Dov'],s:['Nemocenská','PN'],ot:['Přesčas','Př'],pg:['Lékař (paragraf)','Dr']}},
+pl:{moreBtn:'Szczegóły',pickCat:'Wybierz kategorię',lookTitle:'Wygląd i język',navBal:'Urlop i Paragraf',navOn:'Wł.',navOff:'Wył.',autoTag:'zaplanowane',payGrpBasic:'Podstawa',payGrpPrem:'Dodatki i nadgodziny',payGrpTax:'Podatki i składki',payGrpLeave:'Urlop, zwolnienie, Paragraf',title:'Moje zmiany',today:'Dziś',prev:'Wstecz',next:'Dalej',menu:'Menu',close:'Zamknij',h:'godz.',
+ undo:'Cofnij',undoBtn:'↶ Cofnij ostatnią czynność',summary:'Podsumowanie — {m}',totalHours:'godzin łącznie',noHours:'bez godzin',
+ noteTitle:'Notatka',notePh:'Np.: zastępstwo, lekarz o 10:00…',overlayTitle:'Dodatkowo do zmiany',pDay:'Dzień',pNight:'Noc',timeTitle:'Czas zmiany',reset:'Przywróć',
+ clearShift:'Wyczyść zmianę',done:'Gotowe',add:'Dodaj',update:'Zaktualizuj',updateApp:'Zaktualizuj aplikację',remove:'Usuń',nextDay:'do następnego dnia',
+ shiftChanged:'Zmiana zmieniona',shiftCleared:'Zmiana wyczyszczona',timeReset:'Czas przywrócony',otSaved:'Nadgodziny zapisane',removed:'Usunięto',
+ timeChanged:'Czas zmieniony',undone:'Cofnięto',autoConfirmed:'Zaplanowane zmiany potwierdzone',autoCleared:'Zaplanowane zmiany usunięte',
+ imported:'Dane zaimportowane',typeSaved:'Kategoria zapisana',typeDeleted:'Kategoria usunięta',built:'Grafik utworzony',monthCleared:'Miesiąc wyczyszczony',
+ categories:'Kategorie',addCat:'+ Własna kategoria',overlayTag:'dodatkowo do zmiany',auto:'Automatyczne planowanie',autoOn:'Na',months:'mies. do przodu',build:'Utwórz',
+ confirmAuto:'Potwierdź zaplanowane zmiany',clearAuto:'Usuń zaplanowane zmiany',autoHint:'Zaplanowane zmiany są w kalendarzu przerywane.',
+ theme:'Motyw',light:'☀️ Jasny',themeAuto:'Auto',dark:'🌙 Ciemny',language:'Język',data:'Dane',export:'Eksport',import:'Import',
+ localNote:'Dane są przechowywane tylko na tym urządzeniu.',clearSec:'Czyszczenie',clearMonthBtn:'Wyczyść: {m}',clearHint:'Usunie wszystkie zmiany, nadgodziny i notatki tego miesiąca.',
+ found:'Znaleziono cykl {p} dni: {pat} — zgodność {c}%, z {n} dni.',
+ notEnough:'Za mało danych: zaznacz co najmniej 2 cykle zmian (zwykle 2–4 tygodnie), a znajdę prawidłowość.',
+ badFile:'Nieprawidłowy plik',cantDetect:'Nie potrafię jeszcze określić cyklu. Uzupełnij więcej minionych dni.',
+ confirmDelType:'Usunąć kategorię? Dni z nią zostaną wyczyszczone.',confirmClear:'Wyczyścić wszystko za {m}? Zmiany, nadgodziny i notatki zostaną usunięte (można cofnąć).',
+ catTitle:'Kategoria',newCat:'Nowa kategoria',name:'Nazwa',namePh:'Np.: Dodatkowa praca',short:'Oznaczenie',hours:'Godziny',color:'Kolor',
+ start:'Początek zmiany',end:'Koniec zmiany',noTime:'Bez czasu',
+ timeHint:'Jeśli czas jest podany, godziny liczą się same (koniec wcześniej niż początek — zmiana przez północ). Przerwa na obiad jest odejmowana od godzin.',
+ lunch:'Obiad, min',net:'Razem po odjęciu obiadu: {h} godz.',lunchShort:'obiad {m} min',
+ version:'Wersja',shiftsWord:'zmian',netWord:'netto',offsWord:'wolnych',edit:'Edytuj',noShiftToday:'Dziś · bez zmiany',
+ holTitle:'Święta',holShow:'Pokazuj święta',holCountry:'Kraj',holAuto:'Według języka',holOff:'Brak',holPick:'Wybierz kraj, aby zobaczyć jego święta.',
+ holHint:'Święta państwowe wybranego kraju są oznaczone czerwoną kropką. Daty są orientacyjne: sprawdź je w oficjalnym kalendarzu.',holiday:'Święto',
+ balTitle:'Saldo · {y}',daysShort:'dni',marked:'zaznaczono',left:'pozostało',limit:'Limit',limitHint:'Ustaw roczny limit dni, aby zobaczyć saldo.',limitSaved:'Limit zapisany',
+ remTitle:'Powiadomienia',remShifts:'Przypominaj o zmianach',remShiftsHint:'Dzień wcześniej. Domyślnie włączone, tutaj można wyłączyć.',remTime:'Przypomnij dzień wcześniej o',
+ remPerm:'Zezwól na powiadomienia systemowe',remPermOn:'Powiadomienia systemowe są dozwolone',remPermDenied:'Powiadomienia są zablokowane w ustawieniach przeglądarki',
+ remIcs:'Dodaj zmiany do kalendarza telefonu',remIcsHint:'W ten sposób przypomnienia przychodzą, nawet gdy aplikacja jest zamknięta. Otwórz otrzymany plik .ics i wybierz „Dodaj do kalendarza”. Ponowny eksport zaktualizuje wydarzenia.',
+ remNote:'Sama aplikacja pokazuje przypomnienie, gdy ją otworzysz. Aby dostawać sygnały przy zamkniętej aplikacji, użyj kalendarza telefonu.',
+ remOt:'Przypomnij',remTomorrow:'Jutro: {list}',remNotifTitle:'Jutro zmiana',icsEmpty:'Brak nadchodzących zmian ani nadgodzin z przypomnieniem',
+ payTitle:'Wynagrodzenie',payMenuBtn:'Obliczanie wynagrodzenia',payWizTitle:'Jak pracujesz?',
+ payModeStudent:'Praca dorywcza (student)',payModeStudentHint:'Słowacka „dohoda o brigádnickej práci študentov”. Domyślnie: składki 4% + 3% z odliczeniem 200 €, podatek 19% (tak jest na paskach jednej firmy). Twoja firma może mieć inaczej: ustaw według swojego paska.',
+ payModeRegular:'Zwykły pracownik',payModeRegularHint:'Słowacka umowa o pracę (pracovná zmluva): składki 13,4%, podatek 15% z kwotą wolną. Wartości są orientacyjne, porównaj je ze swoim paskiem.',
+ payModeSkip:'Nie obliczaj wynagrodzenia',payRateTitle:'Stawka godzinowa',payRateHint:'Ile Ci płacą za godzinę przed opodatkowaniem (hrubá). Resztę możesz ustawić później.',payRate:'Stawka, €/godz.',payBack:'Wstecz',payContinue:'Dalej',
+ payNet:'Na rękę (Čistá mzda)',payGross:'Brutto (Hrubá mzda)',payHoursPay:'Godziny × stawka',payNight:'Nocne',paySat:'Sobota',paySun:'Niedziela',payHol:'Święta',payVac:'Urlop',payPg:'Paragraf',payPn:'Zasiłek chorobowy (płaci firma)',payTax:'Podatek (Daň)',
+ payFootnote:'Obliczenie według kalendarza, razem z zaplanowanymi zmianami. To szacunek, a nie pasek wypłaty: porównaj go z paskiem.',payStudentNote:'Przy pracy dorywczej studenta firma nie płaci za urlop, zwolnienie ani Paragraf.',
+ paySettings:'Ustawienia obliczeń',payPremH:'Dodatek, €/godz.',payPremHint:'Dla zwykłego pracownika wpisano minimalne wartości z przepisów, porównaj je ze swoim paskiem.',payOtPct:'Nadgodziny: dodatek, %',payVacH:'Godzin na dzień urlopu',payPgH:'Godzin na dzień Paragraf',
+ payAvgNem:'Priemer na nemoc, €/godz.',payAvgNah:'Priemer pre náhrady, €/godz.',payAvgHint:'Wartości z pomarańczowych okienek paska wypłaty.',payNem1:'Zwolnienie dni 1–3, %',payNem2:'Zwolnienie dni 4–10, %',
+ payDeduct:'Odliczenie od podstawy składek, €/mies.',payTaxRate:'Podatek, %',payTaxFree:'Kwota wolna, €/mies.',payChild:'Ulga podatkowa na dzieci, €/mies.',payContribRates:'Składki pracownika',
+ payOfficial:'Godziny oficjalne',payOfficialSplit:'Na pasku: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Porównanie z paskiem',payCheckHint:'Wpisz „Čistá mzda” z paska wypłaty za ten miesiąc.',payCheckApply:'Dopasuj obliczenie',payCheckDiff:'Różnica względem obliczenia: {d} €',payCalib:'Korekta obliczenia: ×{k}',payCalibReset:'Zresetuj',
+ paySaved:'Ustawienia wynagrodzenia zapisane',payChange:'Zmień tryb',
+ payTypeLbl:'Rodzaj wynagrodzenia',payTypeHourly:'Godzinowe',payTypeMonthly:'Miesięczne',payBase:'Pensja (hrubá mzda), €/mies.',payBaseHint:'Ile wynosi Twoja hrubá mzda miesięcznie według umowy, przed opodatkowaniem. Dodatki doliczą się na wierzch.',
+ payBaseLine:'Wynagrodzenie za przepracowane',payFund:'Fundusz godzin',payDayH:'Godzin w dniu roboczym',
+ payLearn:'Ustaw według paska wypłaty',payLearnHint:'Wpisz liczby z paska: program znajdzie odliczenie, składki i podatek właśnie Twojej firmy.',
+ payG:'Hrubá mzda',payB:'Podstawa składek (vymeriavací základ)',payO:'Odvody celkom (składki pracownika)',payT:'Daň (podatek)',payN:'Kwota wolna, €/mies. (jeśli jest)',
+ payLearnBtn:'Ustal',payLearnRes:'Znaleziono: odliczenie od podstawy {d} €, składki {c}%, podatek {t}%',payApply:'Zastosuj',payLearnNeed:'Wpisz „Hrubá mzda” i co najmniej „Odvody” lub „Daň”.',
+ payBonuses:'Premie i bonusy',payBonusHint:'wchodzą do brutto, od nich liczone są składki i podatek',payBonusName:'Nazwa, np. „premia za jakość”',payBonusAdd:'Dodaj bonus',payBonus:'Bonus',payExtra:'Premia jednorazowa',
+ payBU1:'€ miesięcznie',payBU2:'% pensji',payBU3:'€ za godzinę',payBU4:'€ za zmianę',
+ helpTitle:'Pomoc',helpBtn:'Jak korzystać',helpNext:'Dalej',helpBack:'Wstecz',helpSkip:'Pomiń',helpStart:'Zacznij',
+ hlp1t:'Kalendarz sam układa grafik',hlp1b:'Zaznacz swoje zmiany z ostatnich <b>2–4 tygodni</b>. Aplikacja je przeanalizuje, znajdzie powtarzający się cykl (np. 2 dni, 2 noce, 4 wolne) i przedłuży grafik na miesiące do przodu.',
+ hlp2t:'Jak zaznaczać zmiany',hlp2b:'Dotknij dnia i wybierz kategorię: dzień, noc, wolne, urlop, zwolnienie, Paragraf. W tym samym oknie możesz podać czas zmiany, <b>nadgodziny</b> i notatkę. Każdą czynność można cofnąć.',
+ hlp3t:'Automatyczny plan',hlp3b:'Otwórz <b>⚙ → „Automatyczne planowanie”</b>, wybierz, na ile miesięcy do przodu, i naciśnij „Utwórz”. Zaplanowane zmiany są przerywane: potwierdź je lub popraw ręcznie.',
+ hlp4t:'Więcej funkcji',hlp4b:'Saldo urlopu i Paragrafu, święta państwowe, przypomnienia dzień przed zmianą i obliczanie wynagrodzenia według paska wypłaty. Wszystko włącza się w menu ⚙.',
+ hlp5t:'Instalacja i dane',hlp5b_ios:'<b>iPhone:</b> otwórz stronę w Safari, dotknij „Udostępnij” → „Do ekranu początkowego”. Aplikacja będzie wtedy działać jak zwykła, nawet bez internetu.',
+ hlp5b_and:'<b>Android:</b> w menu Chrome wybierz „Zainstaluj aplikację”. Będzie wtedy działać jak zwykła, nawet bez internetu.',hlp5b_pc:'Aplikację można zainstalować przez ikonę w pasku adresu przeglądarki.',
+ hlp5b:'Dane są przechowywane tylko na Twoim urządzeniu. Rób „Eksport” w menu ⚙, aby mieć kopię zapasową.',
+ overlayLbl:'Dodawane do zmiany',overlayHint:'Jak nadgodziny: dzień zachowuje swoją zmianę i dostaje plakietkę z godzinami.',
+ ignoreLbl:'Nie uwzględniaj w analizie grafiku',ignoreHint:'Dla urlopu, zwolnienia i wszelkich nieregularnych dni.',
+ delete:'Usuń',cancel:'Anuluj',save:'Zapisz',
+ types:{d:['Dzień','D'],n:['Noc','N'],o:['Wolne','W'],v:['Urlop','Url'],s:['Zwolnienie','L4'],ot:['Nadgodziny','Ng'],pg:['Lekarz (Paragraf)','Dr']}},
+de:{moreBtn:'Details',pickCat:'Kategorie wählen',lookTitle:'Design und Sprache',navBal:'Urlaub und Paragraf',navOn:'An',navOff:'Aus',autoTag:'geplant',payGrpBasic:'Grundlagen',payGrpPrem:'Zuschläge und Überstunden',payGrpTax:'Steuern und Abgaben',payGrpLeave:'Urlaub, Krank, Paragraf',title:'Meine Schichten',today:'Heute',prev:'Zurück',next:'Weiter',menu:'Menü',close:'Schließen',h:'Std.',
+ undo:'Rückgängig',undoBtn:'↶ Letzte Aktion rückgängig machen',summary:'Übersicht — {m}',totalHours:'Stunden gesamt',noHours:'ohne Stunden',
+ noteTitle:'Notiz',notePh:'Z. B.: Vertretung, Arzt um 10:00…',overlayTitle:'Zusätzlich zur Schicht',pDay:'Tag',pNight:'Nacht',timeTitle:'Schichtzeit',reset:'Zurücksetzen',
+ clearShift:'Schicht löschen',done:'Fertig',add:'Hinzufügen',update:'Aktualisieren',updateApp:'App aktualisieren',remove:'Entfernen',nextDay:'bis zum nächsten Tag',
+ shiftChanged:'Schicht geändert',shiftCleared:'Schicht gelöscht',timeReset:'Zeit zurückgesetzt',otSaved:'Überstunden gespeichert',removed:'Entfernt',
+ timeChanged:'Zeit geändert',undone:'Rückgängig gemacht',autoConfirmed:'Geplante Schichten bestätigt',autoCleared:'Geplante Schichten entfernt',
+ imported:'Daten importiert',typeSaved:'Kategorie gespeichert',typeDeleted:'Kategorie gelöscht',built:'Dienstplan erstellt',monthCleared:'Monat geleert',
+ categories:'Kategorien',addCat:'+ Eigene Kategorie',overlayTag:'zusätzlich zur Schicht',auto:'Automatische Planung',autoOn:'Für',months:'Monate im Voraus',build:'Erstellen',
+ confirmAuto:'Geplante Schichten bestätigen',clearAuto:'Geplante Schichten entfernen',autoHint:'Geplante Schichten sind im Kalender gestrichelt.',
+ theme:'Design',light:'☀️ Hell',themeAuto:'Auto',dark:'🌙 Dunkel',language:'Sprache',data:'Daten',export:'Export',import:'Import',
+ localNote:'Die Daten werden nur auf diesem Gerät gespeichert.',clearSec:'Löschen',clearMonthBtn:'Leeren: {m}',clearHint:'Entfernt alle Schichten, Überstunden und Notizen dieses Monats.',
+ found:'Zyklus von {p} Tagen gefunden: {pat} — Übereinstimmung {c} %, aus {n} Tagen.',
+ notEnough:'Zu wenig Daten: Markieren Sie mindestens 2 Schichtzyklen (meist 2–4 Wochen), dann finde ich das Muster.',
+ badFile:'Ungültige Datei',cantDetect:'Ich kann den Zyklus noch nicht bestimmen. Tragen Sie mehr vergangene Tage ein.',
+ confirmDelType:'Kategorie löschen? Tage mit dieser Kategorie werden geleert.',confirmClear:'Alles für {m} löschen? Schichten, Überstunden und Notizen werden entfernt (rückgängig möglich).',
+ catTitle:'Kategorie',newCat:'Neue Kategorie',name:'Name',namePh:'Z. B.: Nebenjob',short:'Kürzel',hours:'Stunden',color:'Farbe',
+ start:'Schichtbeginn',end:'Schichtende',noTime:'Ohne Zeit',
+ timeHint:'Ist eine Zeit angegeben, werden die Stunden automatisch berechnet (Ende vor Beginn — die Schicht geht über Mitternacht). Die Mittagspause wird von den Stunden abgezogen.',
+ lunch:'Mittagspause, Min.',net:'Gesamt nach Abzug der Pause: {h} Std.',lunchShort:'Pause {m} Min.',
+ version:'Version',shiftsWord:'Schichten',netWord:'netto',offsWord:'frei',edit:'Bearbeiten',noShiftToday:'Heute · keine Schicht',
+ holTitle:'Feiertage',holShow:'Feiertage anzeigen',holCountry:'Land',holAuto:'Nach Sprache',holOff:'Keine',holPick:'Wählen Sie ein Land, um seine Feiertage zu sehen.',
+ holHint:'Gesetzliche Feiertage des gewählten Landes sind mit einem roten Punkt markiert. Die Daten sind unverbindlich: Prüfen Sie sie im offiziellen Kalender.',holiday:'Feiertag',
+ balTitle:'Restbestand · {y}',daysShort:'Tg.',marked:'markiert',left:'übrig',limit:'Limit',limitHint:'Legen Sie ein Jahreslimit an Tagen fest, um den Restbestand zu sehen.',limitSaved:'Limit gespeichert',
+ remTitle:'Benachrichtigungen',remShifts:'An Schichten erinnern',remShiftsHint:'Am Tag davor. Standardmäßig an, hier können Sie es ausschalten.',remTime:'Am Vortag erinnern um',
+ remPerm:'Systembenachrichtigungen erlauben',remPermOn:'Systembenachrichtigungen sind erlaubt',remPermDenied:'Benachrichtigungen sind in den Browsereinstellungen blockiert',
+ remIcs:'Schichten zum Telefonkalender hinzufügen',remIcsHint:'So kommen die Erinnerungen auch bei geschlossener App. Öffnen Sie die erhaltene .ics-Datei und wählen Sie „Zum Kalender hinzufügen“. Ein erneuter Export aktualisiert die Termine.',
+ remNote:'Die App selbst zeigt die Erinnerung beim Öffnen an. Für Signale bei geschlossener App nutzen Sie den Telefonkalender.',
+ remOt:'Erinnern',remTomorrow:'Morgen: {list}',remNotifTitle:'Morgen Schicht',icsEmpty:'Keine kommenden Schichten oder Überstunden mit Erinnerung',
+ payTitle:'Lohn',payMenuBtn:'Lohnberechnung',payWizTitle:'Wie arbeiten Sie?',
+ payModeStudent:'Studentenjob (Brigáda)',payModeStudentHint:'Slowakische „dohoda o brigádnickej práci študentov“. Standard: Abgaben 4 % + 3 % mit 200 € Abzug, Steuer 19 % (so auf den Abrechnungen einer Firma). Bei Ihrer Firma kann es anders sein: Stellen Sie es nach Ihrer Abrechnung ein.',
+ payModeRegular:'Normaler Angestellter',payModeRegularHint:'Slowakischer Arbeitsvertrag (pracovná zmluva): Abgaben 13,4 %, Steuer 15 % mit Freibetrag. Die Werte sind Richtwerte, vergleichen Sie sie mit Ihrer Abrechnung.',
+ payModeSkip:'Lohn nicht berechnen',payRateTitle:'Stundensatz',payRateHint:'Wie viel Sie pro Stunde vor Steuern bekommen (hrubá). Den Rest können Sie später einstellen.',payRate:'Satz, €/Std.',payBack:'Zurück',payContinue:'Weiter',
+ payNet:'Netto (Čistá mzda)',payGross:'Brutto (Hrubá mzda)',payHoursPay:'Stunden × Satz',payNight:'Nacht',paySat:'Samstag',paySun:'Sonntag',payHol:'Feiertage',payVac:'Urlaub',payPg:'Paragraf',payPn:'Krankengeld (Firma)',payTax:'Steuer (Daň)',
+ payFootnote:'Berechnet nach dem Kalender, einschließlich geplanter Schichten. Das ist eine Schätzung, keine Abrechnung: Vergleichen Sie sie mit Ihrer Abrechnung.',payStudentNote:'Bei Studentenjobs zahlt die Firma keinen Urlaub, kein Krankengeld und kein Paragraf.',
+ paySettings:'Berechnungseinstellungen',payPremH:'Zuschlag, €/Std.',payPremHint:'Für normale Angestellte sind die gesetzlichen Mindestwerte vorausgefüllt; vergleichen Sie sie mit Ihrer Abrechnung.',payOtPct:'Überstunden: Zuschlag, %',payVacH:'Stunden pro Urlaubstag',payPgH:'Stunden pro Paragraf-Tag',
+ payAvgNem:'Priemer na nemoc, €/Std.',payAvgNah:'Priemer pre náhrady, €/Std.',payAvgHint:'Werte aus den orangen Feldern der Abrechnung.',payNem1:'Krankheit Tage 1–3, %',payNem2:'Krankheit Tage 4–10, %',
+ payDeduct:'Abzug von der Beitragsgrundlage, €/Monat',payTaxRate:'Steuer, %',payTaxFree:'Freibetrag, €/Monat',payChild:'Steuerbonus für Kinder, €/Monat',payContribRates:'Abgaben des Arbeitnehmers',
+ payOfficial:'Offizielle Stunden',payOfficialSplit:'Auf der Abrechnung: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Vergleich mit der Abrechnung',payCheckHint:'Geben Sie „Čistá mzda“ aus der Abrechnung für diesen Monat ein.',payCheckApply:'Berechnung anpassen',payCheckDiff:'Abweichung von der Berechnung: {d} €',payCalib:'Korrektur der Berechnung: ×{k}',payCalibReset:'Zurücksetzen',
+ paySaved:'Lohneinstellungen gespeichert',payChange:'Modus ändern',
+ payTypeLbl:'Vergütungsart',payTypeHourly:'Stundenlohn',payTypeMonthly:'Monatsgehalt',payBase:'Gehalt (hrubá mzda), €/Monat',payBaseHint:'Ihre monatliche hrubá mzda laut Vertrag, vor Steuern. Zuschläge kommen obendrauf.',
+ payBaseLine:'Lohn für geleistete Arbeit',payFund:'Stundenfonds',payDayH:'Stunden pro Arbeitstag',
+ payLearn:'Nach der Abrechnung einstellen',payLearnHint:'Geben Sie die Zahlen aus der Abrechnung ein: Die App findet Abzug, Abgaben und Steuer Ihrer Firma.',
+ payG:'Hrubá mzda',payB:'Beitragsgrundlage (vymeriavací základ)',payO:'Odvody celkom (Abgaben des Arbeitnehmers)',payT:'Daň (Steuer)',payN:'Freibetrag, €/Monat (falls vorhanden)',
+ payLearnBtn:'Ermitteln',payLearnRes:'Gefunden: Abzug von der Grundlage {d} €, Abgaben {c} %, Steuer {t} %',payApply:'Übernehmen',payLearnNeed:'Geben Sie „Hrubá mzda“ und mindestens „Odvody“ oder „Daň“ ein.',
+ payBonuses:'Boni und Prämien',payBonusHint:'zählen zum Brutto, Abgaben und Steuer werden davon berechnet',payBonusName:'Name, z. B. „Qualitätsprämie“',payBonusAdd:'Bonus hinzufügen',payBonus:'Bonus',payExtra:'Einmalige Prämie',
+ payBU1:'€ pro Monat',payBU2:'% vom Gehalt',payBU3:'€ pro Stunde',payBU4:'€ pro Schicht',
+ helpTitle:'Hilfe',helpBtn:'So funktioniert es',helpNext:'Weiter',helpBack:'Zurück',helpSkip:'Überspringen',helpStart:'Los geht’s',
+ hlp1t:'Der Kalender plant den Dienstplan selbst',hlp1b:'Markieren Sie Ihre Schichten der letzten <b>2–4 Wochen</b>. Die App analysiert sie, findet den wiederkehrenden Zyklus (z. B. 2 Tage, 2 Nächte, 4 frei) und führt den Dienstplan Monate in die Zukunft fort.',
+ hlp2t:'So markieren Sie Schichten',hlp2b:'Tippen Sie auf einen Tag und wählen Sie eine Kategorie: Tag, Nacht, frei, Urlaub, Krank, Paragraf. Im selben Fenster können Sie Schichtzeit, <b>Überstunden</b> und eine Notiz eintragen. Jede Aktion lässt sich rückgängig machen.',
+ hlp3t:'Automatische Planung',hlp3b:'Öffnen Sie <b>⚙ → „Automatische Planung“</b>, wählen Sie, wie viele Monate im Voraus, und tippen Sie auf „Erstellen“. Geplante Schichten sind gestrichelt: Bestätigen Sie sie oder passen Sie sie von Hand an.',
+ hlp4t:'Weitere Funktionen',hlp4b:'Restbestand von Urlaub und Paragraf, Feiertage, Erinnerungen am Vortag einer Schicht und Lohnberechnung nach Ihrer Abrechnung. Alles wird im Menü ⚙ eingeschaltet.',
+ hlp5t:'Installation und Daten',hlp5b_ios:'<b>iPhone:</b> Öffnen Sie die Seite in Safari, tippen Sie auf „Teilen“ → „Zum Home-Bildschirm“. Die App läuft dann wie eine normale App, auch ohne Internet.',
+ hlp5b_and:'<b>Android:</b> Wählen Sie im Chrome-Menü „App installieren“. Sie läuft dann wie eine normale App, auch ohne Internet.',hlp5b_pc:'Sie können die App über das Symbol in der Adressleiste des Browsers installieren.',
+ hlp5b:'Die Daten werden nur auf Ihrem Gerät gespeichert. Machen Sie im Menü ⚙ einen „Export“ als Sicherung.',
+ overlayLbl:'Wird zusätzlich zur Schicht gesetzt',overlayHint:'Wie Überstunden: Der Tag behält seine Schicht und erhält ein Abzeichen mit Stunden.',
+ ignoreLbl:'In der Dienstplananalyse ignorieren',ignoreHint:'Für Urlaub, Krankheit und alle unregelmäßigen Tage.',
+ delete:'Löschen',cancel:'Abbrechen',save:'Speichern',
+ types:{d:['Tag','T'],n:['Nacht','N'],o:['Frei','Fr'],v:['Urlaub','Url'],s:['Krankenstand','Kr'],ot:['Überstunden','ÜS'],pg:['Arzttermin (Paragraf)','Dr']}},
+hu:{moreBtn:'Részletek',pickCat:'Kategória választása',lookTitle:'Megjelenés és nyelv',navBal:'Szabadság és Paragraf',navOn:'Be',navOff:'Ki',autoTag:'tervezett',payGrpBasic:'Alapok',payGrpPrem:'Pótlékok és túlóra',payGrpTax:'Adók és járulékok',payGrpLeave:'Szabadság, betegség, Paragraf',title:'Műszakjaim',today:'Ma',prev:'Vissza',next:'Előre',menu:'Menü',close:'Bezárás',h:'ó',
+ undo:'Visszavonás',undoBtn:'↶ Utolsó művelet visszavonása',summary:'Összesítés — {m}',totalHours:'óra összesen',noHours:'óra nélkül',
+ noteTitle:'Jegyzet',notePh:'Pl.: helyettesítés, orvos 10:00-kor…',overlayTitle:'A műszak mellett',pDay:'Nappal',pNight:'Éjszaka',timeTitle:'Műszak ideje',reset:'Visszaállítás',
+ clearShift:'Műszak törlése',done:'Kész',add:'Hozzáadás',update:'Frissítés',updateApp:'Alkalmazás frissítése',remove:'Eltávolítás',nextDay:'a következő napig',
+ shiftChanged:'Műszak módosítva',shiftCleared:'Műszak törölve',timeReset:'Idő visszaállítva',otSaved:'Túlóra mentve',removed:'Eltávolítva',
+ timeChanged:'Idő módosítva',undone:'Visszavonva',autoConfirmed:'A tervezett műszakok megerősítve',autoCleared:'A tervezett műszakok eltávolítva',
+ imported:'Adatok importálva',typeSaved:'Kategória mentve',typeDeleted:'Kategória törölve',built:'Beosztás elkészült',monthCleared:'Hónap törölve',
+ categories:'Kategóriák',addCat:'+ Saját kategória',overlayTag:'a műszak mellett',auto:'Automatikus tervezés',autoOn:'Erre:',months:'hónap előre',build:'Létrehozás',
+ confirmAuto:'Tervezett műszakok megerősítése',clearAuto:'Tervezett műszakok eltávolítása',autoHint:'A tervezett műszakok a naptárban szaggatott vonallal vannak jelölve.',
+ theme:'Megjelenés',light:'☀️ Világos',themeAuto:'Auto',dark:'🌙 Sötét',language:'Nyelv',data:'Adatok',export:'Exportálás',import:'Importálás',
+ localNote:'Az adatok csak ezen az eszközön tárolódnak.',clearSec:'Törlés',clearMonthBtn:'Törlés: {m}',clearHint:'Törli a hónap összes műszakját, túlóráját és jegyzetét.',
+ found:'{p} napos ciklus található: {pat} — egyezés {c}%, {n} nap alapján.',
+ notEnough:'Kevés az adat: jelöljön meg legalább 2 műszakciklust (általában 2–4 hét), és megtalálom a mintát.',
+ badFile:'Érvénytelen fájl',cantDetect:'A ciklust még nem tudom meghatározni. Töltsön ki több korábbi napot.',
+ confirmDelType:'Törli a kategóriát? Az ezzel jelölt napok törlődnek.',confirmClear:'Töröl mindent a(z) {m} hónapra? A műszakok, túlórák és jegyzetek törlődnek (visszavonható).',
+ catTitle:'Kategória',newCat:'Új kategória',name:'Név',namePh:'Pl.: Mellékállás',short:'Jelölés',hours:'Órák',color:'Szín',
+ start:'Műszak kezdete',end:'Műszak vége',noTime:'Idő nélkül',
+ timeHint:'Ha megad időt, az órák automatikusan számolódnak (ha a vége korábbi a kezdésnél, a műszak éjfélen átnyúlik). Az ebédszünet levonódik az órákból.',
+ lunch:'Ebéd, perc',net:'Összesen az ebéd levonása után: {h} ó',lunchShort:'ebéd {m} perc',
+ version:'Verzió',shiftsWord:'műszak',netWord:'nettó',offsWord:'szabadnap',edit:'Szerkesztés',noShiftToday:'Ma · nincs műszak',
+ holTitle:'Ünnepnapok',holShow:'Ünnepnapok mutatása',holCountry:'Ország',holAuto:'Nyelv szerint',holOff:'Nincs',holPick:'Válasszon országot az ünnepnapok megjelenítéséhez.',
+ holHint:'A kiválasztott ország állami ünnepei piros ponttal vannak jelölve. A dátumok tájékoztató jellegűek: ellenőrizze őket a hivatalos naptárban.',holiday:'Ünnepnap',
+ balTitle:'Egyenleg · {y}',daysShort:'nap',marked:'megjelölve',left:'maradt',limit:'Keret',limitHint:'Adjon meg éves napkeretet, hogy lássa az egyenleget.',limitSaved:'Keret mentve',
+ remTitle:'Értesítések',remShifts:'Emlékeztető a műszakokról',remShiftsHint:'Egy nappal előtte. Alapértelmezés szerint be van kapcsolva, itt kikapcsolható.',remTime:'Emlékeztető előző nap ekkor:',
+ remPerm:'Rendszerértesítések engedélyezése',remPermOn:'A rendszerértesítések engedélyezve vannak',remPermDenied:'Az értesítések le vannak tiltva a böngésző beállításaiban',
+ remIcs:'Műszakok hozzáadása a telefon naptárához',remIcsHint:'Így az emlékeztetők akkor is megjönnek, ha az alkalmazás be van zárva. Nyissa meg a kapott .ics fájlt, és válassza a „Hozzáadás a naptárhoz” lehetőséget. Az ismételt exportálás frissíti az eseményeket.',
+ remNote:'Maga az alkalmazás megnyitáskor mutatja az emlékeztetőt. Zárt alkalmazás esetén használja a telefon naptárát.',
+ remOt:'Emlékeztető',remTomorrow:'Holnap: {list}',remNotifTitle:'Holnap műszak',icsEmpty:'Nincs közelgő műszak vagy emlékeztetős túlóra',
+ payTitle:'Fizetés',payMenuBtn:'Fizetés számítása',payWizTitle:'Hogyan dolgozik?',
+ payModeStudent:'Diákmunka (brigád)',payModeStudentHint:'A szlovák „dohoda o brigádnickej práci študentov”. Alapértelmezés: járulékok 4% + 3% 200 € levonással, adó 19% (így szerepel egy cég bérpapírjain). Az Ön cégénél más lehet: állítsa be a saját bérpapírja alapján.',
+ payModeRegular:'Rendes alkalmazott',payModeRegularHint:'Szlovák munkaszerződés (pracovná zmluva): járulékok 13,4%, adó 15% adómentes résszel. Az értékek tájékoztató jellegűek, vesse össze a saját bérpapírjával.',
+ payModeSkip:'Ne számoljon fizetést',payRateTitle:'Órabér',payRateHint:'Mennyit fizetnek óránként adózás előtt (hrubá). A többit később is beállíthatja.',payRate:'Órabér, €/ó',payBack:'Vissza',payContinue:'Tovább',
+ payNet:'Kézhez (Čistá mzda)',payGross:'Bruttó (Hrubá mzda)',payHoursPay:'Órák × órabér',payNight:'Éjszakai',paySat:'Szombat',paySun:'Vasárnap',payHol:'Ünnepnapok',payVac:'Szabadság',payPg:'Paragraf',payPn:'Betegszabadság (a cég fizeti)',payTax:'Adó (Daň)',
+ payFootnote:'A naptár alapján számolva, a tervezett műszakokkal együtt. Ez becslés, nem bérpapír: vesse össze a bérpapírjával.',payStudentNote:'Diákmunkánál a cég nem fizet szabadságot, betegszabadságot és Paragrafot.',
+ paySettings:'Számítási beállítások',payPremH:'Pótlék, €/ó',payPremHint:'Rendes alkalmazottnál a törvényi minimumok vannak előre kitöltve; vesse össze a bérpapírjával.',payOtPct:'Túlóra: pótlék, %',payVacH:'Óra egy szabadságnapra',payPgH:'Óra egy Paragraf-napra',
+ payAvgNem:'Priemer na nemoc, €/ó',payAvgNah:'Priemer pre náhrady, €/ó',payAvgHint:'Értékek a bérpapír narancssárga mezőiből.',payNem1:'Betegség 1–3. nap, %',payNem2:'Betegség 4–10. nap, %',
+ payDeduct:'Levonás a járulékalapból, €/hó',payTaxRate:'Adó, %',payTaxFree:'Adómentes rész, €/hó',payChild:'Gyermekek utáni adókedvezmény, €/hó',payContribRates:'A munkavállaló járulékai',
+ payOfficial:'Hivatalos órák',payOfficialSplit:'A bérpapíron: čiastka krátená {a} € + odmena {b} €',
+ payCheck:'Összevetés a bérpapírral',payCheckHint:'Adja meg a „Čistá mzda” értékét a bérpapírról erre a hónapra.',payCheckApply:'Számítás igazítása',payCheckDiff:'Eltérés a számítástól: {d} €',payCalib:'Számítási korrekció: ×{k}',payCalibReset:'Visszaállítás',
+ paySaved:'Fizetési beállítások mentve',payChange:'Mód módosítása',
+ payTypeLbl:'Fizetés típusa',payTypeHourly:'Órabéres',payTypeMonthly:'Havi fizetés',payBase:'Fizetés (hrubá mzda), €/hó',payBaseHint:'A havi hrubá mzda a szerződés szerint, adózás előtt. A pótlékok ráadódnak.',
+ payBaseLine:'Munkabér a ledolgozott időre',payFund:'Óraalap',payDayH:'Óra egy munkanapon',
+ payLearn:'Beállítás bérpapír alapján',payLearnHint:'Adja meg a bérpapír számait: a program megtalálja az Ön cégének levonását, járulékait és adóját.',
+ payG:'Hrubá mzda',payB:'Járulékalap (vymeriavací základ)',payO:'Odvody celkom (munkavállalói járulékok)',payT:'Daň (adó)',payN:'Adómentes rész, €/hó (ha van)',
+ payLearnBtn:'Meghatározás',payLearnRes:'Találat: levonás az alapból {d} €, járulékok {c}%, adó {t}%',payApply:'Alkalmaz',payLearnNeed:'Adja meg a „Hrubá mzda” értéket és legalább az „Odvody” vagy a „Daň” értéket.',
+ payBonuses:'Bónuszok és jutalmak',payBonusHint:'a bruttó részét képezik, ezekből számolódik a járulék és az adó',payBonusName:'Név, pl. „minőségi jutalom”',payBonusAdd:'Bónusz hozzáadása',payBonus:'Bónusz',payExtra:'Egyszeri jutalom',
+ payBU1:'€ havonta',payBU2:'% a fizetésből',payBU3:'€ óránként',payBU4:'€ műszakonként',
+ helpTitle:'Súgó',helpBtn:'Hogyan használja',helpNext:'Tovább',helpBack:'Vissza',helpSkip:'Kihagyás',helpStart:'Kezdés',
+ hlp1t:'A naptár maga állítja össze a beosztást',hlp1b:'Jelölje meg az elmúlt <b>2–4 hét</b> műszakjait. Az alkalmazás elemzi őket, megtalálja az ismétlődő ciklust (pl. 2 nappal, 2 éjszaka, 4 szabadnap), és hónapokra előre folytatja a beosztást.',
+ hlp2t:'Hogyan jelölje a műszakokat',hlp2b:'Koppintson egy napra, és válasszon kategóriát: nappal, éjszaka, szabadnap, szabadság, betegszabadság, Paragraf. Ugyanebben az ablakban megadhatja a műszak idejét, a <b>túlórát</b> és egy jegyzetet. Minden művelet visszavonható.',
+ hlp3t:'Automatikus terv',hlp3b:'Nyissa meg a <b>⚙ → „Automatikus tervezés”</b> menüt, válassza ki, hány hónapra előre, és koppintson a „Létrehozás” gombra. A tervezett műszakok szaggatott vonallal vannak rajzolva: erősítse meg őket, vagy javítsa kézzel.',
+ hlp4t:'További funkciók',hlp4b:'Szabadság- és Paragraf-egyenleg, állami ünnepek, emlékeztetők a műszak előtti napon és fizetésszámítás a bérpapírja alapján. Minden a ⚙ menüben kapcsolható be.',
+ hlp5t:'Telepítés és adatok',hlp5b_ios:'<b>iPhone:</b> nyissa meg az oldalt Safariban, koppintson a „Megosztás” → „Főképernyőhöz adás” elemre. Az alkalmazás ezután szokásos alkalmazásként működik, internet nélkül is.',
+ hlp5b_and:'<b>Android:</b> a Chrome menüjében válassza az „Alkalmazás telepítése” lehetőséget. Ezután szokásos alkalmazásként működik, internet nélkül is.',hlp5b_pc:'Az alkalmazást a böngésző címsorában lévő ikonnal telepítheti.',
+ hlp5b:'Az adatok csak az Ön eszközén tárolódnak. Készítsen „Exportálást” a ⚙ menüben biztonsági mentésként.',
+ overlayLbl:'A műszak mellé kerül',overlayHint:'Mint a túlóra: a nap megtartja a műszakját, és egy jelvényt kap az órákkal.',
+ ignoreLbl:'Ne vegye figyelembe a beosztás elemzésében',ignoreHint:'Szabadsághoz, betegszabadsághoz és bármilyen rendszertelen naphoz.',
+ delete:'Törlés',cancel:'Mégse',save:'Mentés',
+ types:{d:['Nappal','N'],n:['Éjszaka','É'],o:['Szabadnap','Szn'],v:['Szabadság','Sz'],s:['Betegszabadság','Bet'],ot:['Túlóra','Tú'],pg:['Orvos (Paragraf)','Dr']}}
 };
-const LANGS=[['ru','Русский'],['uk','Українська'],['sk','Slovenčina']];
-const LOC={ru:'ru-RU',uk:'uk-UA',sk:'sk-SK'};
+// [код, название на самом языке, название по-английски]
+const LANGS=[['ru','Русский','Russian'],['uk','Українська','Ukrainian'],['sk','Slovenčina','Slovak'],['cs','Čeština','Czech'],
+  ['hu','Magyar','Hungarian'],['pl','Polski','Polish'],['de','Deutsch','German'],['en','English','English']];
+const LOC={ru:'ru-RU',uk:'uk-UA',sk:'sk-SK',cs:'cs-CZ',hu:'hu-HU',pl:'pl-PL',de:'de-DE',en:'en-GB'};
 const LK='shiftcal.lang';
+// первый запуск: язык телефона, а для незнакомого языка — английский
 let LANG=(()=>{try{const s=localStorage.getItem(LK);if(I18N[s])return s}catch{}
-  const n=(navigator.language||'ru').slice(0,2);return I18N[n]?n:'ru'})();
+  const n=(navigator.language||'en').slice(0,2);return I18N[n]?n:'en'})();
 const L=()=>I18N[LANG];
-const tr=(k,v)=>{let s=L()[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
+const tr=(k,v)=>{let s=L()[k]??I18N.en[k]??I18N.ru[k]??k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s};
 
 /* ---------- данные ---------- */
-const APP_VERSION='2.9.1';
+const APP_VERSION='3.3';
 const KEY='shiftcal.v1',TK='shiftcal.theme';
 const DEF={types:[
  {id:'d',key:'d',color:'#e08a00',hours:12,start:'07:00',end:'19:00',ignore:false},
@@ -534,11 +910,35 @@ function applyStatic(){
   $('prev').setAttribute('aria-label',tr('prev'));$('next').setAttribute('aria-label',tr('next'));
   $('menuBtn').setAttribute('aria-label',tr('menu'));$('tundo').textContent=tr('undo');
 }
+// Плавное изменение интерфейса: перетекание старого вида в новый (View Transitions),
+// а там, где браузер этого не умеет, — быстрое затухание указанного блока.
+const reduceMotion=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+function smooth(fn,fallbackEl){
+  const r=document.documentElement;
+  if(r.dataset.vt||reduceMotion()){fn();return}
+  if(document.startViewTransition){
+    r.dataset.vt='fade';
+    const t=document.startViewTransition(()=>{fn()});
+    t.finished.finally(()=>{delete r.dataset.vt});
+    return;
+  }
+  if(fallbackEl){
+    fallbackEl.style.transition='opacity .12s';fallbackEl.style.opacity='0';
+    setTimeout(()=>{fn();fallbackEl.style.opacity='1'},120);
+    return;
+  }
+  fn();
+}
 function setLang(l){
   LANG=l;try{localStorage.setItem(LK,l)}catch{}
-  applyStatic();render();
-  if($('menuDlg').open)renderMenu();
-  if($('dayDlg').open)renderDay();
+  smooth(()=>{
+    applyStatic();render();
+    if($('menuDlg').open)renderMenuNow();
+    if($('dayDlg').open)renderDayNow();
+    if($('payDlg').open)renderPayNow();
+    if($('helpDlg').open)renderHelpNow();
+    if($('langDlg').open)renderLangNow();
+  },document.querySelector('.wrap'));
 }
 
 /* ---------- отмена ---------- */
@@ -546,10 +946,14 @@ const hist=[];
 function snap(){hist.push(JSON.stringify(S));if(hist.length>50)hist.shift()}
 function undo(){
   if(!hist.length)return;
-  S=JSON.parse(hist.pop());normalize();save();render();
-  if($('typeDlg').open)closeDlg($('typeDlg'));
-  if($('dayDlg').open)renderDay();
-  if($('menuDlg').open)renderMenu();
+  const prev=hist.pop();
+  smooth(()=>{
+    S=JSON.parse(prev);normalize();save();render();
+    if($('typeDlg').open)closeDlg($('typeDlg'));
+    if($('dayDlg').open)renderDayNow();
+    if($('menuDlg').open)renderMenuNow();
+    if($('payDlg').open&&S.pay)renderPayNow();
+  },document.querySelector('.wrap'));
   toast(tr('undone'),false);
 }
 let tt;
@@ -559,9 +963,13 @@ function toast(msg,canUndo=true,ms=4500){
   T.classList.add('on');
   if(T.showPopover&&!T.matches(':popover-open'))T.showPopover();   // поверх открытых окон
   clearTimeout(tt);
-  tt=setTimeout(()=>{T.classList.remove('on');if(T.hidePopover&&T.matches(':popover-open'))T.hidePopover()},ms);
+  T.classList.remove('out');
+  tt=setTimeout(()=>{
+    T.classList.add('out');   // сначала плавно гаснет, потом убирается
+    setTimeout(()=>{T.classList.remove('on','out');if(T.hidePopover&&T.matches(':popover-open'))T.hidePopover()},reduceMotion()?0:220);
+  },ms);
 }
-function done(msg){save();render();toast(msg)}
+function done(msg){save();smooth(render,$('cal'));toast(msg)}
 $('tundo').onclick=undo;
 document.addEventListener('keydown',e=>{
   const typing=/INPUT|TEXTAREA/.test(document.activeElement.tagName);
@@ -600,8 +1008,11 @@ function setTheme(m,ev){
   if(document.startViewTransition&&ev){
     const x=ev.clientX,y=ev.clientY;
     const r=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
-    document.startViewTransition(()=>paintTheme(m)).ready.then(()=>
-      document.documentElement.animate(
+    const root=document.documentElement;root.dataset.vt='theme';
+    const vt=document.startViewTransition(()=>paintTheme(m));
+    vt.finished.finally(()=>{delete root.dataset.vt});
+    vt.ready.then(()=>
+      root.animate(
         {clipPath:[`circle(0 at ${x}px ${y}px)`,`circle(${r}px at ${x}px ${y}px)`]},
         {duration:650,easing:'cubic-bezier(.4,0,.2,1)',pseudoElement:'::view-transition-new(root)'}));
   }else{
@@ -614,9 +1025,14 @@ mq.onchange=()=>{if(document.documentElement.dataset.mode==='auto')paintTheme('a
 /* ---------- календарь ---------- */
 const track=$('track'),vp=$('vp'),cal=$('cal');
 /* ---------- праздники ---------- */
-// Страна определяется языком: словацкий — Словакия, украинский — Украина. Для русского праздники не показываются.
-const HK='shiftcal.hol',COUNTRY={uk:'UA',sk:'SK'};
+// Страна по умолчанию зависит от языка (для русского и английского не выбрана), но её можно выбрать вручную.
+const HK='shiftcal.hol',HCK='shiftcal.holc';
+const COUNTRY={uk:'UA',sk:'SK',cs:'CZ',pl:'PL',hu:'HU',de:'DE'};
+const HCOUNTRIES=['SK','UA','CZ','PL','HU','DE'];
 let HOL=(()=>{try{return localStorage.getItem(HK)==='1'}catch{return false}})();
+let HC=(()=>{try{return localStorage.getItem(HCK)||'auto'}catch{return'auto'}})();   // auto | none | код страны
+const holCountry=()=>HC==='auto'?(COUNTRY[LANG]||null):HC==='none'?null:HC;
+const regionName=c=>{try{return new Intl.DisplayNames([LOC[LANG]],{type:'region'}).of(c)}catch{return c}};
 const HDATA={
   SK:{west:true,fixed:{'01-01':'Deň vzniku Slovenskej republiky','01-06':'Zjavenie Pána (Traja králi)','05-01':'Sviatok práce','05-08':'Deň víťazstva nad fašizmom',
     '07-05':'Sviatok svätého Cyrila a Metoda','08-29':'Výročie Slovenského národného povstania','09-01':'Deň Ústavy Slovenskej republiky',
@@ -626,7 +1042,20 @@ const HDATA={
   UA:{west:false,fixed:{'01-01':'Новий рік','03-08':'Міжнародний жіночий день','05-01':'День праці','05-08':'День пам’яті та перемоги над нацизмом',
     '06-28':'День Конституції України','07-15':'День Української Державності','08-24':'День Незалежності України',
     '10-01':'День захисників і захисниць України','12-25':'Різдво Христове'},
-    easter:{'0':'Великдень','49':'Трійця'}}
+    easter:{'0':'Великдень','49':'Трійця'}},
+  CZ:{west:true,fixed:{'01-01':'Nový rok','05-01':'Svátek práce','05-08':'Den vítězství','07-05':'Den slovanských věrozvěstů Cyrila a Metoděje',
+    '07-06':'Den upálení mistra Jana Husa','09-28':'Den české státnosti','10-28':'Den vzniku samostatného československého státu',
+    '11-17':'Den boje za svobodu a demokracii','12-24':'Štědrý den','12-25':'1. svátek vánoční','12-26':'2. svátek vánoční'},
+    easter:{'-2':'Velký pátek','1':'Velikonoční pondělí'}},
+  PL:{west:true,fixed:{'01-01':'Nowy Rok','01-06':'Święto Trzech Króli','05-01':'Święto Pracy','05-03':'Święto Konstytucji 3 Maja',
+    '08-15':'Wniebowzięcie Najświętszej Maryi Panny','11-01':'Wszystkich Świętych','11-11':'Narodowe Święto Niepodległości',
+    '12-24':'Wigilia Bożego Narodzenia','12-25':'Boże Narodzenie','12-26':'Drugi dzień Bożego Narodzenia'},
+    easter:{'0':'Wielkanoc','1':'Poniedziałek Wielkanocny','49':'Zielone Świątki','60':'Boże Ciało'}},
+  HU:{west:true,fixed:{'01-01':'Újév','03-15':'Nemzeti ünnep (1848–49-es forradalom)','05-01':'A munka ünnepe','08-20':'Az államalapítás ünnepe',
+    '10-23':'Nemzeti ünnep (1956-os forradalom)','11-01':'Mindenszentek','12-24':'Szenteste','12-25':'Karácsony','12-26':'Karácsony másnapja'},
+    easter:{'-2':'Nagypéntek','0':'Húsvétvasárnap','1':'Húsvéthétfő','49':'Pünkösdvasárnap','50':'Pünkösdhétfő'}},
+  DE:{west:true,fixed:{'01-01':'Neujahr','05-01':'Tag der Arbeit','10-03':'Tag der Deutschen Einheit','12-25':'1. Weihnachtstag','12-26':'2. Weihnachtstag'},
+    easter:{'-2':'Karfreitag','1':'Ostermontag','39':'Christi Himmelfahrt','50':'Pfingstmontag'}}
 };
 // Пасха: западная (григорианская) и православная (юлианская + 13 дней)
 const easterW=y=>{const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),
@@ -635,7 +1064,7 @@ const easterW=y=>{const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b
 const easterO=y=>{const a=y%4,b=y%7,c=y%19,d=(19*c+15)%30,e=(2*a+4*b-d+34)%7;
   return new Date(y,Math.floor((d+e+114)/31)-1,((d+e+114)%31)+1+13)};
 const hcache={};
-const holidayMap=y=>{const c=COUNTRY[LANG];return c&&HOL?holidaysFor(c,y):{}};   // для показа: зависит от языка и переключателя
+const holidayMap=y=>{const c=holCountry();return c&&HOL&&HDATA[c]?holidaysFor(c,y):{}};   // для показа: зависит от страны и переключателя
 function holidaysFor(c,y){   // для расчётов: страна задана явно
   const ck=`${c}${y}`;if(hcache[ck])return hcache[ck];
   const D=HDATA[c],out={};
@@ -720,8 +1149,8 @@ function render(){
   track.style.transition='none';track.style.transform='';
   track.innerHTML=[-1,0,1].map(o=>`<div class="pn">${gridHtml(monthAt(o))}</div>`).join('');
 }
-track.onclick=e=>{const c=e.target.closest('.dc');if(c)openDay(c.dataset.k)};
-$('bar').onclick=e=>{if(e.target.closest('button'))openDay(fmt(new Date()))};
+track.onclick=e=>{const c=e.target.closest('.dc');if(c)openCat(c.dataset.k)};
+$('bar').onclick=e=>{if(e.target.closest('button'))openCat(fmt(new Date()))};
 
 let busy=false;
 const EASE='cubic-bezier(.22,.85,.3,1)';
@@ -796,7 +1225,37 @@ function timeInfo(a,b,t){
   const l=lunchOf(t||{});
   return`${netOf(span(a,b),t||{})} ${tr('h')}${l?' · '+tr('lunchShort',{m:l}):''}${toMin(b)<=toMin(a)?' · '+tr('nextDay'):''}`;
 }
-function renderDay(){
+/* ---------- шторка выбора категории ---------- */
+// Нажатие на день открывает шторку: выбрал категорию — готово. «Подробнее» открывает время, nadčas и заметку.
+function openCat(k){dayKey=k;noteSnap=false;renderCatNow();openDlg($('catSheet'))}
+function renderCatNow(){
+  const e=S.days[dayKey]||{},main=S.types.filter(t=>!t.overlay);
+  const title=parse(dayKey).toLocaleDateString(LOC[LANG],{weekday:'long',day:'numeric',month:'long'});
+  const extra=!!e.note||!!(e.ov&&Object.keys(e.ov).length);
+  $('catBody').innerHTML=`<div class="grab"></div>
+    <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+    ${holidayOf(dayKey)?`<div class="hnote">${tr('holiday')}: ${esc(holidayOf(dayKey))}</div>`:''}
+    <div class="cats">${main.map(t=>`<button class="cat${e.t===t.id&&!e.auto?' on':''}" data-set="${t.id}" style="--c:${t.color}">
+      <b>${esc(sh(t))}</b><span>${esc(nm(t))}<small>${t.start&&t.end?t.start+'–'+t.end+' · ':''}${typeNet(t)?typeNet(t)+' '+tr('h'):tr('noHours')}</small></span></button>`).join('')}</div>
+    <div class="foot sheetfoot"><button data-more>⋯ ${tr('moreBtn')}${extra?' ●':''}</button>${e.t?`<button class="danger" data-clear>${tr('clearShift')}</button>`:''}</div>`;
+}
+$('catBody').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const x=S.days[dayKey]||{};
+  if(b.dataset.set){
+    snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;
+    done(tr('shiftChanged'));closeDlg($('catSheet'));if($('dayDlg').open)renderDay();
+  }else if('clear' in b.dataset){
+    snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);
+    done(tr('shiftCleared'));closeDlg($('catSheet'));if($('dayDlg').open)renderDay();
+  }else if('more' in b.dataset){
+    closeDlg($('catSheet'));
+    setTimeout(()=>openDay(dayKey),160);
+  }
+});
+
+// перерисовка уже открытой панели идёт плавно; первое открытие — сразу (его анимирует само окно)
+const renderDay=()=>$('dayDlg').open?smooth(renderDayNow,$('dayBody')):renderDayNow();
+function renderDayNow(){
   const e=S.days[dayKey]||{},cur_t=e.t&&type(e.t);
   const title=parse(dayKey).toLocaleDateString(LOC[LANG],{weekday:'long',day:'numeric',month:'long'});
   const main=S.types.filter(t=>!t.overlay),ovs=S.types.filter(t=>t.overlay);
@@ -804,8 +1263,10 @@ function renderDay(){
   $('dayBody').innerHTML=`
    <div class="dhead"><h2>${title}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
    ${holidayOf(dayKey)?`<div class="hnote">${tr('holiday')}: ${esc(holidayOf(dayKey))}</div>`:''}
-   <div class="cats">${main.map(t=>`<button class="cat${e.t===t.id&&!e.auto?' on':''}" data-set="${t.id}" style="--c:${t.color}">
-      <b>${esc(sh(t))}</b><span>${esc(nm(t))}<small>${t.start&&t.end?t.start+'–'+t.end+' · ':''}${typeNet(t)?typeNet(t)+' '+tr('h'):tr('noHours')}</small></span></button>`).join('')}</div>
+   <button class="lrow catpick" data-opencat style="--c:${cur_t?cur_t.color:'var(--accent)'}">
+     <span class="lcode">${cur_t?esc(sh(cur_t)):'+'}</span>
+     <span class="lname"><b>${cur_t?esc(nm(cur_t)):tr('pickCat')}</b>${cur_t?`<small>${tm&&tm[0]&&tm[1]?tm[0]+'–'+tm[1]+' · ':''}${dayHours(e,cur_t)?nf(dayHours(e,cur_t))+' '+tr('h'):tr('noHours')}${e.auto?' · '+tr('autoTag'):''}</small>`:''}</span>
+     <span class="muted">›</span></button>
    ${tm?`<div class="sec"><h3>${tr('timeTitle')}</h3><div class="row">
       <input type="time" id="tmS" value="${tm[0]}"><span>–</span><input type="time" id="tmE" value="${tm[1]}">
       <span class="muted" id="tmH">${tm[0]&&tm[1]?timeInfo(tm[0],tm[1],cur_t):''}</span>
@@ -823,7 +1284,7 @@ function renderDay(){
 $('dayBody').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;
   const x=S.days[dayKey]||{};
-  if(b.dataset.set){snap();x.t=b.dataset.set;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;done(tr('shiftChanged'));closeDlg($('dayDlg'))}
+  if('opencat' in b.dataset){renderCatNow();openDlg($('catSheet'))}
   else if('clear' in b.dataset){snap();delete x.t;delete x.auto;delete x.s;delete x.e;S.days[dayKey]=x;cleanup(dayKey);done(tr('shiftCleared'));renderDay()}
   else if('tmreset' in b.dataset){snap();delete x.s;delete x.e;done(tr('timeReset'));renderDay()}
   else if(b.dataset.per){b.parentElement.querySelectorAll('button').forEach(o=>o.classList.toggle('on',o===b))}
@@ -858,7 +1319,7 @@ $('dayBody').addEventListener('change',e=>{
 });
 
 /* ---------- меню ---------- */
-$('menuBtn').onclick=()=>{renderMenu();openDlg($('menuDlg'))};
+$('menuBtn').onclick=()=>{menuPage=null;renderMenuNow();openDlg($('menuDlg'))};
 const monthKey=()=>`${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
 function monthStats(){
   const ym=monthKey();
@@ -899,8 +1360,7 @@ function renderPills(){
 $('pills').onclick=e=>{
   if(e.target.closest('[data-pay]')){openPay();return}
   if(!e.target.closest('.pill'))return;
-  renderMenu();openDlg($('menuDlg'));
-  requestAnimationFrame(()=>{const s=$('balSec');if(s)s.scrollIntoView({block:'start'})});   // сразу к остаткам и лимитам
+  menuPage='bal';renderMenuNow();openDlg($('menuDlg'));   // сразу экран с остатками и лимитами
 };
 // остатки по отпуску и Paragraf за календарный год открытого месяца
 function balancesHtml(){
@@ -915,50 +1375,82 @@ function balancesHtml(){
   }).join('');
   return rows+(noLimit?`<div class="muted">${tr('limitHint')}</div>`:'');
 }
-function renderMenu(){
+const renderMenu=()=>$('menuDlg').open?smooth(renderMenuNow,$('menuBody')):renderMenuNow();
+function holOptions(){
+  const auto=COUNTRY[LANG];
+  return`<option value="auto"${HC==='auto'?' selected':''}>${tr('holAuto')}${auto?` (${regionName(auto)})`:''}</option>
+    <option value="none"${HC==='none'?' selected':''}>${tr('holOff')}</option>`+
+    HCOUNTRIES.map(c=>`<option value="${c}"${HC===c?' selected':''}>${esc(regionName(c))}</option>`).join('');
+}
+// Меню — это список разделов; каждый раздел открывается отдельным экраном со стрелкой «назад».
+let menuPage=null,lastMenuPage=null;
+const MENU_NAV=[
+  ['cats','📋',()=>tr('categories'),()=>String(S.types.length)],
+  ['auto','✨',()=>tr('auto'),()=>''],
+  ['bal','🌴',()=>tr('navBal'),()=>''],
+  ['hol','🎉',()=>tr('holTitle'),()=>HOL?(holCountry()?regionName(holCountry()):tr('navOn')):tr('navOff')],
+  ['pay','💶',()=>tr('payTitle'),()=>''],
+  ['rem','🔔',()=>tr('remTitle'),()=>getRem().on?tr('navOn'):tr('navOff')],
+  ['look','🎨',()=>tr('lookTitle'),()=>LANG.toUpperCase()],
+  ['data','💾',()=>tr('data'),()=>'v'+APP_VERSION],
+  ['help','❓',()=>tr('helpBtn'),()=>'']
+];
+function menuSection(p){
   const m=document.documentElement.dataset.mode;
-  const ym=monthKey(),hasData=Object.keys(S.days).some(k=>k.startsWith(ym));
-  $('menuBody').innerHTML=`
-   <div class="dhead"><h2>${tr('menu')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
-   <button data-undo ${hist.length?'':'disabled'} style="width:100%">${tr('undoBtn')}</button>
-   <div class="sec"><h3>${tr('summary',{m:monthLabel(cur)})}</h3><div class="stats">${monthStats()}</div></div>
-   <div class="sec" id="balSec"><h3>${tr('balTitle',{y:cur.getFullYear()})}</h3>${balancesHtml()}</div>
-   <div class="sec"><h3>${tr('categories')}</h3>
-     <div class="catlist">${S.types.map(t=>`<button data-edit="${t.id}"><span class="dot" style="background:${t.color}">${esc(sh(t))}</span>
-       <span class="nm">${esc(nm(t))}</span><span class="muted">${t.overlay?tr('overlayTag'):(t.start&&t.end?t.start+'–'+t.end+' · ':'')+typeNet(t)+' '+tr('h')}</span><span class="muted">›</span></button>`).join('')}
-       <button class="primary" data-add>${tr('addCat')}</button></div></div>
-   <div class="sec"><h3>${tr('auto')}</h3>
-     <div class="muted" id="analysis" style="margin-bottom:10px">${analysisText()}</div>
-     <div class="row"><span>${tr('autoOn')}</span><input id="months" type="number" min="1" max="12" value="3" style="width:64px"><span>${tr('months')}</span>
-       <button class="primary" data-gen>${tr('build')}</button></div>
-     <div class="row" style="margin-top:8px"><button data-confirm>${tr('confirmAuto')}</button><button class="ghost" data-clearauto>${tr('clearAuto')}</button></div>
-     <div class="muted" style="margin-top:8px">${tr('autoHint')}</div></div>
-   <div class="sec"><h3>${tr('holTitle')}</h3>
-     <div class="hrow"><div>${tr('holShow')}<div class="muted">${tr(COUNTRY[LANG]?'holInfo':'holNone')}</div></div>
-       <label class="sw"><input type="checkbox" id="holToggle" ${HOL&&COUNTRY[LANG]?'checked':''} ${COUNTRY[LANG]?'':'disabled'}><span></span></label></div></div>
-   <div class="sec"><h3>${tr('payTitle')}</h3><button data-pay style="width:100%">💶 ${tr('payMenuBtn')}</button></div>
-   <div class="sec"><h3>${tr('remTitle')}</h3>
-     <div class="hrow"><div>${tr('remShifts')}<div class="muted">${tr('remShiftsHint')}</div></div>
-       <label class="sw"><input type="checkbox" id="remOn" ${getRem().on?'checked':''}><span></span></label></div>
-     <div class="row" style="margin-top:10px"><span>${tr('remTime')}</span><input type="time" id="remTime" value="${getRem().time}"></div>
-     ${'Notification' in window?(Notification.permission==='granted'?`<div class="muted" style="margin-top:10px">✓ ${tr('remPermOn')}</div>`
-       :Notification.permission==='denied'?`<div class="muted" style="margin-top:10px">${tr('remPermDenied')}</div>`
-       :`<button data-notif style="width:100%;margin-top:10px">🔔 ${tr('remPerm')}</button>`):''}
-     <button data-ics style="width:100%;margin-top:10px">📅 ${tr('remIcs')}</button>
-     <div class="muted" style="margin-top:8px">${tr('remIcsHint')}</div>
-     <div class="muted" style="margin-top:6px">${tr('remNote')}</div></div>
-   <div class="sec"><h3>${tr('theme')}</h3>
-     <div class="seg" id="theme"><button data-m="light" class="${m==='light'?'on':''}">${tr('light')}</button><button data-m="auto" class="${m==='auto'?'on':''}">${tr('themeAuto')}</button><button data-m="dark" class="${m==='dark'?'on':''}">${tr('dark')}</button></div></div>
-   <div class="sec"><h3>${tr('language')}</h3>
-     <div class="seg" id="lang">${LANGS.map(([c,n])=>`<button data-lang="${c}" class="${c===LANG?'on':''}">${n}</button>`).join('')}</div></div>
-   <div class="sec"><h3>${tr('data')}</h3>
-     <div class="row"><button data-exp>${tr('export')}</button>
-       <label class="btn">${tr('import')}<input type="file" id="fileImp" accept="application/json,.json,text/plain"></label></div>
-     <div class="muted" style="margin-top:8px">${tr('localNote')}</div>
-     <div class="row" style="margin-top:12px"><button data-update>↻ ${tr('update')}</button><span class="muted">${tr('version')} ${APP_VERSION}</span></div></div>
-   <div class="sec"><h3>${tr('clearSec')}</h3>
-     <button class="danger" data-clearmonth ${hasData?'':'disabled'} style="width:100%">🗑 ${tr('clearMonthBtn',{m:monthLabel(cur)})}</button>
-     <div class="muted" style="margin-top:8px">${tr('clearHint')}</div></div>`;
+  if(p==='cats')return`<div class="catlist">${S.types.map(t=>`<button data-edit="${t.id}"><span class="dot" style="background:${t.color}">${esc(sh(t))}</span>
+    <span class="nm">${esc(nm(t))}</span><span class="muted">${t.overlay?tr('overlayTag'):(t.start&&t.end?t.start+'–'+t.end+' · ':'')+typeNet(t)+' '+tr('h')}</span><span class="muted">›</span></button>`).join('')}
+    <button class="primary" data-add>${tr('addCat')}</button></div>`;
+  if(p==='auto')return`<div class="muted" id="analysis" style="margin-bottom:10px">${analysisText()}</div>
+    <div class="row"><span>${tr('autoOn')}</span><input id="months" type="number" min="1" max="12" value="3" style="width:64px"><span>${tr('months')}</span>
+      <button class="primary" data-gen>${tr('build')}</button></div>
+    <div class="row" style="margin-top:8px"><button data-confirm>${tr('confirmAuto')}</button><button class="ghost" data-clearauto>${tr('clearAuto')}</button></div>
+    <div class="muted" style="margin-top:8px">${tr('autoHint')}</div>`;
+  if(p==='bal')return`<div class="muted" style="margin-bottom:8px">${tr('balTitle',{y:cur.getFullYear()})}</div>${balancesHtml()}`;
+  if(p==='hol')return`<div class="hrow"><div>${tr('holShow')}</div>
+      <label class="sw"><input type="checkbox" id="holToggle" ${HOL?'checked':''}><span></span></label></div>
+    <label class="f"><span>${tr('holCountry')}</span><select id="holCountrySel" style="width:100%">${holOptions()}</select></label>
+    <div class="muted" style="margin-top:6px">${HOL&&!holCountry()?tr('holPick')+' ':''}${tr('holHint')}</div>`;
+  if(p==='rem')return`<div class="hrow"><div>${tr('remShifts')}<div class="muted">${tr('remShiftsHint')}</div></div>
+      <label class="sw"><input type="checkbox" id="remOn" ${getRem().on?'checked':''}><span></span></label></div>
+    <div class="row" style="margin-top:10px"><span>${tr('remTime')}</span><input type="time" id="remTime" value="${getRem().time}"></div>
+    ${'Notification' in window?(Notification.permission==='granted'?`<div class="muted" style="margin-top:10px">✓ ${tr('remPermOn')}</div>`
+      :Notification.permission==='denied'?`<div class="muted" style="margin-top:10px">${tr('remPermDenied')}</div>`
+      :`<button data-notif style="width:100%;margin-top:10px">🔔 ${tr('remPerm')}</button>`):''}
+    <button data-ics style="width:100%;margin-top:10px">📅 ${tr('remIcs')}</button>
+    <div class="muted" style="margin-top:8px">${tr('remIcsHint')}</div>
+    <div class="muted" style="margin-top:6px">${tr('remNote')}</div>`;
+  if(p==='look')return`<div class="sec" style="margin-top:0"><h3>${tr('theme')}</h3>
+      <div class="seg" id="theme"><button data-m="light" class="${m==='light'?'on':''}">${tr('light')}</button><button data-m="auto" class="${m==='auto'?'on':''}">${tr('themeAuto')}</button><button data-m="dark" class="${m==='dark'?'on':''}">${tr('dark')}</button></div></div>
+    <div class="sec"><h3>${tr('language')}</h3>
+      <button class="lrow" data-langdlg><span class="lcode">${LANG.toUpperCase()}</span><span class="lname"><b>${LANGS.find(l=>l[0]===LANG)[1]}</b></span><span class="muted">›</span></button></div>`;
+  if(p==='data'){
+    const ym=monthKey(),hasData=Object.keys(S.days).some(k=>k.startsWith(ym));
+    return`<div class="row"><button data-exp>${tr('export')}</button>
+      <label class="btn">${tr('import')}<input type="file" id="fileImp" accept="application/json,.json,text/plain"></label></div>
+      <div class="muted" style="margin-top:8px">${tr('localNote')}</div>
+      <div class="row" style="margin-top:12px"><button data-update>↻ ${tr('updateApp')}</button><span class="muted">${tr('version')} ${APP_VERSION}</span></div>
+      <div class="sec"><h3>${tr('clearSec')}</h3>
+        <button class="danger" data-clearmonth ${hasData?'':'disabled'} style="width:100%">🗑 ${tr('clearMonthBtn',{m:monthLabel(cur)})}</button>
+        <div class="muted" style="margin-top:8px">${tr('clearHint')}</div></div>`;
+  }
+  return'';
+}
+function renderMenuNow(){
+  const page=menuPage&&['cats','auto','bal','hol','rem','look','data'].includes(menuPage)?menuPage:null;
+  if(!page){
+    const nav=(attr,ic,label,hint)=>`<button class="nav" ${attr}><span class="mic">${ic}</span><span class="nm">${label}</span><span class="muted">${hint}</span><span class="muted">›</span></button>`;
+    $('menuBody').innerHTML=`
+      <div class="dhead"><h2>${tr('menu')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+      <button data-undo ${hist.length?'':'disabled'} style="width:100%">${tr('undoBtn')}</button>
+      <div class="sec"><h3>${tr('summary',{m:monthLabel(cur)})}</h3><div class="stats">${monthStats()}</div></div>
+      <div class="sec"><div class="navlist">${MENU_NAV.map(([k,ic,l,h])=>nav(k==='pay'?'data-pay':k==='help'?'data-help':`data-mp="${k}"`,ic,l(),h())).join('')}</div></div>`;
+  }else{
+    const title=MENU_NAV.find(n=>n[0]===page)[2]();
+    $('menuBody').innerHTML=`
+      <div class="dhead"><button class="icon ghost" data-mback aria-label="${tr('payBack')}">‹</button><h2>${title}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+      ${menuSection(page)}`;
+  }
+  if(lastMenuPage!==page){$('menuBody').scrollTop=0;lastMenuPage=page}
 }
 $('menuBody').addEventListener('change',e=>{
   const t=e.target;
@@ -966,7 +1458,10 @@ $('menuBody').addEventListener('change',e=>{
   else if(t.id==='remTime'){if(t.value){setRem({time:t.value});try{localStorage.removeItem(RL)}catch{}}}
   else if(t.id==='holToggle'){
     HOL=t.checked;try{localStorage.setItem(HK,HOL?'1':'0')}catch{}
-    render();renderMenu();
+    smooth(()=>{render();renderMenuNow()},$('menuBody'));
+  }else if(t.id==='holCountrySel'){
+    HC=t.value;try{localStorage.setItem(HCK,HC)}catch{}
+    smooth(()=>{render();renderMenuNow()},$('menuBody'));
   }else if(t.dataset.quota){
     const ty=type(t.dataset.quota);if(!ty)return;
     snap();const v=Math.max(0,Math.floor(+t.value||0));
@@ -984,7 +1479,9 @@ function clearMonth(){
 $('menuBody').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.m)setTheme(d.m,e);
-  else if(d.lang)setLang(d.lang);
+  else if(d.mp){menuPage=d.mp;renderMenu()}
+  else if('mback' in d){menuPage=null;renderMenu()}
+  else if('langdlg' in d)openLangDlg();
   else if('undo' in d)undo();
   else if(d.edit)openType(d.edit);
   else if('add' in d)openType(null);
@@ -994,6 +1491,7 @@ $('menuBody').onclick=e=>{
   else if('clearauto' in d){snap();for(const k in S.days)if(S.days[k].auto){delete S.days[k].t;delete S.days[k].auto;delete S.days[k].s;delete S.days[k].e;cleanup(k)}done(tr('autoCleared'));renderMenu()}
   else if('exp' in d)exportData();
   else if('pay' in d){closeDlg($('menuDlg'));openPay()}
+  else if('help' in d){closeDlg($('menuDlg'));openHelp()}
   else if('ics' in d)exportIcs();
   else if('notif' in d)Notification.requestPermission().then(()=>renderMenu());
   else if('update' in d)forceUpdate();
@@ -1350,11 +1848,13 @@ function payPill(){
 }
 
 let payStep=null,payDraft={},payOpen=false,payProposal=null;
+const payOpenSet=new Set();
 function openPay(step){
   payStep=step||(S.pay&&S.pay.mode!=='none'&&(S.pay.rate||S.pay.base)?null:'mode');
   renderPay();if(!$('payDlg').open)openDlg($('payDlg'));
 }
-function renderPay(){
+const renderPay=()=>$('payDlg').open?smooth(renderPayNow,$('payBody')):renderPayNow();
+function renderPayNow(){
   const box=$('payBody');
   const head=t=>`<div class="dhead"><h2>${t}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>`;
   if(payStep==='mode'){
@@ -1403,28 +1903,32 @@ function renderPay(){
   const num=(label,path,val,step='0.01',ph='')=>`<label class="f"><span>${label}</span><input type="number" step="${step}" inputmode="decimal" data-pf="${path}" value="${val}" placeholder="${ph}"></label>`;
   const prem=(k,l)=>`<label class="f"><span>${tr(l)}</span><div class="row" style="flex-wrap:nowrap;gap:6px"><input type="number" step="0.01" inputmode="decimal" data-pf="prem.${k}.v" value="${P.prem[k].v}" style="min-width:0">
     <select data-pf="prem.${k}.u" data-str><option value="€"${P.prem[k].unit==='€'?' selected':''}>€/${H}</option><option value="%"${P.prem[k].unit==='%'?' selected':''}>%</option></select></div></label>`;
-  let set=`<label class="f"><span>${tr('payTypeLbl')}</span><select data-pf="payType" data-str><option value="hourly"${monthly?'':' selected'}>${tr('payTypeHourly')}</option><option value="monthly"${monthly?' selected':''}>${tr('payTypeMonthly')}</option></select></label>`;
-  set+=`<div class="pgrid">${monthly?num(tr('payBase'),'base',P.base)+num(tr('payDayH'),'dayH',P.dayH,'0.5')+num(`${tr('payFund')}, ${H} · ${monthLabel(cur)}`,'fund.'+ym,P.fund[ym]||'','1',nf(C.fund)):num(tr('payRate'),'rate',P.rate)}</div>`;
-  set+=`<div class="muted" style="margin-top:12px">${tr('payPremH')} — ${tr('payPremHint')}</div><div class="pgrid">${prem('night','payNight')}${prem('sat','paySat')}${prem('sun','paySun')}${prem('hol','payHol')}</div>`;
-  set+=`<div class="pgrid">${num(tr('payOtPct'),'otPct',P.otPct,'1')}${num(tr('payTaxRate'),'taxRate',P.taxRate,'0.5')}`;
-  if(st&&!monthly)set+=num(tr('payDeduct'),'deduct',P.deduct)+num(`${tr('payOfficial')}, ${H}`,'official.'+ym,P.official[ym]||'','0.5');
-  else if(st)set+=num(tr('payDeduct'),'deduct',P.deduct);
-  else set+=num(tr('payVacH'),'vacH',P.vacH,'0.5')+num(tr('payPgH'),'pgH',P.pgH,'0.5')+num(tr('payTaxFree'),'taxFree',P.taxFree)+num(tr('payChild'),'childBonus',P.childBonus)+num(tr('payDeduct'),'deduct',P.deduct);
-  set+=`</div>`;
-  if(!st)set+=`<div class="muted" style="margin-top:12px">${tr('payAvgHint')}</div><div class="pgrid">${num(tr('payAvgNah'),'avgNah',P.avgNah,'0.0001',fx(C.hr))}${num(tr('payAvgNem'),'avgNem',P.avgNem,'0.0001',fx(C.hr))}${num(tr('payNem1'),'nem1',P.nem1,'1')}${num(tr('payNem2'),'nem2',P.nem2,'1')}</div>`;
+  // настройки сгруппированы: каждая группа раскрывается отдельно и помнит, открыта ли она
   const BU=[['€','payBU1'],['%','payBU2'],['€/h','payBU3'],['€/s','payBU4']];
-  set+=`<div class="muted" style="margin-top:12px">${tr('payBonuses')} — ${tr('payBonusHint')}</div>`+
+  const grp=(k,t,c)=>`<details class="paydet" data-g="${k}" ${payOpenSet.has(k)?'open':''}><summary>${t}</summary>${c}</details>`;
+  const g1=`<label class="f"><span>${tr('payTypeLbl')}</span><select data-pf="payType" data-str><option value="hourly"${monthly?'':' selected'}>${tr('payTypeHourly')}</option><option value="monthly"${monthly?' selected':''}>${tr('payTypeMonthly')}</option></select></label>
+    <div class="pgrid">${monthly?num(tr('payBase'),'base',P.base)+num(tr('payDayH'),'dayH',P.dayH,'0.5')+num(`${tr('payFund')}, ${H} · ${monthLabel(cur)}`,'fund.'+ym,P.fund[ym]||'','1',nf(C.fund)):num(tr('payRate'),'rate',P.rate)}</div>`;
+  const g2=`<div class="muted">${tr('payPremH')} — ${tr('payPremHint')}</div><div class="pgrid">${prem('night','payNight')}${prem('sat','paySat')}${prem('sun','paySun')}${prem('hol','payHol')}</div>
+    <div class="pgrid">${num(tr('payOtPct'),'otPct',P.otPct,'1')}</div>`;
+  let g3=`<div class="pgrid">${num(tr('payTaxRate'),'taxRate',P.taxRate,'0.5')}`;
+  if(st&&!monthly)g3+=num(tr('payDeduct'),'deduct',P.deduct)+num(`${tr('payOfficial')}, ${H}`,'official.'+ym,P.official[ym]||'','0.5');
+  else if(st)g3+=num(tr('payDeduct'),'deduct',P.deduct);
+  else g3+=num(tr('payTaxFree'),'taxFree',P.taxFree)+num(tr('payChild'),'childBonus',P.childBonus)+num(tr('payDeduct'),'deduct',P.deduct);
+  g3+=`</div><div class="muted" style="margin-top:12px">${tr('payContribRates')}</div><div class="pgrid">${P.contrib.map(([n,p],i)=>num(n+', %',`contrib.${i}.1`,p,'0.1')).join('')}</div>`;
+  const g4=st?'':`<div class="pgrid">${num(tr('payVacH'),'vacH',P.vacH,'0.5')}${num(tr('payPgH'),'pgH',P.pgH,'0.5')}</div>
+    <div class="muted" style="margin-top:12px">${tr('payAvgHint')}</div>
+    <div class="pgrid">${num(tr('payAvgNah'),'avgNah',P.avgNah,'0.0001',fx(C.hr))}${num(tr('payAvgNem'),'avgNem',P.avgNem,'0.0001',fx(C.hr))}${num(tr('payNem1'),'nem1',P.nem1,'1')}${num(tr('payNem2'),'nem2',P.nem2,'1')}</div>`;
+  const g5=`<div class="muted">${tr('payBonusHint')}</div>`+
     P.bonus.map((b,i)=>`<div class="bonus"><input type="text" data-pf="bonus.${i}.n" data-str value="${esc(b.n||'')}" placeholder="${esc(tr('payBonusName'))}" maxlength="40">
       <input type="number" step="0.01" inputmode="decimal" data-pf="bonus.${i}.v" value="${b.v}">
       <select data-pf="bonus.${i}.u" data-str>${BU.map(([u,l])=>`<option value="${u}"${(b.u||'€')===u?' selected':''}>${tr(l)}</option>`).join('')}</select>
       <button class="icon danger" data-pbdel="${i}" aria-label="${tr('remove')}">✕</button></div>`).join('')+
     `<div class="row" style="margin-top:8px"><button data-pbadd>+ ${tr('payBonusAdd')}</button></div>
      <div class="pgrid">${num(`${tr('payExtra')} · ${monthLabel(cur)}`,'extra.'+ym,P.extra[ym]||'')}</div>`;
-  set+=`<div class="muted" style="margin-top:12px">${tr('payContribRates')}</div><div class="pgrid">${P.contrib.map(([n,p],i)=>num(n+', %',`contrib.${i}.1`,p,'0.1')).join('')}</div>`;
-  const learn=`<div class="sec"><h3>${tr('payLearn')}</h3><div class="muted">${tr('payLearnHint')}</div>
+  const learn=`<div class="muted">${tr('payLearnHint')}</div>
     <div class="pgrid">${[['payG','payG'],['payB','payB'],['payO','payO'],['payT','payT'],['payN','payN']].map(([id,l])=>`<label class="f"><span>${tr(l)}</span><input type="number" step="0.01" inputmode="decimal" id="${id}"></label>`).join('')}</div>
     <div class="row" style="margin-top:10px"><button data-plearn>${tr('payLearnBtn')}</button></div>
-    <div class="muted" id="payLearnRes" style="margin-top:8px"></div></div>`;
+    <div class="muted" id="payLearnRes" style="margin-top:8px"></div>`;
   box.innerHTML=head(tr('payTitle'))+`
     <div class="paymon"><button class="icon" data-pm="-1" aria-label="${tr('prev')}">‹</button><span>${monthLabel(cur)}</span><button class="icon" data-pm="1" aria-label="${tr('next')}">›</button></div>
     <div class="paybig"><small>${tr('payNet')}</small><b>≈ ${fx(C.net)} €</b></div>
@@ -1434,11 +1938,11 @@ function renderPay(){
       <div class="row" style="margin-top:8px"><input type="number" id="payActual" step="0.01" inputmode="decimal" placeholder="${fx(C.net0)}" style="width:130px">
         <button data-pcheck>${tr('payCheckApply')}</button>${P.calib!==1?`<button class="ghost" data-pcalreset>${tr('payCalibReset')}</button>`:''}</div>
       <div class="muted" id="payCheckRes" style="margin-top:6px"></div></div>
-    <details class="paydet" ${payOpen?'open':''}><summary>${tr('paySettings')}</summary>${set}${learn}</details>
+    <div class="sec"><h3>${tr('paySettings')}</h3>${grp('basic',tr('payGrpBasic'),g1)}${grp('prem',tr('payGrpPrem'),g2)}${grp('tax',tr('payGrpTax'),g3)}${st?'':grp('leave',tr('payGrpLeave'),g4)}${grp('bonus',tr('payBonuses'),g5)}${grp('learn',tr('payLearn'),learn)}</div>
     <div class="muted" style="margin-top:12px">${tr('payFootnote')}</div>
     <div class="foot"><button data-pchange>${tr('payChange')}</button><button class="primary" data-close>${tr('done')}</button></div>`;
 }
-$('payBody').addEventListener('toggle',e=>{if(e.target.tagName==='DETAILS')payOpen=e.target.open},true);
+$('payBody').addEventListener('toggle',e=>{const g=e.target.dataset&&e.target.dataset.g;if(g){if(e.target.open)payOpenSet.add(g);else payOpenSet.delete(g)}},true);
 $('payBody').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.pmode){
@@ -1466,8 +1970,8 @@ $('payBody').addEventListener('click',e=>{
     snap();S.pay.calib=Math.max(.5,Math.min(1.5,a/C.net0));done(tr('paySaved'));renderPay();
   }
   else if('pcalreset' in d){snap();S.pay.calib=1;done(tr('paySaved'));renderPay()}
-  else if('pbadd' in d){snap();S.pay.bonus.push({n:'',v:0,u:'€'});payOpen=true;done(tr('paySaved'));renderPay()}
-  else if(d.pbdel!==undefined){snap();S.pay.bonus.splice(+d.pbdel,1);payOpen=true;done(tr('paySaved'));renderPay()}
+  else if('pbadd' in d){snap();S.pay.bonus.push({n:'',v:0,u:'€'});payOpenSet.add('bonus');done(tr('paySaved'));renderPay()}
+  else if(d.pbdel!==undefined){snap();S.pay.bonus.splice(+d.pbdel,1);payOpenSet.add('bonus');done(tr('paySaved'));renderPay()}
   else if('plearn' in d){
     const g=id=>parseFloat(String($(id).value).replace(',','.'))||0;
     payProposal=learnFromSlip(g('payG'),g('payB'),g('payO'),g('payT'),g('payN'),S.pay);
@@ -1480,7 +1984,7 @@ $('payBody').addEventListener('click',e=>{
     P.deduct=p.deduct;if(p.taxFree!==undefined)P.taxFree=p.taxFree;
     if(p.contribRate!==undefined&&!p.keepContrib)P.contrib=[['Odvody',p.contribRate]];
     if(p.taxRate!==undefined)P.taxRate=p.taxRate;
-    payProposal=null;payOpen=true;done(tr('paySaved'));renderPay();
+    payProposal=null;payOpenSet.add('basic');payOpenSet.add('tax');done(tr('paySaved'));renderPay();
   }
 });
 // разница с реальным листом считается на лету, пока вводите число
@@ -1503,11 +2007,78 @@ $('payBody').addEventListener('change',e=>{
 // закрыли первое окно, ничего не выбрав — больше не спрашиваем (кнопка остаётся в меню)
 $('payDlg').addEventListener('close',()=>{if(!S.pay){S.pay={mode:'none'};save()}payStep=null});
 
+/* ---------- окно выбора языка ---------- */
+// Выбор отмечается галочкой, интерфейс плавно переключается, окно закрывается само.
+const renderLang=()=>$('langDlg').open?smooth(renderLangNow,$('langBody')):renderLangNow();
+function renderLangNow(){
+  $('langBody').innerHTML=`<div class="dhead"><h2>${tr('language')}</h2><button class="icon ghost" data-close aria-label="${tr('close')}">✕</button></div>
+    <div class="langlist">${LANGS.map(([c,n,en])=>`<button class="lrow${c===LANG?' on':''}" data-lang="${c}"><span class="lcode">${c.toUpperCase()}</span>
+      <span class="lname"><b>${n}</b><small>${en}</small></span><span class="lck">✓</span></button>`).join('')}</div>`;
+}
+function openLangDlg(){renderLangNow();openDlg($('langDlg'))}
+$('langBody').addEventListener('click',e=>{
+  const b=e.target.closest('[data-lang]');if(!b)return;
+  setLang(b.dataset.lang);
+  setTimeout(()=>closeDlg($('langDlg')),340);
+});
+
+/* ---------- инструкция для новых пользователей ---------- */
+// Показывается один раз при первом запуске (если в календаре ещё нет смен) и всегда доступна в меню.
+const HELP_KEY='shiftcal.help',HELP_STEPS=5;
+let helpStep=0;
+const isStandalone=()=>matchMedia('(display-mode:standalone)').matches||navigator.standalone===true;
+const platform=()=>{
+  const ua=navigator.userAgent||'';
+  if(/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1))return'ios';
+  return /Android/.test(ua)?'and':'pc';
+};
+// картинка к шагу собрана из тех же элементов, что и приложение
+function helpArt(i){
+  const C={d:'#e08a00',n:'#4f46e5',o:'#10b981'},T=L().types;
+  const disc=(k,cls)=>`<span class="disc ${cls}" style="--c:${C[k]};--ink:#fff">${esc(T[k][1])}</span>`;
+  const solid=['d','d','n','n','o','o','o','o'].map(k=>disc(k,k==='o'?'off':'on')).join('');
+  const plan=['d','d','n','n'].map(k=>disc(k,'on auto')).join('');
+  if(i===0)return solid+'<span class="arr">→</span>'+plan;
+  if(i===1)return['d','n','o'].map(k=>`<span class="cat" style="--c:${C[k]}"><b>${esc(T[k][1])}</b>${esc(T[k][0])}</span>`).join('');
+  if(i===2)return`<span class="btnlike">${tr('build')}</span><span class="arr">→</span>`+plan;
+  if(i===3)return`<span class="pill"><i style="background:#ec4899"></i>${esc(T.v[0])} <span>${tr('left')}</span><b>17</b><span>/ 20</span></span>
+    <span class="pill"><i style="background:var(--accent)"></i>${tr('payTitle')} <span>≈</span><b>577 €</b></span>`;
+  return'<img src="icon-192.png" alt="">';
+}
+const renderHelp=()=>$('helpDlg').open?smooth(renderHelpNow,$('helpBody')):renderHelpNow();
+function renderHelpNow(){
+  const i=helpStep,last=i===HELP_STEPS-1;
+  const body=last?(isStandalone()?'':tr('hlp5b_'+platform())+' ')+tr('hlp5b'):tr('hlp'+(i+1)+'b');
+  $('helpBody').innerHTML=`
+    <div class="hlang"><button data-hlangdlg>🌐 ${LANGS.find(l=>l[0]===LANG)[1]} ▾</button></div>
+    <div class="hart">${helpArt(i)}</div>
+    <h2 class="htitle">${tr('hlp'+(i+1)+'t')}</h2><p class="hbody">${body}</p>
+    <div class="hdots">${Array.from({length:HELP_STEPS},(_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+    <div class="foot">${i?`<button data-hback>${tr('helpBack')}</button>`:`<button data-hskip>${tr('helpSkip')}</button>`}<button class="primary" data-hnext>${tr(last?'helpStart':'helpNext')}</button></div>`;
+}
+function openHelp(){helpStep=0;renderHelpNow();openDlg($('helpDlg'))}
+$('helpBody').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if('hlangdlg' in d)openLangDlg();
+  else if('hskip' in d)closeDlg($('helpDlg'));
+  else if('hback' in d){helpStep=Math.max(0,helpStep-1);renderHelp()}
+  else if('hnext' in d){if(helpStep>=HELP_STEPS-1)closeDlg($('helpDlg'));else{helpStep++;renderHelp()}}
+});
+// после инструкции — выбор режима зарплаты
+$('helpDlg').addEventListener('close',()=>{
+  try{localStorage.setItem(HELP_KEY,'1')}catch{}
+  if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},250);
+});
+
 paintTheme(document.documentElement.dataset.mode);
 applyStatic();
 render();
 checkReminders();setInterval(checkReminders,60000);
-if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},700);   // первое окно: режим работы
+// первый запуск: сначала инструкция (только если смен ещё нет), потом выбор режима зарплаты
+let showHelp=false;
+try{if(localStorage.getItem(HELP_KEY)!=='1'){if(!Object.keys(S.days).length)showHelp=true;else localStorage.setItem(HELP_KEY,'1')}}catch{}
+if(showHelp)setTimeout(openHelp,600);
+else if(!S.pay)setTimeout(()=>{if(!document.querySelector('dialog[open]'))openPay('mode')},700);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   const had=!!navigator.serviceWorker.controller;let reloaded=false;
